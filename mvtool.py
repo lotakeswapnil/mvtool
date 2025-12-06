@@ -25,18 +25,21 @@ if uploaded is not None:
             key=f"var_{i}"
         )
 
-    if globals()[f"ind_var_{i}"] not in df.columns and energy_cons is not None and globals()[f"ind_var_{i}"] != "":
-        X = df[globals()[f'ind_var_{i}']].to_frame()
-        y = df[energy_cons]
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    if energy_cons is not None and globals()[f"ind_var_{i}"] != "":
+        if globals()[f"ind_var_{i}"] not in df.columns:
+            st.warning(f"Variable '{col_name}' not found in the uploaded CSV.")
+        else:
+            X = df[globals()[f'ind_var_{i}']].to_frame()
+            y = df[energy_cons]
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-        model = LinearRegression()
-        model.fit(X_train, y_train)
-        preds = model.predict(X_test)
-        regression = model.score(X_test, y_test)
+            model = LinearRegression()
+            model.fit(X_train, y_train)
+            preds = model.predict(X_test)
+            regression = model.score(X_test, y_test)
 
-        st.write(f'Regression: {regression:.2%}')
-        st.line_chart(pd.DataFrame({'Actual': y_test, 'Predicted': preds}).reset_index(drop=True))
+            st.write(f'Regression: {regression:.2%}')
+            st.line_chart(pd.DataFrame({'Actual': y_test, 'Predicted': preds}).reset_index(drop=True))
 
     else:
         st.write('All Variables not defined.')
