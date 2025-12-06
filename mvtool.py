@@ -14,10 +14,14 @@ if uploaded is not None:
     st.write('Preview:', df.head())
 
 energy_cons = st.text_input('Target column name (energy usage)')
-independent_variables = st.text_input('Target column name (independent variables)')
+num_var = st.number_input('Number of variables')
+for column in num_var:
+    column
 
-if energy_cons and independent_variables is not None:
-    X = df[independent_variables].to_frame()
+ind_var_1 = st.text_input('Target column name (independent variables)')
+
+if energy_cons and ind_var_1 is not None:
+    X = df[ind_var_1].to_frame()
     y = df[energy_cons]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
