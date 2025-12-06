@@ -9,11 +9,13 @@ st.title('Energy M&V — Simple Regression Demo')
 
 uploaded = st.file_uploader('Upload CSV (features + target)', type='csv')
 
+df = []
+
 if uploaded is not None:
     df = pd.read_csv(uploaded)
     st.write('Preview:', df.head())
 
-st.dataframe(df)
+
 
 
 energy_cons = st.text_input('Target column name (energy usage)')
@@ -25,7 +27,7 @@ for i in range(1,num_var+1):
     )
 
 if energy_cons is not None and globals()[f"ind_var_{i}"] != "" :
-    X = df[globals()[f'ind_var_{i}']]
+    X = df[globals()[f'ind_var_{i}']].to_frame()
     y = df[energy_cons]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
