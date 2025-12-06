@@ -12,6 +12,7 @@ uploaded = st.file_uploader('Upload CSV (features + target)', type='csv')
 
 if uploaded is not None:
     df = pd.read_csv(uploaded)
+    st.dataframe(df)
     st.write('Preview:', df.head())
 
     energy_cons = st.text_input('Target column name (energy usage)')
@@ -37,7 +38,6 @@ if uploaded is not None:
         st.write(f'Regression: {regression:.2%}')
         st.line_chart(pd.DataFrame({'Actual': y_test, 'Predicted': preds}).reset_index(drop=True))
 
-    st.dataframe(df)
 
     elif globals()[f"ind_var_{i}"] not in df.columns:
         st.write('Variable not found')
