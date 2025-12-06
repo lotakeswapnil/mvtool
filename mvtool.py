@@ -22,5 +22,5 @@ if uploaded is not None and target_col:
     preds = model.predict(X_test)
     regression = model.score(X_test, y_test)
 
-    st.write(f'Regression: {regression:.2f%}')
+    st.write(f'Regression: {regression:.2%}')
     st.line_chart(pd.DataFrame({"Actual": y_test, "Predicted": preds}).reset_index(drop=True))
