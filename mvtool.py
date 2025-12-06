@@ -25,7 +25,7 @@ if uploaded is not None:
             key=f"var_{i}"
         )
 
-    if energy_cons is not None and globals()[f"ind_var_{i}"] != "" and globals()[f"ind_var_{i}"] not in df.columns:
+    if energy_cons is not None and globals()[f"ind_var_{i}"] not in df.columns and globals()[f"ind_var_{i}"] != "":
         X = df[globals()[f'ind_var_{i}']].to_frame()
         y = df[energy_cons]
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
