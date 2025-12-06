@@ -16,12 +16,11 @@ if uploaded is not None:
 energy_cons = st.text_input('Target column name (energy usage)')
 num_var = st.number_input('Number of variables', min_value=1, max_value=10, step=1)
 for i in range(1,num_var+1):
-    var_name = st.text_input(
-        f"Target column name {i} (independent variable)",
+    globals()[f"ind_var{i}"] = st.text_input(
+        f"Independent variable {i}",
         key=f"var_{i}"
     )
-    var_name
-    ind_var.i = var_name
+    ind_var{i}
 
 if energy_cons and ind_var_1 is not None:
     X = df[ind_var_1].to_frame()
