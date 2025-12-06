@@ -21,7 +21,7 @@ for i in range(1,num_var+1):
         key=f"var_{i}"
     )
     var_name
-    ind_var.append(var_name)
+    ind_var.i = var_name
 
 if energy_cons and ind_var_1 is not None:
     X = df[ind_var_1].to_frame()
