@@ -36,8 +36,7 @@ if energy_cons is not None and globals()[f"ind_var_{i}"] != "" :
     st.line_chart(pd.DataFrame({'Actual': y_test, 'Predicted': preds}).reset_index(drop=True))
 
 
-
-elif globals()[f"ind_var_{i}"] not in df.columns.values.tolist():
+elif globals()[f"ind_var_{i}"] not in df.columns.values:
     st.write('Variable not found.')
 
 else:
