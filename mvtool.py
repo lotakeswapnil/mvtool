@@ -14,7 +14,6 @@ st.dataframe(df)
 if uploaded is not None:
     df = pd.read_csv(uploaded)
     st.write('Preview:', df.head())
-    st.write(type(df))
 
 
 energy_cons = st.text_input('Target column name (energy usage)')
@@ -38,6 +37,7 @@ if energy_cons is not None and globals()[f"ind_var_{i}"] != "" :
     st.write(f'Regression: {regression:.2%}')
     st.line_chart(pd.DataFrame({'Actual': y_test, 'Predicted': preds}).reset_index(drop=True))
 
+st.dataframe(df)
 
 elif globals()[f"ind_var_{i}"] not in df.columns:
     st.write('Variable not found.')
