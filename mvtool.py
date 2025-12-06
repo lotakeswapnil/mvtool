@@ -12,7 +12,6 @@ uploaded = st.file_uploader('Upload CSV (features + target)', type='csv')
 
 if uploaded is not None:
     df = pd.read_csv(uploaded)
-    st.dataframe(df)
     st.write('Preview:', df.head())
 
     energy_cons = st.text_input('Target column name (energy usage)')
@@ -20,10 +19,7 @@ if uploaded is not None:
 
 
     for i in range(1,num_var+1):
-        globals()[f"ind_var_{i}"] = st.text_input(
-            f"Independent variable {i}",
-            key=f"var_{i}"
-        )
+        globals()[f"ind_var_{i}"] = st.text_input(f"Independent variable {i}",key=f"var_{i}")
 
     if energy_cons is not None and globals()[f"ind_var_{i}"] != "":
         if globals()[f"ind_var_{i}"] not in df.columns:
