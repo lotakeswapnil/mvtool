@@ -7,16 +7,16 @@ from sklearn.metrics import mean_squared_error
 
 st.title('Energy M&V — Simple Regression Demo')
 
-uploaded = st.file_uploader('Upload CSV:', type='csv')
+uploaded = st.file_uploader('Upload CSV (features + target)', type='csv')
 
 if uploaded is not None:
     df = pd.read_csv(uploaded)
     st.write('Preview:', df.head())
 
-energy_cons = st.text_input('Type the energy consumption column:',type='text')
-independent_1 = st.text_input('Type the independent variable column:',type='text')
+energy_cons = st.text_input('Target column name (energy usage)')
+independent_1 = st.text_input('Target column name (independent variable)')
 
-if energy_cons and independent_1:
+if energy_cons and independent_1 is not None:
     X = df[independent_1]
     y = df[energy_cons]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
