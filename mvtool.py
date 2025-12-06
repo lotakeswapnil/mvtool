@@ -13,7 +13,6 @@ if uploaded is not None:
     df = pd.read_csv(uploaded)
     st.write('Preview:', df.head())
 
-st.write(df.columns.values.tolist())
 
 energy_cons = st.text_input('Target column name (energy usage)')
 num_var = st.number_input('Number of variables', min_value=1, max_value=10, step=1)
@@ -38,8 +37,8 @@ if energy_cons is not None and globals()[f"ind_var_{i}"] != "" :
 
 
 
-#elif globals()[f"ind_var_{i}"] not in df.columns.values:
-#    st.write('Variable not found.')
+elif globals()[f"ind_var_{i}"] not in df.columns.values.tolist():
+    st.write('Variable not found.')
 
-#else:
-#    st.write('All Variables not defined.')
+else:
+    st.write('All Variables not defined.')
