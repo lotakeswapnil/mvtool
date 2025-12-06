@@ -13,8 +13,8 @@ if uploaded is not None:
     df = pd.read_csv(uploaded)
     st.write('Preview:', df.head())
 
-energy_cons = st.text_input('Type the energy consumption column:')
-independent_1 = st.text_input('Type the independent variable column:')
+energy_cons = st.text_input('Type the energy consumption column:',type='text')
+independent_1 = st.text_input('Type the independent variable column:',type='text')
 
 if energy_cons and independent_1:
     X = df[independent_1]
