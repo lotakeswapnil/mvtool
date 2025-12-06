@@ -9,13 +9,13 @@ st.title('Energy M&V — Simple Regression Demo')
 
 uploaded = st.file_uploader('Upload CSV (features + target)', type='csv')
 
-if uploaded is not None and target_col:
+if uploaded is not None:
     df = pd.read_csv(uploaded)
     st.write('Preview:', df.head())
 
 target_col = st.text_input('Target column name (energy usage)')
 
-if uploaded is not None and target_col:
+if target_col:
     X = df.drop(columns=[target_col])
     y = df[target_col]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
