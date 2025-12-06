@@ -21,8 +21,6 @@ for i in range(1,num_var+1):
         key=f"var_{i}"
     )
 
-st.write(f"ind_var_{i}")
-
 if energy_cons is not None and globals()[f"ind_var_{i}"] != "" :
     X = df[ind_var_1].to_frame()
     y = df[energy_cons]
