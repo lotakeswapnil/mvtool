@@ -13,6 +13,7 @@ if uploaded is not None:
     df = pd.read_csv(uploaded)
     st.write('Preview:', df.head())
 
+column_names = df.columns.values
 
 energy_cons = st.text_input('Target column name (energy usage)')
 num_var = st.number_input('Number of variables', min_value=1, max_value=10, step=1)
@@ -36,7 +37,7 @@ if energy_cons is not None and globals()[f"ind_var_{i}"] != "" :
     st.line_chart(pd.DataFrame({'Actual': y_test, 'Predicted': preds}).reset_index(drop=True))
 
 
-elif globals()[f"ind_var_{i}"] not in df.columns.values:
+elif globals()[f"ind_var_{i}"] not in column_names:
     st.write('Variable not found.')
 
 else:
