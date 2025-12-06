@@ -13,7 +13,7 @@ if uploaded is not None:
     df = pd.read_csv(uploaded)
     st.write('Preview:', df.head())
 
-df.columns.values
+df
 
 energy_cons = st.text_input('Target column name (energy usage)')
 num_var = st.number_input('Number of variables', min_value=1, max_value=10, step=1)
