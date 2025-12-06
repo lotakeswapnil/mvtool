@@ -17,7 +17,7 @@ energy_cons = st.text_input('Target column name (energy usage)')
 independent_variables = st.text_input('Target column name (independent variables)')
 
 if energy_cons and independent_variables is not None:
-    X = df[independent_variables]
+    X = df[independent_variables].to_frame()
     y = df[energy_cons]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
