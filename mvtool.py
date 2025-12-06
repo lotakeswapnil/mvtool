@@ -13,7 +13,7 @@ if uploaded is not None:
     df = pd.read_csv(uploaded)
     st.write('Preview:', df.head())
 
-target_col = st.text_input('Target column name (energy usage)')
+#target_col = st.text_input('Target column name (energy usage)')
 
 if target_col:
     X = df.drop(columns=[target_col])
