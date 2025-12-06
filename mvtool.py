@@ -14,7 +14,7 @@ if uploaded is not None:
     st.write('Preview:', df.head())
 
 energy_cons = st.text_input('Target column name (energy usage)')
-num_var = st.number_input('Number of variables', type=int)
+num_var = st.number_input('Number of variables', min_value=1, max_value=10, step=1)
 for column in num_var:
     column
 
