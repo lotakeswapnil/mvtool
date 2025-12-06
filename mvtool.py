@@ -21,6 +21,7 @@ if uploaded is not None and target_col:
     model.fit(X_train, y_train)
     preds = model.predict(X_test)
     mse = mean_squared_error(y_test, preds)
+    regression = model.score(X_test, y_test)
 
-    st.write(f"Test MSE: {mse:.4f}")
+    st.write(f"Test MSE: {mse:.4f}, Regression: {regression:.4f}")
     st.line_chart(pd.DataFrame({"Actual": y_test, "Predicted": preds}).reset_index(drop=True))
