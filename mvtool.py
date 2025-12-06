@@ -1,7 +1,7 @@
 # app.py
 import streamlit as st
 import pandas as pd
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, Lasso
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, root_mean_squared_error
 
@@ -16,7 +16,8 @@ if uploaded is not None:
 
     energy_cons = st.text_input('Target column name (energy usage)')
     num_var = st.number_input('Number of variables', min_value=1, max_value=10, step=1)
-    model_list = st.selectbox('Select models', ['Linear Regression', 'Ridge Regression', 'Lasso Regression'])
+    model_dict = {'Linear Regression':LinearRegression, 'Ridge Regression':Ridge, 'Lasso Regression':Lasso}
+    model_list = st.selectbox('Select models', model_dict)
 
 
     for i in range(1,num_var+1):
@@ -30,7 +31,7 @@ if uploaded is not None:
             y = df[energy_cons]
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-            model = model_list()
+            model = model_dict[model_list]()
             model.fit(X_train, y_train)
             preds = model.predict(X_test)
             regression = model.score(X_test, y_test)
