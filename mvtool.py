@@ -39,5 +39,5 @@ else:
     if globals()[f"ind_var_{i}"] not in df.columns.values:
     st.write('Variable not found.')
 
-else:
+    else:
     st.write('All Variables not defined.')
