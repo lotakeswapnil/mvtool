@@ -10,7 +10,8 @@ st.title('Energy M&V — Simple Regression Demo')
 uploaded = st.file_uploader('Upload CSV (features + target)', type='csv')
 
 if uploaded is not None:
-    df = pd.read_csv(uploaded).to_frame
+    df = pd.read_csv(uploaded)
+    df.to_frame()
     st.write('Preview:', df.head())
 
 
