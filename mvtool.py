@@ -20,7 +20,7 @@ for i in range(1,num_var+1):
         f"Independent variable {i}",
         key=f"var_{i}"
     )
-    st.write(globals()[f"ind_var_{i}"])
+    st.write(globals()[f"ind_var{i}"])
 
 if energy_cons and ind_var_1 is not None:
     X = df[ind_var_1].to_frame()
