@@ -27,7 +27,7 @@ if uploaded is not None:
 
     if energy_cons is not None and globals()[f"ind_var_{i}"] != "":
         if globals()[f"ind_var_{i}"] not in df.columns:
-            st.warning(f"Variable '{col_name}' not found in the uploaded CSV.")
+            st.warning(f"Variable' not found in the uploaded CSV.")
         else:
             X = df[globals()[f'ind_var_{i}']].to_frame()
             y = df[energy_cons]
