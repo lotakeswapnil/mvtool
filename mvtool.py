@@ -39,6 +39,8 @@ if energy_cons is not None and globals()[f"ind_var_{i}"] != "" :
 
 st.dataframe(df)
 
+st.write(type(df))
+
 elif globals()[f"ind_var_{i}"] not in df.columns:
     st.write('Variable not found.')
 
