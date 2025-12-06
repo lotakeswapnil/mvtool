@@ -15,7 +15,7 @@ if uploaded is not None:
 
 energy_cons = st.text_input('Target column name (energy usage)')
 num_var = st.number_input('Number of variables', min_value=1, max_value=10, step=1)
-for column in range(num_var-1):
+for column in range(num_var+1):
     column
 
 ind_var_1 = st.text_input('Target column name (independent variables)')
