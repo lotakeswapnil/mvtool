@@ -20,7 +20,8 @@ for i in range(1,num_var+1):
         f"Target column name {i} (independent variable)",
         key=f"var_{i}"
     )
-    ind_var_append(var_name)
+    var_name
+    ind_var.append(var_name)
 
 if energy_cons and ind_var_1 is not None:
     X = df[ind_var_1].to_frame()
