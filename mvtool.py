@@ -3,7 +3,7 @@ import streamlit as st
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, root_mean_squared_error
 
 st.title('Energy M&V — Simple Regression Demo')
 
@@ -19,7 +19,7 @@ if uploaded is not None:
 
 
     for i in range(1,num_var+1):
-        globals()[f"ind_var_{i}"] = st.text_input(f"Independent variable {i}",key=f"var_{i}")
+        globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
 
     if energy_cons is not None and globals()[f"ind_var_{i}"] != "":
         if globals()[f"ind_var_{i}"] not in df.columns:
@@ -33,9 +33,11 @@ if uploaded is not None:
             model.fit(X_train, y_train)
             preds = model.predict(X_test)
             regression = model.score(X_test, y_test)
+            cvrmse = root_mean_squared_error(y_test, preds)/y_test.mean()
 
             st.write(f'Regression: {regression:.2%}')
             st.line_chart(pd.DataFrame({'Actual': y_test, 'Predicted': preds}).reset_index(drop=True))
 
     else:
-        st.error('All Variables not defined.')
+        st.error('All variables not defined.')
+
