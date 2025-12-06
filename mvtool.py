@@ -16,6 +16,7 @@ if uploaded is not None:
 
     energy_cons = st.text_input('Target column name (energy usage)')
     num_var = st.number_input('Number of variables', min_value=1, max_value=10, step=1)
+    model_list = st.selectbox('Select models', ['Linear Regression', 'Ridge Regression', 'Lasso Regression'])
 
 
     for i in range(1,num_var+1):
