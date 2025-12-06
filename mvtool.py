@@ -15,7 +15,8 @@ if uploaded is not None:
 
 energy_cons = st.text_input('Target column name (energy usage)')
 independent_1 = st.text_input('Target column name (independent variable)')
-df[independent_1]
+df[independent_1].reset_index(drop=True)
+df[energy_cons]
 
 if energy_cons and independent_1 is not None:
     X = df['HDD']
