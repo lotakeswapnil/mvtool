@@ -13,12 +13,11 @@ if uploaded is not None:
     df = pd.read_csv(uploaded)
     st.write('Preview:', df.head())
 
-energy_cons = st.text_input('Target column name (energy usage)')
-independent_1 = st.text_input('Target column name (independent variable)')
+target_col = st.text_input('Target column name (energy usage)')
 
-if energy_cons and independent_1 is not None:
-    X = df[independent_1]
-    y = df[energy_cons]
+if target_col is not None:
+    X = df.drop(columns=[target_col])
+    y = df[target_col]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     model = LinearRegression()
