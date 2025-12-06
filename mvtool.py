@@ -11,7 +11,7 @@ uploaded = st.file_uploader('Upload CSV (features + target)', type='csv')
 
 
 if uploaded is not None:
-    df = st.dataframe(pd.read_csv(uploaded))
+    df = pd.read_csv(uploaded)
     st.write('Preview:', df.head())
 
 
@@ -24,6 +24,7 @@ for i in range(1,num_var+1):
     )
 
 if energy_cons is not None and globals()[f"ind_var_{i}"] != "" :
+    st.dataframe(df)
     X = df[globals()[f'ind_var_{i}']].to_frame()
     y = df[energy_cons]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -35,6 +36,8 @@ if energy_cons is not None and globals()[f"ind_var_{i}"] != "" :
 
     st.write(f'Regression: {regression:.2%}')
     st.line_chart(pd.DataFrame({'Actual': y_test, 'Predicted': preds}).reset_index(drop=True))
+
+
 
 
 elif globals()[f"ind_var_{i}"] not in df.columns:
