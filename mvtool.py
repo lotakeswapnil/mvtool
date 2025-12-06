@@ -15,11 +15,9 @@ if uploaded is not None:
 
 energy_cons = st.text_input('Target column name (energy usage)')
 independent_1 = st.text_input('Target column name (independent variable)')
-df[independent_1]
-df[energy_cons]
 
 if energy_cons and independent_1 is not None:
-    X = df['HDD']
+    X = df[independent_1]
     y = df[energy_cons]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
