@@ -14,8 +14,7 @@ st.dataframe(df)
 if uploaded is not None:
     df = pd.read_csv(uploaded)
     st.write('Preview:', df.head())
-
-st.write(type(df))
+    st.write(type(df))
 
 
 energy_cons = st.text_input('Target column name (energy usage)')
