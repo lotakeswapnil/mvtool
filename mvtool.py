@@ -36,6 +36,7 @@ if uploaded is not None:
             cvrmse = root_mean_squared_error(y_test, preds)/y_test.mean()
 
             st.write(f'Regression: {regression:.2%}')
+            st.write(f'CVRMSE: {cvrmse:.2%}')
             st.line_chart(pd.DataFrame({'Actual': y_test, 'Predicted': preds}).reset_index(drop=True))
 
     else:
