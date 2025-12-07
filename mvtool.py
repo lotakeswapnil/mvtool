@@ -91,46 +91,46 @@ elif st.session_state.mode == "manual":
 
     st.subheader('Enter Data (Manual)')
 
+    # Ask if the user needs weather data
     st.write('Do you want Weather Data?')
 
     col1, col2, col3, col4 = st.columns(4)
-
     with col1:
         yes_btn = st.button("Yes")
-
     with col2:
         no_btn = st.button("No")
 
-    # Ask for number of rows & columns
-    num_cols = st.number_input("Number of Dependent Variables: ", 0, 10, 3)
+    if no_btn:
+        # Ask for number of rows & columns
+        num_cols = st.number_input("Number of Dependent Variables: ", 0, 10, 3)
 
-    # Build column names automatically
-    col_names = ["Dependent Variable"]  # first column fixed
-    input_valid = True  # flag to track if all names are filled
+        # Build column names automatically
+        col_names = ["Dependent Variable"]  # first column fixed
+        input_valid = True  # flag to track if all names are filled
 
-    # Generate independent variable labels
-    for i in range(1, num_cols + 1):
-        dependent = st.text_input(f'Independent Variable {i}:', key=f"var_{i}")
+        # Generate independent variable labels
+        for i in range(1, num_cols + 1):
+            dependent = st.text_input(f'Independent Variable {i}:', key=f"var_{i}")
 
-        # If blank, trigger error and mark input as invalid
-        if dependent.strip() == "":
-            st.error(f'Independent Variable {i} cannot be blank.')
-            input_valid = False
+            # If blank, trigger error and mark input as invalid
+            if dependent.strip() == "":
+                st.error(f'Independent Variable {i} cannot be blank.')
+                input_valid = False
 
-        col_names.append(dependent)
+            col_names.append(dependent)
 
-    # Only proceed if all variable names are valid
-    if input_valid:
-        df_empty = pd.DataFrame("", index=range(1), columns=col_names)
+        # Only proceed if all variable names are valid
+        if input_valid:
+            df_empty = pd.DataFrame("", index=range(1), columns=col_names)
 
-        st.subheader('Enter Data Below:')
-        edited_df = st.data_editor(df_empty, num_rows="dynamic")
+            st.subheader('Enter Data Below:')
+            edited_df = st.data_editor(df_empty, num_rows="dynamic")
 
-        if st.button('Create Data'):
-            st.success('Generated Data:')
-            st.dataframe(edited_df)
-    else:
-        st.info('Please complete all Independent Variable names.')
+            if st.button('Create Data'):
+                st.success('Generated Data:')
+                st.dataframe(edited_df)
+        else:
+            st.info('Please complete all Independent Variable names.')
 
 
 
