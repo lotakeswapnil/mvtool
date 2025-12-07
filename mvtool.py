@@ -25,6 +25,8 @@ if st.session_state.mode is None:
             st.session_state.mode = "upload"
 
 
+st.write(st.session_state.mode)
+
 # --- Only show uploader & modeling inputs after button is clicked ---
 if st.session_state.mode == "upload":
     uploaded = st.file_uploader('Upload CSV', type='csv')
