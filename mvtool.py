@@ -10,21 +10,21 @@ st.title('Energy M&V — Simple Regression Demo')
 st.subheader('Select Any One of the Options')
 
 # --- Create session-state variable ---
-if "show_upload" not in st.session_state:
-    st.session_state.show_upload = True
+if "mode" not in st.session_state:
+    st.session_state.mode = None
 
 #button1, button2, button3, button4 = st.columns(4)
 
 if st.button('Enter Data'):
-    st.session_state.show_upload = False
+    st.session_state.mode = False
 
 # --- Button to show uploader ---
 if st.button('Upload Data'):
-    st.session_state.show_upload = True
+    st.session_state.mode = True
 
 
 # --- Only show uploader & modeling inputs after button is clicked ---
-if st.session_state.show_upload:
+if st.session_state.mode:
     uploaded = st.file_uploader('Upload CSV', type='csv')
 
     if uploaded:
