@@ -9,7 +9,7 @@ st.title('Energy M&V — Simple Regression Demo')
 
 st.subheader('Select Any One of the Options')
 
-button1, button2, button3 = st.columns(3)
+button0, button1, button2, button3 = st.columns(4)
 
 with button1:
     st.button('Enter Data')
