@@ -94,7 +94,7 @@ elif st.session_state.mode == "manual":
 
     st.write('Do you want Weather Data?')
 
-    if st.button('Yes'):
+    #if st.button('Yes'):
 
     # Ask for number of rows & columns
     num_cols = st.number_input("Number of Dependent Variables: ", 0, 10, 3)
