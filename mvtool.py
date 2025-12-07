@@ -28,6 +28,7 @@ if st.session_state.mode is None:
         st.rerun()
 
 
+
 # -------------------------
 # UPLOAD DATA MODE
 # -------------------------
@@ -80,9 +81,11 @@ if st.session_state.mode == "upload":
                 st.error('All variables not defined.')
 
 
+
 # -------------------------
 # MANUAL DATA MODE
 # -------------------------
+
 elif st.session_state.mode == "manual":
 
     if st.button("Back to Menu"):
@@ -91,16 +94,25 @@ elif st.session_state.mode == "manual":
 
     st.subheader('Enter Data (Manual)')
 
-    # Ask if the user needs weather data
-    st.write('Do you want Weather Data?')
 
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        yes_btn = st.button("Yes")
-    with col2:
-        no_btn = st.button("No")
+    # --- Create session-state variable for Manual Mode---
+    if "yes_no" not in st.session_state:
+        st.session_state.yes_no = None
 
-    if no_btn:
+    # --- Display Start Buttons ---
+    if st.session_state.yes_no is None:
+        st.subheader('Do you want Weather Data?')
+
+        if st.button('Yes'):
+            st.session_state.yes_no = "yes"
+            st.rerun()
+
+        if st.button('No'):
+            st.session_state.yes_no = "no"
+            st.rerun()
+
+
+    if st.button('No'):
         # Ask for number of rows & columns
         num_cols = st.number_input("Number of Dependent Variables: ", 0, 10, 3)
 
