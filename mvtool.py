@@ -189,4 +189,4 @@ elif st.session_state.mode == "manual":
                         st.success("Fetched weather data")
                         st.json(meta)
                         st.dataframe(df_weather.head())
-                        st.line_chart(df_weather.set_index("date")[var])
+                        st.line_chart(df_weather.set_index("date_utc")[var])
