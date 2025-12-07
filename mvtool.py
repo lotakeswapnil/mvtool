@@ -219,3 +219,4 @@ elif st.session_state.mode == "manual":
                     st.rerun()
 
                 st.write('sure')
+
