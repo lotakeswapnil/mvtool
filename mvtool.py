@@ -160,6 +160,9 @@ elif st.session_state.mode == "manual":
             st.session_state.yes_no = None
             st.rerun()
 
+        interval_dict = {'Hourly', 'Daily', 'Monthly'}
+        weather_interval = st.selectbox('Select Interval', interval_dict)
+
         lat = st.number_input("Latitude", format="%.4f")
         lon = st.number_input("Longitude", format="%.4f")
         start_date = st.date_input("Start date", value=date.today().replace(year=date.today().year-1).replace(day=date.today().day-2))
