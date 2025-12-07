@@ -19,14 +19,14 @@ if st.session_state.mode is None:
     st.subheader('Select Any One of the Options')
 
     if st.button("Enter Data (Manual)"):
-        st.session_state.mode = False
+        st.session_state.mode = "manual"
 
     if st.button("Upload Data (CSV)"):
-            st.session_state.mode = True
+            st.session_state.mode = "upload"
 
 
 # --- Only show uploader & modeling inputs after button is clicked ---
-if st.session_state.mode:
+if st.session_state.mode == "upload":
     uploaded = st.file_uploader('Upload CSV', type='csv')
 
     if uploaded:
