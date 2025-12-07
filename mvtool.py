@@ -7,7 +7,10 @@ from sklearn.metrics import mean_squared_error, root_mean_squared_error
 
 st.title('Energy M&V — Simple Regression Demo')
 
-st.button('Hello')
+st.subheader('Select Any One of the Options')
+
+st.button('Enter Data')
+st.button('Upload Data')
 
 uploaded = st.file_uploader('Upload CSV (features + target)', type='csv')
 
