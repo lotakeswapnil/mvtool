@@ -165,8 +165,8 @@ elif st.session_state.mode == "manual":
 
         lat = st.number_input("Latitude", format="%.4f")
         lon = st.number_input("Longitude", format="%.4f")
-        start_date = st.date_input("Start date", value=date.today().replace(year=date.today().year-1).replace(day=date.today().day-2))
-        end_date = st.date_input("End date", value=date.today().replace(day=date.today().day-1))
+        start_date = st.date_input("Start date", value=date.today().replace(year=date.today().year-1).replace(day=date.today().day-1))
+        end_date = st.date_input("End date", value=date.today().replace(day=date.today().day-2))
         var = "temperature"   # or let user pick
         which = "hourly"
 
@@ -186,6 +186,7 @@ elif st.session_state.mode == "manual":
                 with st.spinner("Fetching..."):
                     try:
                         meta, df_weather = fetch_openmeteo_archive(client, lat, lon, start_str, end_str, which, var)
+                        df_weather['date_utc'] = pd.to_datetime(df_weather['date_utc'], utc=True)
                     except Exception as e:
                         st.error(f"Weather fetch failed: {e}")
                     else:
@@ -193,5 +194,6 @@ elif st.session_state.mode == "manual":
                         #st.json(meta)
                         st.dataframe(df_weather.head())
                         st.line_chart(df_weather.set_index("date_utc")[var])
+
 
 
