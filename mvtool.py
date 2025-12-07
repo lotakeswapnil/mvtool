@@ -76,7 +76,7 @@ else:
     if all(col_names):
 
         # Create empty dataframe
-        df_empty = pd.DataFrame("", columns=col_names)
+        df_empty = pd.DataFrame("", index=range(1), columns=col_names)
 
         st.subheader("Enter Data Below:")
         edited_df = st.data_editor(df_empty, num_rows="dynamic")
