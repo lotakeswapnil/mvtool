@@ -9,7 +9,7 @@ st.title('Energy M&V — Simple Regression Demo')
 
 st.subheader('Select Any One of the Options')
 
-button1, button2, button3, button4 = st.columns(4)
+#button1, button2, button3, button4 = st.columns(4)
 
 with button1:
     st.button('Enter Data')
@@ -17,7 +17,6 @@ with button1:
 with button2:
     if st.button('Upload Data'):
         uploaded = st.file_uploader('Upload CSV', type='csv')
-
 
 
 if uploaded is not None:
