@@ -114,16 +114,3 @@ elif st.session_state.mode == "manual":
             st.dataframe(edited_df)
     else:
         st.info("Please complete all Independent Variable names.")
-
-    # Show table
-    df_empty = pd.DataFrame("", index=range(1), columns=col_names)
-
-    st.subheader("Enter Data Below:")
-    edited_df = st.data_editor(df_empty, num_rows="dynamic")
-
-    if st.button("Create Data"):
-        st.success("Generated Data:")
-        st.dataframe(edited_df)
-
-    else:
-        st.error("Please enter all column names to show the input table.")
