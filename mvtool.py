@@ -31,12 +31,13 @@ if st.session_state.mode is None:
 # UPLOAD DATA MODE
 # -------------------------
 if st.session_state.mode == "upload":
-    st.subheader('Upload Data (CSV)')
-    uploaded = st.file_uploader('', type="csv", label_visibility='collapsed')
 
     if st.button("Back to Menu"):
         st.session_state.mode = None
         st.rerun()
+
+    st.subheader('Upload Data (CSV)')
+    uploaded = st.file_uploader('', type="csv", label_visibility='collapsed')
 
     if uploaded:
         df = pd.read_csv(uploaded)
@@ -97,7 +98,7 @@ elif st.session_state.mode == "manual":
 
         # If blank, trigger error and mark input as invalid
         if dependent.strip() == "":
-            st.error(f"Independent Variable {i} cannot be blank.")
+            st.error(f'Independent Variable {i} cannot be blank.')
             input_valid = False
 
         col_names.append(dependent)
@@ -106,11 +107,11 @@ elif st.session_state.mode == "manual":
     if input_valid:
         df_empty = pd.DataFrame("", index=range(1), columns=col_names)
 
-        st.subheader("Enter Data Below:")
+        st.subheader('Enter Data Below:')
         edited_df = st.data_editor(df_empty, num_rows="dynamic")
 
-        if st.button("Create DataFrame"):
-            st.success("Generated DataFrame:")
+        if st.button('Create Data'):
+            st.success('Generated Data:')
             st.dataframe(edited_df)
     else:
-        st.info("Please complete all Independent Variable names.")
+        st.info('Please complete all Independent Variable names.')
