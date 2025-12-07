@@ -4,11 +4,8 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression, Lasso, Ridge
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import root_mean_squared_error
-import requests_cache
-from retry_requests import retry
-import openmeteo_requests
-from datetime import date, timedelta
-import io
+from weather_api import make_openmeteo_client, fetch_openmeteo_archive
+from datetime import date
 
 st.title('Energy M&V Tool')
 
@@ -128,3 +125,34 @@ elif st.session_state.mode == "manual":
 
 
 
+# inputs (example)
+lat = st.number_input("Latitude", value=18.5196, format="%.6f")
+lon = st.number_input("Longitude", value=73.8554, format="%.6f")
+start_date = st.date_input("Start date", value=date.today().replace(year=date.today().year-1))
+end_date = st.date_input("End date", value=date.today())
+var = "temperature_2m"   # or let user pick
+which = "hourly"
+
+# create client once (you can cache it)
+@st.cache_resource
+def get_client():
+    return make_openmeteo_client()
+
+client = get_client()
+
+if st.button("Fetch Weather Data"):
+    if start_date > end_date:
+        st.error("Start must be <= end")
+    else:
+        start_str = start_date.isoformat()
+        end_str = end_date.isoformat()
+        with st.spinner("Fetching..."):
+            try:
+                meta, df_weather = fetch_openmeteo_archive(client, lat, lon, start_str, end_str, which, var)
+            except Exception as e:
+                st.error(f"Weather fetch failed: {e}")
+            else:
+                st.success("Fetched weather data")
+                st.json(meta)
+                st.dataframe(df_weather.head(200))
+                st.line_chart(df_weather.set_index("date_utc")[var])
