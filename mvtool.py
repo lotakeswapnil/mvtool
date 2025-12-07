@@ -112,7 +112,7 @@ elif st.session_state.mode == "manual":
             st.rerun()
 
 
-    if st.button('No'):
+    if st.session_state.yes_no == 'no':
         # Ask for number of rows & columns
         num_cols = st.number_input("Number of Dependent Variables: ", 0, 10, 3)
 
