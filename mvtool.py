@@ -200,7 +200,7 @@ elif st.session_state.mode == "manual":
                         st.session_state.bal_pt = None
 
                         # force an immediate rerun so the BP UI (which lives outside the Fetch block) appears
-                        st.experimental_rerun()
+                        st.rerun()
 
             # --- Show Balance Point UI only if weather has been fetched successfully ---
             if st.session_state.get("weather_fetched", False):
