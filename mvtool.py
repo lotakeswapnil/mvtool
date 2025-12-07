@@ -103,16 +103,16 @@ elif st.session_state.mode == "manual":
     if st.session_state.yes_no is None:
         st.markdown('Do you want Weather Data?')
 
-        col1, col2 = st.columns([0.05, 0.25])
+        col1, col2 = st.columns([0.05, 0.5])
 
         with col1:
-            if st.button("Yes"):
-                st.session_state.yes_no = "yes"
+            if st.button('Yes'):
+                st.session_state.yes_no = 'yes'
                 st.rerun()
 
         with col2:
-            if st.button("No"):
-                st.session_state.yes_no = "no"
+            if st.button('No'):
+                st.session_state.yes_no = 'no'
                 st.rerun()
 
 
@@ -160,8 +160,8 @@ elif st.session_state.mode == "manual":
             st.session_state.yes_no = None
             st.rerun()
 
-        lat = st.number_input("Latitude", format="%.6f")
-        lon = st.number_input("Longitude", format="%.6f")
+        lat = st.number_input("Latitude", format="%.4f")
+        lon = st.number_input("Longitude", format="%.4f")
         start_date = st.date_input("Start date", value=date.today().replace(year=date.today().year-1))
         end_date = st.date_input("End date", value=date.today())
         var = "temperature_2m"   # or let user pick
