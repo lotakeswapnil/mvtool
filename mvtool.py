@@ -133,10 +133,10 @@ elif st.session_state.mode == "manual":
             st.info('Please complete all Independent Variable names.')
 
 
-    if yes_btn:
+    elif yes_btn:
 
-        lat = st.number_input("Latitude", value=18.5196, format="%.6f")
-        lon = st.number_input("Longitude", value=73.8554, format="%.6f")
+        lat = st.number_input("Latitude", format="%.6f")
+        lon = st.number_input("Longitude", format="%.6f")
         start_date = st.date_input("Start date", value=date.today().replace(year=date.today().year-1))
         end_date = st.date_input("End date", value=date.today())
         var = "temperature_2m"   # or let user pick
