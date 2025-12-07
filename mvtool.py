@@ -145,7 +145,7 @@ elif st.session_state.mode == "manual":
             st.info('Please complete all Independent Variable names.')
 
 
-    elif yes_btn:
+    elif st.session_state.yes_no == 'yes':
 
         lat = st.number_input("Latitude", format="%.6f")
         lon = st.number_input("Longitude", format="%.6f")
