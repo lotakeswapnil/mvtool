@@ -16,8 +16,8 @@ st.button('Enter Data')
 if st.button('Upload Data'):
     uploaded = st.file_uploader('Upload CSV', type='csv')
 
-
     if uploaded is not None:
+
         df = pd.read_csv(uploaded)
         st.write('Preview:', df.head())
 
