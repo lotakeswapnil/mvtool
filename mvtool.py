@@ -187,6 +187,6 @@ elif st.session_state.mode == "manual":
                         st.error(f"Weather fetch failed: {e}")
                     else:
                         st.success("Fetched weather data")
-                        st.json(meta)
+                        #st.json(meta)
                         st.dataframe(df_weather.head())
                         st.line_chart(df_weather.set_index("date_utc")[var])
