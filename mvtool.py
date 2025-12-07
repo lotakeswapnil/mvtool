@@ -87,25 +87,22 @@ elif st.session_state.mode == "manual":
     # Ask for number of rows & columns
     num_cols = st.number_input("Number of columns", 1, 10, 3)
 
-    # Ask for column names
-    st.subheader("Enter Column Names")
-    col_names = []
-    for i in range(num_cols):
-        col = st.text_input(f"Column {i + 1} name", key=f"col_{i}")
-        col_names.append(col)
+    # Build column names automatically
+    col_names = ["Dependent_Variable"]  # first column fixed
 
-    # Only show table if all column names are provided
-    if all(col_names):
+    # Generate independent variable labels
+    for i in range(1, num_cols + 1):
+        col_names.append(f"Independent_Variable_{i}")
 
-        # Create empty dataframe
-        df_empty = pd.DataFrame("", index=range(1), columns=col_names)
+    # Show table
+    df_empty = pd.DataFrame("", index=range(1), columns=col_names)
 
-        st.subheader("Enter Data Below:")
-        edited_df = st.data_editor(df_empty, num_rows="dynamic")
+    st.subheader("Enter Data Below:")
+    edited_df = st.data_editor(df_empty, num_rows="dynamic")
 
-        if st.button("Create DataFrame"):
-            st.success("Generated DataFrame:")
-            st.dataframe(edited_df)
+    if st.button("Create DataFrame"):
+        st.success("Generated DataFrame:")
+        st.dataframe(edited_df)
 
     else:
         st.info("Please enter all column names to show the input table.")
