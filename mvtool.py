@@ -164,7 +164,7 @@ elif st.session_state.mode == "manual":
         lon = st.number_input("Longitude", format="%.4f")
         start_date = st.date_input("Start date", value=date.today().replace(year=date.today().year-1).replace(day=date.today().day-2))
         end_date = st.date_input("End date", value=date.today().replace(day=date.today().day-1))
-        var = "temperature_2m"   # or let user pick
+        var = "temperature"   # or let user pick
         which = "hourly"
 
         # create client once (you can cache it)
@@ -188,5 +188,5 @@ elif st.session_state.mode == "manual":
                     else:
                         st.success("Fetched weather data")
                         st.json(meta)
-                        st.dataframe(df_weather.head(200))
-                        st.line_chart(df_weather.set_index("date_utc")[var])
+                        st.dataframe(df_weather.head())
+                        st.line_chart(df_weather.set_index("date")[var])
