@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression, Lasso, Ridge
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import root_mean_squared_error
-from weather_api import make_openmeteo_client, fetch_openmeteo_archive
+from weather import make_openmeteo_client, fetch_openmeteo_archive
 from datetime import date
 
 st.title('Energy M&V Tool')
