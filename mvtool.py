@@ -61,3 +61,20 @@ if st.session_state.show_upload:
         else:
             st.error('All variables not defined.')
 
+else:
+    num_cols = st.number_input("Number of columns", 1, 10, 3)
+
+    inputs = {}
+    for i in range(1, num_cols + 1):
+        col_name = st.text_input(f"Column {i} name", key=f"name_{i}")
+        value = st.text_input(f"Value for column '{col_name}'", key=f"value_{i}")
+        if col_name:
+            inputs[col_name] = value
+
+    if st.button("Create DataFrame"):
+        if all(v != "" for v in inputs.values()):
+            df = pd.DataFrame([inputs])  # list with one row
+            st.write("Generated DataFrame:")
+            st.dataframe(df)
+        else:
+            st.error("Fill every column name and value before creating the DataFrame.")
