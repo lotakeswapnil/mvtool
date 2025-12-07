@@ -93,6 +93,10 @@ elif st.session_state.mode == "manual":
     # Generate independent variable labels
     for i in range(1, num_cols + 1):
         dependent = st.text_input(f'Independent Variable {i}:', key=f"var_{i}")
+
+        if dependent.strip() == "":
+            dependent = "\u00A0" + str(i)
+
         col_names.append(dependent)
 
     # Show table
