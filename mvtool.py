@@ -1,4 +1,4 @@
-# app.py
+# mvtool.py
 import streamlit as st
 import pandas as pd
 from sklearn.linear_model import LinearRegression, Lasso, Ridge
@@ -11,7 +11,7 @@ st.subheader('Select Any One of the Options')
 
 # --- Create session-state variable ---
 if "show_upload" not in st.session_state:
-    st.session_state.show_upload = False
+    st.session_state.show_upload = True
 
 #button1, button2, button3, button4 = st.columns(4)
 
@@ -27,7 +27,7 @@ if st.button('Upload Data'):
 if st.session_state.show_upload:
     uploaded = st.file_uploader('Upload CSV', type='csv')
 
-    if uploaded is not None:
+    if uploaded:
         df = pd.read_csv(uploaded)
         st.write('Preview:', df.head())
 
