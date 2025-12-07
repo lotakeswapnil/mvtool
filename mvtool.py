@@ -3,14 +3,20 @@ import streamlit as st
 import pandas as pd
 from sklearn.linear_model import LinearRegression, Lasso, Ridge
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error, root_mean_squared_error
+from sklearn.metrics import root_mean_squared_error
 
 st.title('Energy M&V — Simple Regression Demo')
 
 st.subheader('Select Any One of the Options')
 
-st.button('Enter Data')
-st.button('Upload Data')
+button1, button2 = st.columns(2)
+
+with button1:
+    st.button('Enter Data')
+
+with button2:
+    st.button('Upload Data')
+
 
 uploaded = st.file_uploader('Upload CSV (features + target)', type='csv')
 
