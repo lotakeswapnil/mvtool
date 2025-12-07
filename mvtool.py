@@ -92,7 +92,8 @@ elif st.session_state.mode == "manual":
 
     # Generate independent variable labels
     for i in range(1, num_cols + 1):
-        col_names.append(f"Independent Variable_{i}")
+        dependent = st.text_input('Dependent Variable Name:', key=f"var_{i}")
+        col_names.append(dependent)
 
     # Show table
     df_empty = pd.DataFrame("", index=range(1), columns=col_names)
