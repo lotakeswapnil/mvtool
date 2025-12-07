@@ -110,4 +110,4 @@ elif st.session_state.mode == "manual":
         st.dataframe(edited_df)
 
     else:
-        st.info("Please enter all column names to show the input table.")
+        st.error("Please enter all column names to show the input table.")
