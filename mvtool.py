@@ -82,6 +82,8 @@ elif st.session_state.mode == "manual":
         st.session_state.mode = None
         st.rerun()
 
+    st.subheader('Enter Data (Manual)')
+
     # Ask for number of rows & columns
     num_cols = st.number_input("Number of columns", 1, 10, 3)
 
