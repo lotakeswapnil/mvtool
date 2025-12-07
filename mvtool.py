@@ -20,11 +20,11 @@ if st.session_state.mode is None:
 
     if st.button("Enter Data (Manual)"):
         st.session_state.mode = "manual"
-        st.experimental_rerun()
+        st.rerun()
 
     if st.button("Upload Data (CSV)"):
         st.session_state.mode = "upload"
-        st.experimental_rerun()
+        st.rerun()
 
 
 # -------------------------
