@@ -15,10 +15,9 @@ with button1:
     st.button('Enter Data')
 
 with button2:
-    st.button('Upload Data')
+    if st.button('Upload Data'):
+        uploaded = st.file_uploader('Upload CSV', type='csv')
 
-if button2:
-    uploaded = st.file_uploader('Upload CSV', type='csv')
 
 
 if uploaded is not None:
