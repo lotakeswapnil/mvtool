@@ -222,19 +222,19 @@ elif st.session_state.mode == "manual":
                 col1, col2 = st.columns([0.05, 0.5])
 
                 with col1:
-                    if st.button('Yes'):
+                    if st.button('Yes', key='bp_yes'):
                         st.session_state.bal_pt = 'yes'
                         st.rerun()
 
                 with col2:
-                    if st.button('No'):
+                    if st.button('No',key='bp_no'):
                         st.session_state.bal_pt = 'no'
                         st.rerun()
 
             # --- Calculate Balance Point ---
             if st.session_state.bal_pt == 'no':
 
-                if st.button("Back to Balance Point selection"):
+                if st.button("Back to Balance Point selection",key='bp_back'):
                     st.session_state.yes_no = None
                     st.rerun()
 
