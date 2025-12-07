@@ -101,7 +101,7 @@ elif st.session_state.mode == "manual":
 
     # --- Display Start Buttons ---
     if st.session_state.yes_no is None:
-        st.subheader('Do you want Weather Data?')
+        st.markdown('Do you want Weather Data?')
 
         if st.button('Yes'):
             st.session_state.yes_no = "yes"
