@@ -190,33 +190,33 @@ elif st.session_state.mode == "manual":
                         #st.json(meta)
                         st.dataframe(df_weather.head())
                         st.line_chart(df_weather.set_index("date_utc")[var])
+            # --- Create session-state variable for Balance Point---
+            if "bal_pt" not in st.session_state:
+                st.session_state.bal_pt = None
 
-                        # --- Create session-state variable for Balance Point---
-                        if "bal_pt" not in st.session_state:
-                            st.session_state.bal_pt = None
+                # --- Display Start Buttons ---
+                if st.session_state.bal_pt is None:
+                    st.subheader('Do you know Balance Point?')
 
-                            # --- Display Start Buttons ---
-                            if st.session_state.bal_pt is None:
-                                st.subheader('Do you know Balance Point?')
+                    col1, col2 = st.columns([0.05, 0.5])
 
-                                col1, col2 = st.columns([0.05, 0.5])
+                    with col1:
+                        if st.button('Yes'):
+                            st.session_state.bal_pt = 'yes'
+                            st.rerun()
 
-                                with col1:
-                                    if st.button('Yes'):
-                                        st.session_state.bal_pt = 'yes'
-                                        st.rerun()
+                    with col2:
+                        if st.button('No'):
+                            st.session_state.bal_pt = 'no'
+                            st.rerun()
 
-                                with col2:
-                                    if st.button('No'):
-                                        st.session_state.bal_pt = 'no'
-                                        st.rerun()
+            # --- Calculate Balance Point ---
+            if st.session_state.bal_pt == 'no':
 
-                        # --- Calculate Balance Point ---
-                        if st.session_state.bal_pt == 'no':
+                if st.button("Back to Balance Point selection"):
+                    st.session_state.yes_no = None
+                    st.rerun()
 
-                            if st.button("Back to Balance Point selection"):
-                                st.session_state.yes_no = None
-                                st.rerun()
+                st.write('sure')
 
-                            st.write('sure')
 
