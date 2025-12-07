@@ -15,7 +15,7 @@ st.button('Enter Data')
 
 if st.button('Upload Data'):
     uploaded = st.file_uploader('Upload CSV', type='csv')
-    uploaded
+    st.write(uploaded)
     if uploaded is not None:
 
         df = pd.read_csv(uploaded)
