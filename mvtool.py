@@ -64,7 +64,6 @@ if st.session_state.show_upload:
 else:
     # Ask for number of rows & columns
     num_cols = st.number_input("Number of columns", 1, 10, 3)
-    num_rows = st.number_input("Number of rows", 1, 20, 3)
 
     # Ask for column names
     st.subheader("Enter Column Names")
@@ -77,7 +76,7 @@ else:
     if all(col_names):
 
         # Create empty dataframe
-        df_empty = pd.DataFrame("", index=range(num_rows), columns=col_names)
+        df_empty = pd.DataFrame("", columns=col_names)
 
         st.subheader("Enter Data Below:")
         edited_df = st.data_editor(df_empty, num_rows="dynamic")
