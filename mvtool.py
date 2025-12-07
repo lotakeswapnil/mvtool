@@ -62,41 +62,29 @@ if st.session_state.show_upload:
             st.error('All variables not defined.')
 
 else:
-    # Number of columns and rows
+    # Ask for number of rows & columns
     num_cols = st.number_input("Number of columns", 1, 10, 3)
-    num_rows = st.number_input("Number of rows", 1, 20, 1)
+    num_rows = st.number_input("Number of rows", 1, 20, 3)
 
-    st.write("---")
-
-    # Step 1: Get column names
+    # Ask for column names
+    st.subheader("Enter Column Names")
     col_names = []
-    for i in range(1, num_cols + 1):
-        name = st.text_input(f"Name of Column {i}", key=f"colname_{i}")
-        col_names.append(name)
+    for i in range(num_cols):
+        col = st.text_input(f"Column {i + 1} name", key=f"col_{i}")
+        col_names.append(col)
 
-    st.write("---")
+    # Only show table if all column names are provided
+    if all(col_names):
 
-    # Step 2: Get row values
-    data = {col: [] for col in col_names if col != ""}
+        # Create empty dataframe
+        df_empty = pd.DataFrame("", index=range(num_rows), columns=col_names)
 
-    if all(col_names):  # only show row input if all column names are provided
+        st.subheader("Enter Data Below:")
+        edited_df = st.data_editor(df_empty, num_rows="dynamic")
 
-        st.subheader("Enter Data for Each Row")
-
-        for r in range(1, num_rows + 1):
-            st.markdown(f"### Row {r}")
-            for c, col in enumerate(col_names, start=1):
-                val = st.text_input(f"({r}, {col}) value", key=f"cell_{r}_{c}")
-                data[col].append(val)
+        if st.button("Create DataFrame"):
+            st.success("Generated DataFrame:")
+            st.dataframe(edited_df)
 
     else:
-        st.info("Please enter all column names to proceed.")
-
-    # Step 3: Create DataFrame
-    if st.button("Create DataFrame"):
-        if all(col_names) and all(len(v) == num_rows for v in data.values()):
-            df = pd.DataFrame(data)
-            st.success("Generated DataFrame:")
-            st.dataframe(df)
-        else:
-            st.error("Please fill all values before creating the DataFrame.")
+        st.info("Please enter all column names to show the input table.")
