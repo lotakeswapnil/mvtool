@@ -103,13 +103,17 @@ elif st.session_state.mode == "manual":
     if st.session_state.yes_no is None:
         st.markdown('Do you want Weather Data?')
 
-        if st.button('Yes'):
-            st.session_state.yes_no = "yes"
-            st.rerun()
+        col1, col2, col3, col4 = st.columns(4)
 
-        if st.button('No'):
-            st.session_state.yes_no = "no"
-            st.rerun()
+        with col1:
+            if st.button("Yes"):
+                st.session_state.yes_no = "yes"
+                st.rerun()
+
+        with col2:
+            if st.button("No"):
+                st.session_state.yes_no = "no"
+                st.rerun()
 
 
     if st.session_state.yes_no == 'no':
