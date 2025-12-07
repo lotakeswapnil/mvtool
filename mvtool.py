@@ -204,7 +204,7 @@ elif st.session_state.mode == "manual":
                         monthly_avg_df = monthly_avg.to_frame(name="avg_temperature")
                         monthly_avg_df["month"] = monthly_avg_df.index.to_period("M").astype(str)
 
-                        #monthly_avg_df.drop(columns=['date_utc'], inplace=True)
+                        monthly_df = monthly_df.drop(columns=['date_utc'])
                         st.write("### Monthly Average Temperature")
                         st.dataframe(monthly_avg_df)
                         st.line_chart(monthly_avg_df.set_index("month")["avg_temperature"])
