@@ -11,11 +11,9 @@ st.subheader('Select Any One of the Options')
 
 #button1, button2, button3, button4 = st.columns(4)
 
-with button1:
-    st.button('Enter Data')
+st.button('Enter Data')
 
-with button2:
-    if st.button('Upload Data'):
+if st.button('Upload Data'):
         uploaded = st.file_uploader('Upload CSV', type='csv')
 
 
