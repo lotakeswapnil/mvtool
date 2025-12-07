@@ -191,6 +191,24 @@ elif st.session_state.mode == "manual":
                         st.dataframe(df_weather.head())
                         st.line_chart(df_weather.set_index("date_utc")[var])
 
+                        # ---- Persist fetched results and set a flag so BP UI can be shown after reruns ----
+                        st.session_state.df_weather = df_weather
+                        st.session_state.df_meta = meta
+                        st.session_state.weather_fetched = True
+
+                        # reset any previous balance-point selection
+                        st.session_state.bal_pt = None
+
+                        # force an immediate rerun so the BP UI (which lives outside the Fetch block) appears
+                        st.experimental_rerun()
+
+            # --- Show Balance Point UI only if weather has been fetched successfully ---
+            if st.session_state.get("weather_fetched", False):
+                # optional: show the stored data/preview (you can remove if already shown)
+                st.subheader("Fetched weather preview")
+                st.dataframe(st.session_state.df_weather.head())
+                st.line_chart(st.session_state.df_weather.set_index("date_utc")[var])
+
 
             # --- Create session-state variable for Balance Point---
             if "bal_pt" not in st.session_state:
