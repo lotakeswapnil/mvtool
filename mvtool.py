@@ -197,16 +197,18 @@ elif st.session_state.mode == "manual":
                         # Set index for resampling
                         df_weather = df_weather.set_index('date_utc').sort_index()
 
-                        # Monthly mean temperature
-                        monthly_avg = df_weather['temperature'].resample('M').mean()
+                        # 3) Convert to DataFrame
+                        monthly_df = monthly.to_frame(name='avg_temperature')
 
-                        # Convert index to month labels (YYYY-MM)
-                        monthly_avg_df = monthly_avg.to_frame(name="avg_temperature")
-                        monthly_avg_df["month"] = monthly_avg_df.index.to_period("M").astype(str)
+                        # 4) Add calendar-friendly month label (e.g., Jan-2024)
+                        monthly_df['month'] = monthly_df.index.strftime("%b-%Y")
 
-                        st.write("### Monthly Average Temperature")
-                        st.dataframe(monthly_avg_df)
-                        st.line_chart(monthly_avg_df.set_index("month")["avg_temperature"])
+                        # 5) Sort by datetime index (this ensures correct month order)
+                        monthly_df = monthly_df.sort_index()
+
+                        st.write("### Monthly Average Temperature (Calendar Sorted)")
+                        st.dataframe(monthly_df)
+                        st.line_chart(monthly_df['avg_temperature'])
 
 
 
