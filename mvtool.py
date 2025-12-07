@@ -188,11 +188,11 @@ elif st.session_state.mode == "manual":
                     else:
                         st.success("Fetched weather data")
                         #st.json(meta)
-                        st.dataframe(df_weather.head())
-                        st.line_chart(df_weather.set_index("date_utc")[var])
+                        #st.dataframe(df_weather.head())
+                        #st.line_chart(df_weather.set_index("date_utc")[var])
 
 
-
+        st.write(df_weather.head())
         # --- Create session-state variable for Balance Point---
         if "bal_pt" not in st.session_state:
             st.session_state.bal_pt = None
