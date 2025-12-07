@@ -35,7 +35,7 @@ if st.session_state.mode == "upload":
 
     if st.button("Back to Menu"):
         st.session_state.mode = None
-        st.experimental_rerun()
+        st.rerun()
 
     if uploaded:
         df = pd.read_csv(uploaded)
