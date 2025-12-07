@@ -211,3 +211,11 @@ elif st.session_state.mode == "manual":
                     if st.button('No'):
                         st.session_state.bal_pt = 'no'
                         st.rerun()
+
+
+            # --- Calculate Balance Point ---
+            if st.session_state.bal_pt == 'no':
+
+                if st.button("Back to Balance Point selection"):
+                    st.session_state.yes_no = None
+                    st.rerun()
