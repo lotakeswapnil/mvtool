@@ -14,7 +14,6 @@ st.title('Energy M&V Tool')
 if "mode" not in st.session_state:
     st.session_state.mode = None
 
-#button1, button2, button3, button4 = st.columns(4)
 
 # --- Display Start Buttons ---
 if st.session_state.mode is None:
@@ -94,7 +93,8 @@ elif st.session_state.mode == "manual":
 
     st.write('Do you want Weather Data?')
 
-    #if st.button('Yes'):
+
+    st.button('Yes')
 
     # Ask for number of rows & columns
     num_cols = st.number_input("Number of Dependent Variables: ", 0, 10, 3)
