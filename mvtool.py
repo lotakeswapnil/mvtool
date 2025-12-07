@@ -30,52 +30,55 @@ if st.session_state.mode is None:
 # -------------------------
 # UPLOAD DATA MODE
 # -------------------------
-if st.session_state.mode == "upload":
 
-    if st.button("Back to Menu"):
-        st.session_state.mode = None
-        st.rerun()
+if st.button('Run Regression'):
 
-    st.subheader('Upload Data (CSV)')
-    uploaded = st.file_uploader('', type="csv", label_visibility='collapsed')
+    if st.session_state.mode == "upload":
 
-    if uploaded:
-        df = pd.read_csv(uploaded)
-        st.write('Preview:', df.head())
+        if st.button("Back to Menu"):
+            st.session_state.mode = None
+            st.rerun()
 
-        # Target (dependent) column
-        energy_cons = st.text_input('Dependent Variable (target column name)')
+        st.subheader('Upload Data (CSV)')
+        uploaded = st.file_uploader('', type="csv", label_visibility='collapsed')
 
-        # Number of independent vars
-        num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
+        if uploaded:
+            df = pd.read_csv(uploaded)
+            st.write('Preview:', df.head())
 
-        for i in range(1,num_var+1):
-            globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
+            # Target (dependent) column
+            energy_cons = st.text_input('Dependent Variable (target column name)')
 
-        model_dict = {'Linear Regression': LinearRegression, 'Ridge Regression': Ridge, 'Lasso Regression': Lasso}
-        model_list = st.selectbox('Select models', model_dict)
+            # Number of independent vars
+            num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
+
+            for i in range(1,num_var+1):
+                globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
+
+            model_dict = {'Linear Regression': LinearRegression, 'Ridge Regression': Ridge, 'Lasso Regression': Lasso}
+            model_list = st.selectbox('Select models', model_dict)
 
 
-        if energy_cons is not None and globals()[f"ind_var_{i}"] != "":
-            if globals()[f"ind_var_{i}"] not in df.columns:
-                st.error(f"Variable '{globals()[f'ind_var_{i}']}' not found in the uploaded CSV.")
+            if energy_cons is not None and globals()[f"ind_var_{i}"] != "":
+                if globals()[f"ind_var_{i}"] not in df.columns:
+                    st.error(f"Variable '{globals()[f'ind_var_{i}']}' not found in the uploaded CSV.")
+                else:
+                    X = df[globals()[f'ind_var_{i}']].to_frame()
+                    y = df[energy_cons]
+                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+                    model = model_dict[model_list]()
+                    model.fit(X_train, y_train)
+                    preds = model.predict(X_test)
+                    regression = model.score(X_test, y_test)
+                    cvrmse = root_mean_squared_error(y_test, preds)/y_test.mean()
+
+                    st.write(f'Regression: {regression:.2%}')
+                    st.write(f'CVRMSE: {cvrmse:.2%}')
+                    st.line_chart(pd.DataFrame({'Actual': y_test, 'Predicted': preds}).reset_index(drop=True))
+
             else:
-                X = df[globals()[f'ind_var_{i}']].to_frame()
-                y = df[energy_cons]
-                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-                model = model_dict[model_list]()
-                model.fit(X_train, y_train)
-                preds = model.predict(X_test)
-                regression = model.score(X_test, y_test)
-                cvrmse = root_mean_squared_error(y_test, preds)/y_test.mean()
-
-                st.write(f'Regression: {regression:.2%}')
-                st.write(f'CVRMSE: {cvrmse:.2%}')
-                st.line_chart(pd.DataFrame({'Actual': y_test, 'Predicted': preds}).reset_index(drop=True))
-
-        else:
-            st.error('All variables not defined.')
+                st.error('All variables not defined.')
 
 
 # -------------------------
