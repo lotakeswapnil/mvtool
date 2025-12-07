@@ -4,3 +4,6 @@ numpy
 scikit-learn
 joblib
 plotly
+requests_cache
+retry-requests
+openmeteo-requests

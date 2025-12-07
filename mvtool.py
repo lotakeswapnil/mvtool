@@ -4,8 +4,13 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression, Lasso, Ridge
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import root_mean_squared_error
+import requests_cache
+from retry_requests import retry
+import openmeteo_requests
+from datetime import date, timedelta
+import io
 
-st.title('Energy M&V — Simple Regression Demo')
+st.title('Energy M&V Tool')
 
 
 # --- Create session-state variable ---
@@ -120,3 +125,6 @@ elif st.session_state.mode == "manual":
             st.dataframe(edited_df)
     else:
         st.info('Please complete all Independent Variable names.')
+
+
+
