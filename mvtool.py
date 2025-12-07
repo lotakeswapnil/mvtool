@@ -186,7 +186,6 @@ elif st.session_state.mode == "manual":
                 with st.spinner("Fetching..."):
                     try:
                         meta, df_weather = fetch_openmeteo_archive(client, lat, lon, start_str, end_str, which, var)
-                        df_weather['date_utc'] = pd.to_datetime(df_weather['date_utc'], utc=False)
                     except Exception as e:
                         st.error(f"Weather fetch failed: {e}")
                     else:
@@ -194,6 +193,20 @@ elif st.session_state.mode == "manual":
                         #st.json(meta)
                         st.dataframe(df_weather.head())
                         st.line_chart(df_weather.set_index("date_utc")[var])
+
+                        # Set index for resampling
+                        df_weather = df_weather.set_index('date_utc').sort_index()
+
+                        # Monthly mean temperature
+                        monthly_avg = df_weather['temperature'].resample('M').mean()
+
+                        # Convert index to month labels (YYYY-MM)
+                        monthly_avg_df = monthly_avg.to_frame(name="avg_temperature")
+                        monthly_avg_df["month"] = monthly_avg_df.index.to_period("M").astype(str)
+
+                        st.write("### Monthly Average Temperature")
+                        st.dataframe(monthly_avg_df)
+                        st.line_chart(monthly_avg_df.set_index("month")["avg_temperature"])
 
 
 
