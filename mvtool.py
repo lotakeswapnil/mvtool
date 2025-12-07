@@ -31,34 +31,32 @@ if st.session_state.mode is None:
 # UPLOAD DATA MODE
 # -------------------------
 
-if st.button('Run Regression'):
+if st.session_state.mode == "upload":
 
-    if st.session_state.mode == "upload":
+    if st.button("Back to Menu"):
+        st.session_state.mode = None
+        st.rerun()
 
-        if st.button("Back to Menu"):
-            st.session_state.mode = None
-            st.rerun()
+    st.subheader('Upload Data (CSV)')
+    uploaded = st.file_uploader('', type="csv", label_visibility='collapsed')
 
-        st.subheader('Upload Data (CSV)')
-        uploaded = st.file_uploader('', type="csv", label_visibility='collapsed')
+    if uploaded:
+        df = pd.read_csv(uploaded)
+        st.write('Preview:', df.head())
 
-        if uploaded:
-            df = pd.read_csv(uploaded)
-            st.write('Preview:', df.head())
+        # Target (dependent) column
+        energy_cons = st.text_input('Dependent Variable (target column name)')
 
-            # Target (dependent) column
-            energy_cons = st.text_input('Dependent Variable (target column name)')
+        # Number of independent vars
+        num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
 
-            # Number of independent vars
-            num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
+        for i in range(1,num_var+1):
+            globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
 
-            for i in range(1,num_var+1):
-                globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
+        model_dict = {'Linear Regression': LinearRegression, 'Ridge Regression': Ridge, 'Lasso Regression': Lasso}
+        model_list = st.selectbox('Select models', model_dict)
 
-            model_dict = {'Linear Regression': LinearRegression, 'Ridge Regression': Ridge, 'Lasso Regression': Lasso}
-            model_list = st.selectbox('Select models', model_dict)
-
-
+        if st.button('Run Regression'):
             if energy_cons is not None and globals()[f"ind_var_{i}"] != "":
                 if globals()[f"ind_var_{i}"] not in df.columns:
                     st.error(f"Variable '{globals()[f'ind_var_{i}']}' not found in the uploaded CSV.")
