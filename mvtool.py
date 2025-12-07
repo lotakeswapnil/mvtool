@@ -30,7 +30,7 @@ st.write(st.session_state.mode)
 # -------------------------
 # UPLOAD DATA MODE
 # -------------------------
-elif st.session_state.mode == "upload":
+if st.session_state.mode == "upload":
     st.header("Upload CSV Data for Regression")
 
     uploaded = st.file_uploader("Upload CSV", type="csv")
