@@ -32,7 +32,7 @@ if st.session_state.mode is None:
 # -------------------------
 if st.session_state.mode == "upload":
     st.subheader('Upload Data (CSV)')
-    uploaded = st.file_uploader(type="csv")
+    uploaded = st.file_uploader('', type="csv")
 
     if st.button("Back to Menu"):
         st.session_state.mode = None
