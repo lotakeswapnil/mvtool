@@ -15,39 +15,39 @@ st.button('Enter Data')
 
 if st.button('Upload Data'):
     uploaded = st.file_uploader('Upload CSV', type='csv')
-    st.write(uploaded)
-    if uploaded is not None:
-
-        df = pd.read_csv(uploaded)
-        st.write('Preview:', df.head())
-
-        energy_cons = st.text_input('Target column name (energy usage)')
-        num_var = st.number_input('Number of variables', min_value=1, max_value=10, step=1)
-        model_dict = {'Linear Regression':LinearRegression, 'Ridge Regression':Ridge, 'Lasso Regression':Lasso}
-        model_list = st.selectbox('Select models', model_dict)
 
 
-        for i in range(1,num_var+1):
-            globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
+if st.button and uploaded is not None:
+    df = pd.read_csv(uploaded)
+    st.write('Preview:', df.head())
 
-        if energy_cons is not None and globals()[f"ind_var_{i}"] != "":
-            if globals()[f"ind_var_{i}"] not in df.columns:
-                st.error(f"Variable '{globals()[f'ind_var_{i}']}' not found in the uploaded CSV.")
-            else:
-                X = df[globals()[f'ind_var_{i}']].to_frame()
-                y = df[energy_cons]
-                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    energy_cons = st.text_input('Target column name (energy usage)')
+    num_var = st.number_input('Number of variables', min_value=1, max_value=10, step=1)
+    model_dict = {'Linear Regression':LinearRegression, 'Ridge Regression':Ridge, 'Lasso Regression':Lasso}
+    model_list = st.selectbox('Select models', model_dict)
 
-                model = model_dict[model_list]()
-                model.fit(X_train, y_train)
-                preds = model.predict(X_test)
-                regression = model.score(X_test, y_test)
-                cvrmse = root_mean_squared_error(y_test, preds)/y_test.mean()
 
-                st.write(f'Regression: {regression:.2%}')
-                st.write(f'CVRMSE: {cvrmse:.2%}')
-                st.line_chart(pd.DataFrame({'Actual': y_test, 'Predicted': preds}).reset_index(drop=True))
+    for i in range(1,num_var+1):
+        globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
 
+    if energy_cons is not None and globals()[f"ind_var_{i}"] != "":
+        if globals()[f"ind_var_{i}"] not in df.columns:
+            st.error(f"Variable '{globals()[f'ind_var_{i}']}' not found in the uploaded CSV.")
         else:
-            st.error('All variables not defined.')
+            X = df[globals()[f'ind_var_{i}']].to_frame()
+            y = df[energy_cons]
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+            model = model_dict[model_list]()
+            model.fit(X_train, y_train)
+            preds = model.predict(X_test)
+            regression = model.score(X_test, y_test)
+            cvrmse = root_mean_squared_error(y_test, preds)/y_test.mean()
+
+            st.write(f'Regression: {regression:.2%}')
+            st.write(f'CVRMSE: {cvrmse:.2%}')
+            st.line_chart(pd.DataFrame({'Actual': y_test, 'Predicted': preds}).reset_index(drop=True))
+
+    else:
+        st.error('All variables not defined.')
 
