@@ -197,6 +197,9 @@ elif st.session_state.mode == "manual":
                         # Set index for resampling
                         df_weather = df_weather.set_index('date_utc').sort_index()
 
+                        # 2) Monthly average
+                        monthly = df_weather['temperature'].resample('M').mean()
+
                         # 3) Convert to DataFrame
                         monthly_df = monthly.to_frame(name='avg_temperature')
 
