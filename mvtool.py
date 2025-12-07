@@ -103,7 +103,7 @@ elif st.session_state.mode == "manual":
     if st.session_state.yes_no is None:
         st.markdown('Do you want Weather Data?')
 
-        col1, col2 = st.columns([0.1, 0.5])
+        col1, col2 = st.columns([0.05, 0.5])
 
         with col1:
             if st.button("Yes"):
