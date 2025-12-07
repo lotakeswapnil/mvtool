@@ -31,7 +31,8 @@ if st.session_state.mode is None:
 # UPLOAD DATA MODE
 # -------------------------
 if st.session_state.mode == "upload":
-    uploaded = st.file_uploader("Upload CSV", type="csv")
+    st.subheader('Upload Data (CSV)')
+    uploaded = st.file_uploader(type="csv")
 
     if st.button("Back to Menu"):
         st.session_state.mode = None
@@ -71,6 +72,10 @@ if st.session_state.mode == "upload":
         else:
             st.error('All variables not defined.')
 
+
+# -------------------------
+# MANUAL DATA MODE
+# -------------------------
 elif st.session_state.mode == "manual":
 
     if st.button("Back to Menu"):
