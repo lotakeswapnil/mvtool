@@ -71,7 +71,13 @@ if st.session_state.mode == "upload":
         else:
             st.error('All variables not defined.')
 
-else:
+elif st.session_state.mode == "manual":
+    st.header("Manual Data Entry")
+
+    if st.button("Back to Menu"):
+        st.session_state.mode = None
+        st.rerun()
+
     # Ask for number of rows & columns
     num_cols = st.number_input("Number of columns", 1, 10, 3)
 
