@@ -113,6 +113,11 @@ elif st.session_state.mode == "manual":
 
 
     if st.session_state.yes_no == 'no':
+
+        if st.button("Back to Weather Data selection"):
+            st.session_state.yes_no = None
+            st.rerun()
+
         # Ask for number of rows & columns
         num_cols = st.number_input("Number of Dependent Variables: ", 0, 10, 3)
 
