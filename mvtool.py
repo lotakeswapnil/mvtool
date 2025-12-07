@@ -49,58 +49,103 @@ if st.session_state.mode == "upload":
         # Number of independent vars
         num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
 
-    for i in range(1,num_var+1):
-        globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
+        for i in range(1,num_var+1):
+            globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
 
-    model_dict = {'Linear Regression': LinearRegression, 'Ridge Regression': Ridge, 'Lasso Regression': Lasso}
-    model_list = st.selectbox('Select models', model_dict)
+        model_dict = {'Linear Regression': LinearRegression, 'Ridge Regression': Ridge, 'Lasso Regression': Lasso}
+        model_list = st.selectbox('Select models', model_dict)
 
-    # Run button
-    if st.button("Run Regression"):
+        if uploaded:
+            df = pd.read_csv(uploaded)
+            st.write('Preview:', df.head())
 
-        # 1) Validate that target is provided
-        if not energy_cons or energy_cons.strip() == "":
-            st.error("Please enter the target (Dependent) column name.")
-        # 2) Validate all independent variable names are provided (not blank)
-        elif any(v == "" for v in ind_vars):
-            missing_idx = [str(i + 1) for i, v in enumerate(ind_vars) if v == ""]
-            st.error(f"Please provide names for Independent Variable(s): {', '.join(missing_idx)}.")
-        else:
-            # 3) Validate these columns exist in uploaded df
-            required_cols = [energy_cons] + ind_vars
-            missing_cols = [c for c in required_cols if c not in df.columns]
-            if missing_cols:
-                st.error(f"The following column(s) are missing from the uploaded CSV: {missing_cols}")
-            else:
-                # 4) Convert to numeric where needed and handle errors
-                try:
-                    X = df[ind_vars].apply(pd.to_numeric)
-                    y = pd.to_numeric(df[energy_cons])
-                except Exception as e:
-                    st.error(
-                        f"Non-numeric data found in the selected columns. Convert to numeric or choose other columns. ({e})")
+            # Target (dependent) column
+            energy_cons = st.text_input('Dependent Variable (target column name)')
+
+            # Number of independent vars
+            num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
+
+            # Collect independent variable names (keep your existing keys if you want)
+            ind_vars = []
+            for i in range(1, num_var + 1):
+                name = st.text_input(f"Independent Variable {i}", key=f"var_{i}")
+                ind_vars.append(name.strip())
+
+            # Model selection (show keys)
+            model_dict = {'Linear Regression': LinearRegression, 'Ridge Regression': Ridge, 'Lasso Regression': Lasso}
+            model_choice = st.selectbox('Select model', list(model_dict.keys()))
+
+            # Run button
+            if st.button("Run Regression"):
+
+                # 1) Validate that target is provided
+                if not energy_cons or energy_cons.strip() == "":
+                    st.error("Please enter the target (Dependent) column name.")
+
+
+                # 2) Validate all independent variable names are provided (not blank)
+                elif any(v == "" for v in ind_vars):
+                    missing_idx = [str(i + 1) for i, v in enumerate(ind_vars) if v == ""]
+                    st.error(f"Please provide names for Independent Variable(s): {', '.join(missing_idx)}.")
+
+
                 else:
-                    # Train/test + metrics
-                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-                    ModelClass = model_dict[model_choice]
-                    model = ModelClass()
-                    model.fit(X_train, y_train)
-                    preds = model.predict(X_test)
+                    # 3) Validate these columns exist in uploaded df
+                    required_cols = [energy_cons] + ind_vars
+                    missing_cols = [c for c in required_cols if c not in df.columns]
+                    if missing_cols:
+                        st.error(f"The following column(s) are missing from the uploaded CSV: {missing_cols}")
+                    else:
+                        # 4) Convert to numeric where needed and handle errors
+                        try:
+                            X = df[ind_vars].apply(pd.to_numeric)
+                            y = pd.to_numeric(df[energy_cons])
+                        except Exception as e:
+                            st.error(
+                                f"Non-numeric data found in the selected columns. Convert to numeric or choose other columns. ({e})")
+                        else:
+                            # Train/test + metrics
+                            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+                            ModelClass = model_dict[model_choice]
+                            model = ModelClass()
+                            model.fit(X_train, y_train)
+                            preds = model.predict(X_test)
 
-                    # metrics: R^2, RMSE, CVRMSE
-                    from sklearn.metrics import mean_squared_error
-                    import numpy as np
+                            # metrics: R^2, RMSE, CVRMSE
+                            from sklearn.metrics import mean_squared_error
+                            import numpy as np
 
-                    r2 = model.score(X_test, y_test)
-                    rmse = mean_squared_error(y_test, preds, squared=False)
-                    cvrmse = rmse / y_test.mean() if y_test.mean() != 0 else float("nan")
+                            r2 = model.score(X_test, y_test)
+                            rmse = mean_squared_error(y_test, preds, squared=False)
+                            cvrmse = rmse / y_test.mean() if y_test.mean() != 0 else float("nan")
 
-                    st.write(f'Regression (R²): {r2:.4f}')
-                    st.write(f'RMSE: {rmse:.4f}')
-                    st.write(f'CVRMSE: {cvrmse:.2%}')
-                    st.line_chart(
-                        pd.DataFrame({'Actual': y_test.reset_index(drop=True), 'Predicted': preds}).reset_index(
-                            drop=True))
+                            st.write(f'Regression (R²): {r2:.4f}')
+                            st.write(f'RMSE: {rmse:.4f}')
+                            st.write(f'CVRMSE: {cvrmse:.2%}')
+                            st.line_chart(
+                                pd.DataFrame({'Actual': y_test.reset_index(drop=True), 'Predicted': preds}).reset_index(
+                                    drop=True))
+
+        if energy_cons is not None and globals()[f"ind_var_{i}"] != "":
+            if globals()[f"ind_var_{i}"] not in df.columns:
+                st.error(f"Variable '{globals()[f'ind_var_{i}']}' not found in the uploaded CSV.")
+            else:
+                X = df[globals()[f'ind_var_{i}']].to_frame()
+                y = df[energy_cons]
+                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+                model = model_dict[model_list]()
+                model.fit(X_train, y_train)
+                preds = model.predict(X_test)
+                regression = model.score(X_test, y_test)
+                cvrmse = root_mean_squared_error(y_test, preds)/y_test.mean()
+
+                st.write(f'Regression: {regression:.2%}')
+                st.write(f'CVRMSE: {cvrmse:.2%}')
+                st.line_chart(pd.DataFrame({'Actual': y_test, 'Predicted': preds}).reset_index(drop=True))
+
+        else:
+            st.error('All variables not defined.')
 
 
 # -------------------------
