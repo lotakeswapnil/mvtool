@@ -85,14 +85,14 @@ elif st.session_state.mode == "manual":
     st.subheader('Enter Data (Manual)')
 
     # Ask for number of rows & columns
-    num_cols = st.number_input("Number of columns", 1, 10, 3)
+    num_cols = st.number_input("Number of Dependent Variables: ", 1, 10, 3)
 
     # Build column names automatically
-    col_names = ["Dependent_Variable"]  # first column fixed
+    col_names = ["Dependent Variable"]  # first column fixed
 
     # Generate independent variable labels
     for i in range(1, num_cols + 1):
-        col_names.append(f"Independent_Variable_{i}")
+        col_names.append(f"Independent Variable_{i}")
 
     # Show table
     df_empty = pd.DataFrame("", index=range(1), columns=col_names)
