@@ -7,7 +7,6 @@ from sklearn.metrics import root_mean_squared_error
 
 st.title('Energy M&V — Simple Regression Demo')
 
-st.subheader('Select Any One of the Options')
 
 # --- Create session-state variable ---
 if "mode" not in st.session_state:
@@ -15,12 +14,15 @@ if "mode" not in st.session_state:
 
 #button1, button2, button3, button4 = st.columns(4)
 
-if st.button('Enter Data'):
-    st.session_state.mode = False
+# --- Display Start Buttons ---
+if st.session_state.mode is None:
+    st.subheader('Select Any One of the Options')
 
-# --- Button to show uploader ---
-if st.button('Upload Data'):
-    st.session_state.mode = True
+    if st.button("Enter Data (Manual)"):
+        st.session_state.mode = "manual"
+
+    if st.button("Upload Data (CSV)"):
+            st.session_state.mode = "upload"
 
 
 # --- Only show uploader & modeling inputs after button is clicked ---
