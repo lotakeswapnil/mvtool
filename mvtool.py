@@ -152,6 +152,10 @@ elif st.session_state.mode == "manual":
 
     elif st.session_state.yes_no == 'yes':
 
+        if st.button("Back to Weather Data selection"):
+            st.session_state.yes_no = None
+            st.rerun()
+
         lat = st.number_input("Latitude", format="%.6f")
         lon = st.number_input("Longitude", format="%.6f")
         start_date = st.date_input("Start date", value=date.today().replace(year=date.today().year-1))
