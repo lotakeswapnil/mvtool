@@ -62,19 +62,41 @@ if st.session_state.show_upload:
             st.error('All variables not defined.')
 
 else:
+    # Number of columns and rows
     num_cols = st.number_input("Number of columns", 1, 10, 3)
+    num_rows = st.number_input("Number of rows", 1, 20, 1)
 
-    inputs = {}
+    st.write("---")
+
+    # Step 1: Get column names
+    col_names = []
     for i in range(1, num_cols + 1):
-        col_name = st.text_input(f"Column {i} name", key=f"name_{i}")
-        value = st.text_input(f"Value for column '{col_name}'", key=f"value_{i}")
-        if col_name:
-            inputs[col_name] = value
+        name = st.text_input(f"Name of Column {i}", key=f"colname_{i}")
+        col_names.append(name)
 
+    st.write("---")
+
+    # Step 2: Get row values
+    data = {col: [] for col in col_names if col != ""}
+
+    if all(col_names):  # only show row input if all column names are provided
+
+        st.subheader("Enter Data for Each Row")
+
+        for r in range(1, num_rows + 1):
+            st.markdown(f"### Row {r}")
+            for c, col in enumerate(col_names, start=1):
+                val = st.text_input(f"({r}, {col}) value", key=f"cell_{r}_{c}")
+                data[col].append(val)
+
+    else:
+        st.info("Please enter all column names to proceed.")
+
+    # Step 3: Create DataFrame
     if st.button("Create DataFrame"):
-        if all(v != "" for v in inputs.values()):
-            df = pd.DataFrame([inputs])  # list with one row
-            st.write("Generated DataFrame:")
+        if all(col_names) and all(len(v) == num_rows for v in data.values()):
+            df = pd.DataFrame(data)
+            st.success("Generated DataFrame:")
             st.dataframe(df)
         else:
-            st.error("Fill every column name and value before creating the DataFrame.")
+            st.error("Please fill all values before creating the DataFrame.")
