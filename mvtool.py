@@ -29,8 +29,6 @@ if st.session_state.mode is None:
 # UPLOAD DATA MODE
 # -------------------------
 if st.session_state.mode == "upload":
-    st.write("Upload CSV Data for Regression")
-
     uploaded = st.file_uploader("Upload CSV", type="csv")
 
     if st.button("Back to Menu"):
@@ -72,7 +70,6 @@ if st.session_state.mode == "upload":
             st.error('All variables not defined.')
 
 elif st.session_state.mode == "manual":
-    st.header("Manual Data Entry")
 
     if st.button("Back to Menu"):
         st.session_state.mode = None
