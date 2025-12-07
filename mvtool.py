@@ -186,7 +186,7 @@ elif st.session_state.mode == "manual":
                 with st.spinner("Fetching..."):
                     try:
                         meta, df_weather = fetch_openmeteo_archive(client, lat, lon, start_str, end_str, which, var)
-                        df_weather['date_utc'] = pd.to_datetime(df_weather['date_utc'], utc=True)
+                        df_weather['date_utc'] = pd.to_datetime(df_weather['date_utc'], utc=False)
                     except Exception as e:
                         st.error(f"Weather fetch failed: {e}")
                     else:
