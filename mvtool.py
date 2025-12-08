@@ -216,8 +216,9 @@ elif st.session_state.mode == "manual":
                         st.subheader('Enter Dependent Variable Below:')
 
 
-                        # Show editor
-                        edited_df = st.data_editor(manual_df)
+                        for i in range(0,5):
+                            edited_df = st.data_editor(manual_df)
+                            manual_df = edited_df
 
 
 
