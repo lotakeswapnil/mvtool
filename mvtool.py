@@ -218,15 +218,19 @@ elif st.session_state.mode == "manual":
                         st.subheader('Enter Dependent Variable Below:')
 
 
-                        # --- Create session-state variable for Manual Mode---
+                        # Create the initial dataframe only once
                         if "manual_df" not in st.session_state:
-                            st.session_state.manual_df = None
+                            st.session_state.manual_df = pd.DataFrame({
+                                "col1": [""],
+                            })
 
-                        if st.session_state.manual_df is None:
-                            edited_df = st.data_editor(df_empty)
-                            edited_df
+                        # Show data editor
+                        edited_df = st.data_editor(st.session_state.df)
 
-                        if st.button('Create Data'):
-                            st.success('Generated Data:')
-                            st.dataframe(edited_df)
+                        # Save edits back to session state
+                        st.session_state.df = edited_df
+
+                            if st.button('Create Data'):
+                                st.success('Generated Data:')
+                                st.dataframe(edited_df)
 
