@@ -229,8 +229,8 @@ elif st.session_state.mode == "manual":
 
                         # Save edits back to session state
                         st.session_state.df = edited_df
+                        if st.button('Create Data'):
+                            st.success('Generated Data:')
+                            st.dataframe(edited_df)
 
-                            if st.button('Create Data'):
-                                st.success('Generated Data:')
-                                st.dataframe(edited_df)
 
