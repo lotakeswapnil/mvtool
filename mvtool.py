@@ -211,8 +211,11 @@ elif st.session_state.mode == "manual":
                         # Build column names automatically
                         col_names = ["Dependent Variable"]  # first column fixed
 
+
                         df_empty = pd.DataFrame("", index=range(1), columns=col_names)
-                        st.subheader('Enter Data Below:')
+                        df_empty = pd.concat([df_empty, monthly_df], ignore_index=True)
+
+                        st.subheader('Enter Dependent Variable Below:')
                         edited_df = st.data_editor(df_empty, num_rows="dynamic")
 
                         if st.button('Create Data'):
