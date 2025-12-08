@@ -210,12 +210,12 @@ elif st.session_state.mode == "manual":
 
                         # Build column names automatically
                         col_names = ["Dependent Variable"]  # first column fixed
-                        manual_df = pd.DataFrame("", index=range(0), columns=col_names)
+                        empty_df = pd.DataFrame("", index=range(1), columns=col_names)
 
 
                         st.subheader('Enter Dependent Variable Below:')
 
-                        manual_df = st.data_editor(manual_df, num_rows="dynamic")
+                        manual_df = st.data_editor(empty_df, num_rows="dynamic")
 
                         if st.button('Create Data'):
                             st.success('Generated Data:')
