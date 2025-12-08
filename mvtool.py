@@ -92,13 +92,13 @@ elif st.session_state.mode == "manual":
         st.session_state.mode = None
         st.rerun()
 
-    st.write('### Enter Dependent Variable values')
+    st.subheader('Enter Data (Manual)')
 
     # Build column names automatically
     col_names = ["Dependent Variable"]  # first column fixed
     empty_df = pd.DataFrame("", index=range(1), columns=col_names)
 
-    st.subheader('Enter Dependent Variable Below:')
+    st.write('#### Enter Dependent Variable Below:')
 
     manual_df = st.data_editor(empty_df, num_rows="dynamic")
 
