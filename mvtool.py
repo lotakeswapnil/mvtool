@@ -215,7 +215,7 @@ elif st.session_state.mode == "manual":
 
                         st.subheader('Enter Dependent Variable Below:')
 
-                        if manual_df.rows < monthly_avg_df.rows():
+                        if manual_df.shape[0] < monthly_avg_df.shape[0]:
                             manual_df = st.data_editor(manual_df)
 
                         if st.button('Create Data'):
