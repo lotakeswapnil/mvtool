@@ -211,11 +211,14 @@ elif st.session_state.mode == "manual":
                         # Build column names automatically
                         col_names = ["Dependent Variable"]  # first column fixed
 
+                        # Create df only once
                         if "df_empty" not in st.session_state:
-                            # Create df only once
+                            # Create one blank row with SAME columns as monthly_avg_df
+                            blank_row = pd.DataFrame([{col: "" for col in monthly_avg_df.columns}])
+
+                            # Stack blank row + monthly data
                             st.session_state.df_empty = pd.concat(
-                                [pd.DataFrame("", index=range(1), columns=col_names),
-                                 monthly_avg_df],
+                                [blank_row, monthly_avg_df],
                                 ignore_index=True
                             )
 
