@@ -96,7 +96,7 @@ elif st.session_state.mode == "manual":
 
     # Build column names automatically
     col_names = ["Dependent Variable"]  # first column fixed
-    empty_df = pd.DataFrame("", index=range(1), columns=col_names)
+    empty_df = pd.DataFrame("", index=range(0), columns=col_names)
 
     st.write('#### Enter Dependent Variable Below:')
 
