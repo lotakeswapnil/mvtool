@@ -210,17 +210,13 @@ elif st.session_state.mode == "manual":
 
                         # Build column names automatically
                         col_names = ["Dependent Variable"]  # first column fixed
-                        manual_df = pd.concat([pd.DataFrame("", index=range(0), columns=col_names),monthly_avg_df],ignore_index=True)
+                        manual_df = pd.DataFrame("", index=range(0), columns=col_names)
 
 
                         st.subheader('Enter Dependent Variable Below:')
 
-
-                        for i in range(0,5):
-                            edited_df = st.data_editor(manual_df, key=f"editor {i}")
-                            manual_df = edited_df
-
-
+                        if manual_df.rows < monthly_avg_df.rows():
+                            manual_df = st.data_editor(manual_df)
 
                         if st.button('Create Data'):
                             st.success('Generated Data:')
