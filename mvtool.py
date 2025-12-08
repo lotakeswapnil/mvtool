@@ -210,24 +210,16 @@ elif st.session_state.mode == "manual":
 
                         # Build column names automatically
                         col_names = ["Dependent Variable"]  # first column fixed
-                        empty_df = pd.concat([pd.DataFrame("", index=range(0), columns=col_names),monthly_avg_df],ignore_index=True)
-                        st.write(empty_df)
+                        manual_df = pd.concat([pd.DataFrame("", index=range(0), columns=col_names),monthly_avg_df],ignore_index=True)
 
-                        if "df_empty" not in st.session_state:
-                            # Create df only once
-                            st.session_state.df_empty = empty_df
 
                         st.subheader('Enter Dependent Variable Below:')
 
-                        # Initialize manual_df only once
-                        if "manual_df" not in st.session_state:
-                            st.session_state.manual_df = st.session_state.df_empty.copy()
 
                         # Show editor
-                        edited_df = st.data_editor(st.session_state.manual_df)
+                        edited_df = st.data_editor(manual_df)
 
-                        # Persist edits
-                        st.session_state.manual_df = edited_df
+
 
                         if st.button('Create Data'):
                             st.success('Generated Data:')
