@@ -107,118 +107,118 @@ elif st.session_state.mode == "manual":
         st.dataframe(manual_df)
 
 
-        # --- Create session-state variable for Manual Mode---
-        if "yes_no" not in st.session_state:
+    # --- Create session-state variable for Manual Mode---
+    if "yes_no" not in st.session_state:
+        st.session_state.yes_no = None
+
+    # --- Display Start Buttons ---
+    if st.session_state.yes_no is None:
+        st.markdown('Do you want Weather Data?')
+
+        col1, col2 = st.columns([0.05, 0.5])
+
+        with col1:
+            if st.button('Yes'):
+                st.session_state.yes_no = 'yes'
+                st.rerun()
+
+        with col2:
+            if st.button('No'):
+                st.session_state.yes_no = 'no'
+                st.rerun()
+
+
+    if st.session_state.yes_no == 'no':
+
+        if st.button("Back to Weather Data selection"):
             st.session_state.yes_no = None
+            st.rerun()
 
-        # --- Display Start Buttons ---
-        if st.session_state.yes_no is None:
-            st.markdown('Do you want Weather Data?')
+        # Ask for number of rows & columns
+        num_cols = st.number_input("Number of Independent Variables: ", 0, 10, 3)
 
-            col1, col2 = st.columns([0.05, 0.5])
+        # Build column names automatically
+        col_names = ["Dependent Variable"]  # first column fixed
+        input_valid = True  # flag to track if all names are filled
 
-            with col1:
-                if st.button('Yes'):
-                    st.session_state.yes_no = 'yes'
-                    st.rerun()
+        # Generate independent variable labels
+        for i in range(1, num_cols + 1):
+            dependent = st.text_input(f'Independent Variable {i}:', key=f"var_{i}")
 
-            with col2:
-                if st.button('No'):
-                    st.session_state.yes_no = 'no'
-                    st.rerun()
+            # If blank, trigger error and mark input as invalid
+            if dependent.strip() == "":
+                st.error(f'Independent Variable {i} cannot be blank.')
+                input_valid = False
+
+            col_names.append(dependent)
+
+        # Only proceed if all variable names are valid
+        if input_valid:
+            df_empty = pd.DataFrame("", index=range(1), columns=col_names)
+
+            st.subheader('Enter Data Below:')
+            edited_df = st.data_editor(df_empty, num_rows="dynamic")
+
+            if st.button('Create Data'):
+                st.success('Generated Data:')
+                st.dataframe(edited_df)
+        else:
+            st.info('Please complete all Independent Variable names.')
 
 
-        if st.session_state.yes_no == 'no':
+    elif st.session_state.yes_no == 'yes':
 
-            if st.button("Back to Weather Data selection"):
-                st.session_state.yes_no = None
-                st.rerun()
+        if st.button("Back to Weather Data selection"):
+            st.session_state.yes_no = None
+            st.rerun()
 
-            # Ask for number of rows & columns
-            num_cols = st.number_input("Number of Independent Variables: ", 0, 10, 3)
+        interval_dict = {'Hourly', 'Daily', 'Monthly'}
+        weather_interval = st.selectbox('Select Interval', interval_dict)
 
-            # Build column names automatically
-            col_names = ["Dependent Variable"]  # first column fixed
-            input_valid = True  # flag to track if all names are filled
+        lat = st.number_input("Latitude", format="%.4f")
+        lon = st.number_input("Longitude", format="%.4f")
+        start_date = st.date_input("Start date", value=date.today().replace(year=date.today().year-1).replace(day=date.today().day-1))
+        end_date = st.date_input("End date", value=date.today().replace(day=date.today().day-2))
+        var = "temperature"   # or let user pick
+        which = "hourly"
 
-            # Generate independent variable labels
-            for i in range(1, num_cols + 1):
-                dependent = st.text_input(f'Independent Variable {i}:', key=f"var_{i}")
+        # create client once (you can cache it)
+        @st.cache_resource
+        def get_client():
+            return make_openmeteo_client()
 
-                # If blank, trigger error and mark input as invalid
-                if dependent.strip() == "":
-                    st.error(f'Independent Variable {i} cannot be blank.')
-                    input_valid = False
+        client = get_client()
 
-                col_names.append(dependent)
-
-            # Only proceed if all variable names are valid
-            if input_valid:
-                df_empty = pd.DataFrame("", index=range(1), columns=col_names)
-
-                st.subheader('Enter Data Below:')
-                edited_df = st.data_editor(df_empty, num_rows="dynamic")
-
-                if st.button('Create Data'):
-                    st.success('Generated Data:')
-                    st.dataframe(edited_df)
+        if st.button("Fetch Weather Data"):
+            if start_date > end_date:
+                st.error("Start must be <= end")
             else:
-                st.info('Please complete all Independent Variable names.')
+                start_str = start_date.isoformat()
+                end_str = end_date.isoformat()
+                with st.spinner("Fetching..."):
+                    try:
+                        meta, df_weather = fetch_openmeteo_archive(client, lat, lon, start_str, end_str, which, var)
+                    except Exception as e:
+                        st.error(f"Weather fetch failed: {e}")
+                    else:
+                        st.success("Fetched weather data")
+                        #st.json(meta)
+                        #st.dataframe(df_weather.head())
+                        #st.line_chart(df_weather.set_index("date_utc")[var])
 
+                        # Set index for resampling
+                        df_weather = df_weather.set_index('date_utc').sort_index()
 
-        elif st.session_state.yes_no == 'yes':
+                        # Monthly mean temperature
+                        monthly_avg = df_weather['temperature'].resample('M').mean()
 
-            if st.button("Back to Weather Data selection"):
-                st.session_state.yes_no = None
-                st.rerun()
+                        # Convert index to month labels (YYYY-MM)
+                        monthly_avg_df = monthly_avg.to_frame(name="avg_temperature")
+                        monthly_avg_df["month"] = monthly_avg_df.index.to_period("M").astype(str)
 
-            interval_dict = {'Hourly', 'Daily', 'Monthly'}
-            weather_interval = st.selectbox('Select Interval', interval_dict)
-
-            lat = st.number_input("Latitude", format="%.4f")
-            lon = st.number_input("Longitude", format="%.4f")
-            start_date = st.date_input("Start date", value=date.today().replace(year=date.today().year-1).replace(day=date.today().day-1))
-            end_date = st.date_input("End date", value=date.today().replace(day=date.today().day-2))
-            var = "temperature"   # or let user pick
-            which = "hourly"
-
-            # create client once (you can cache it)
-            @st.cache_resource
-            def get_client():
-                return make_openmeteo_client()
-
-            client = get_client()
-
-            if st.button("Fetch Weather Data"):
-                if start_date > end_date:
-                    st.error("Start must be <= end")
-                else:
-                    start_str = start_date.isoformat()
-                    end_str = end_date.isoformat()
-                    with st.spinner("Fetching..."):
-                        try:
-                            meta, df_weather = fetch_openmeteo_archive(client, lat, lon, start_str, end_str, which, var)
-                        except Exception as e:
-                            st.error(f"Weather fetch failed: {e}")
-                        else:
-                            st.success("Fetched weather data")
-                            #st.json(meta)
-                            #st.dataframe(df_weather.head())
-                            #st.line_chart(df_weather.set_index("date_utc")[var])
-
-                            # Set index for resampling
-                            df_weather = df_weather.set_index('date_utc').sort_index()
-
-                            # Monthly mean temperature
-                            monthly_avg = df_weather['temperature'].resample('M').mean()
-
-                            # Convert index to month labels (YYYY-MM)
-                            monthly_avg_df = monthly_avg.to_frame(name="avg_temperature")
-                            monthly_avg_df["month"] = monthly_avg_df.index.to_period("M").astype(str)
-
-                            st.write("### Monthly Average Temperature")
-                            st.dataframe(monthly_avg_df)
-                            st.line_chart(monthly_avg_df.set_index("month")["avg_temperature"])
+                        st.write("### Monthly Average Temperature")
+                        st.dataframe(monthly_avg_df)
+                        st.line_chart(monthly_avg_df.set_index("month")["avg_temperature"])
 
 
 
