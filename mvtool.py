@@ -210,7 +210,7 @@ elif st.session_state.mode == "manual":
 
                         # Build column names automatically
                         col_names = ["Dependent Variable"]  # first column fixed
-                        df = pd.DataFrame("", index=range(1), columns=col_names)
+                        df = pd.DataFrame("", columns=col_names)
                         st.write(df)
                         empty_df = pd.concat([pd.DataFrame("", index=range(1), columns=col_names),monthly_avg_df],ignore_index=True)
                         st.write(empty_df)
