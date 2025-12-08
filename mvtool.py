@@ -215,11 +215,7 @@ elif st.session_state.mode == "manual":
 
                         if "df_empty" not in st.session_state:
                             # Create df only once
-                            st.session_state.df_empty = pd.concat(
-                                [pd.DataFrame("", index=range(1), columns=col_names),
-                                 monthly_avg_df],
-                                ignore_index=True
-                            )
+                            st.session_state.df_empty = empty_df
 
                         st.subheader('Enter Dependent Variable Below:')
 
