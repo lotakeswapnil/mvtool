@@ -217,7 +217,7 @@ elif st.session_state.mode == "manual":
                         monthly_avg_df["month"] = monthly_avg_df.index.to_period("M").astype(str)
 
                         st.write("### Monthly Average Temperature")
-                        st.dataframe(monthly_avg_df)
+                        st.dataframe(monthly_avg_df).reset_index()
                         st.line_chart(monthly_avg_df.set_index("month")["avg_temperature"])
 
                         manual_df = pd.concat([manual_df, monthly_avg_df], axis=1)
