@@ -220,5 +220,5 @@ elif st.session_state.mode == "manual":
                         st.dataframe(monthly_avg_df)
                         st.line_chart(monthly_avg_df.set_index("month")["avg_temperature"])
 
-
+    manual_df = pd.concat([manual_df, monthly_avg_df], axis=1)
 
