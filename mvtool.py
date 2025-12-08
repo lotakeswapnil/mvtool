@@ -203,11 +203,7 @@ elif st.session_state.mode == "manual":
                     else:
                         st.success("Fetched weather data")
                         #st.json(meta)
-                        #st.dataframe(df_weather.head())
-                        #st.line_chart(df_weather.set_index("date_utc")[var])
 
-                        # Set index for resampling
-                        df_weather = df_weather.set_index('date_utc').sort_index()
 
                         # Monthly mean temperature
                         monthly_avg = df_weather['temperature'].resample('M').mean()
