@@ -211,13 +211,37 @@ elif st.session_state.mode == "manual":
                         # Build column names automatically
                         col_names = ["Dependent Variable"]  # first column fixed
 
+                        # Ensure monthly_avg_df exists and has compatible columns (reset index if needed)
+                        monthly_to_append = monthly_avg_df.reset_index(drop=True)  # or align columns/cols as needed
 
-                        df_empty = pd.DataFrame("", index=range(1), columns=col_names)
-                        df_empty = pd.concat([df_empty, monthly_avg_df], ignore_index=True)
+                        # Create session-state container for the manual editor DF (only once)
+                        if "manual_df" not in st.session_state:
+                            # df_empty only created the first time and stored in session_state
+                            st.session_state.manual_df = pd.DataFrame("", index=range(1), columns=col_names)
+
+                        # Append monthly averages exactly once (use a flag so we don't append repeatedly)
+                        if "monthly_appended" not in st.session_state:
+                            try:
+                                # If columns are different, align or rename before concatenation.
+                                # E.g., if monthly_to_append has columns ['month','avg_temperature'] and your manual df has other columns,
+                                # you may want to select/rename columns. Here we try a direct concat; adjust as needed.
+                                st.session_state.manual_df = pd.concat(
+                                    [st.session_state.manual_df, monthly_to_append],
+                                    ignore_index=True,
+                                    sort=False
+                                )
+                            except Exception as e:
+                                st.error(f"Could not append monthly data: {e}")
+                            st.session_state.monthly_appended = True
+
+                        # Show editor using the persistent dataframe and a stable key
+                        edited_df = st.data_editor(st.session_state.manual_df, num_rows="dynamic",
+                                                   key="manual_data_editor")
+
+                        # Save user's edits back to session_state so they persist across reruns
+                        st.session_state.manual_df = edited_df
 
                         st.subheader('Enter Dependent Variable Below:')
-                        edited_df = st.data_editor(df_empty, num_rows="dynamic")
-
-                        if st.button('Create Data'):
-                            st.success('Generated Data:')
-                            st.dataframe(edited_df)
+                        if st.button("Create DataFrame"):
+                            st.success("Generated DataFrame:")
+                            st.dataframe(st.session_state.manual_df)
