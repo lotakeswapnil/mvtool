@@ -92,7 +92,7 @@ elif st.session_state.mode == "manual":
         st.session_state.mode = None
         st.rerun()
 
-    st.write('### Enter Data (Manual)')
+    st.write('### Enter Dependent Variable values')
 
     # Build column names automatically
     col_names = ["Dependent Variable"]  # first column fixed
