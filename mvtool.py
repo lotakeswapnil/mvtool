@@ -216,7 +216,7 @@ elif st.session_state.mode == "manual":
                         st.subheader('Enter Dependent Variable Below:')
 
                         if manual_df.shape[0] < monthly_avg_df.shape[0]:
-                            manual_df = st.data_editor(manual_df)
+                            manual_df = st.data_editor(manual_df, num_rows="dynamic")
 
                         if st.button('Create Data'):
                             st.success('Generated Data:')
