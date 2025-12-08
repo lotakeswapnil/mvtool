@@ -217,7 +217,8 @@ elif st.session_state.mode == "manual":
 
                         st.subheader('Enter Dependent Variable Below:')
 
-                        edited_df = st.data_editor(df_empty, num_rows="dynamic")
+                        edited_df = st.data_editor(df_empty)
+
                         if st.button('Create Data'):
                             st.success('Generated Data:')
                             st.dataframe(edited_df)
