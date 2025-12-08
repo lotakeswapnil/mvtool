@@ -203,20 +203,15 @@ elif st.session_state.mode == "manual":
                     else:
                         st.success("Fetched weather data")
                         #st.json(meta)
+                        st.write(df_weather)
 
 
-                        # Monthly mean temperature
-                        monthly_avg = df_weather['temperature'].resample('M').mean()
 
-                        # Convert index to month labels (YYYY-MM)
-                        monthly_avg_df = monthly_avg.to_frame(name="avg_temperature")
-                        monthly_avg_df["month"] = monthly_avg_df.index.to_period("M").astype(str)
+                        #st.write("### Monthly Average Temperature")
+                        #st.dataframe(monthly_avg_df)
+                        #monthly_avg_df.reset_index()
+                        #st.line_chart(monthly_avg_df.set_index("month")["avg_temperature"])
 
-                        st.write("### Monthly Average Temperature")
-                        st.dataframe(monthly_avg_df)
-                        monthly_avg_df.reset_index()
-                        st.line_chart(monthly_avg_df.set_index("month")["avg_temperature"])
-
-                        manual_df = pd.concat([manual_df, monthly_avg_df], axis=1)
-                        st.write(manual_df)
+                        #manual_df = pd.concat([manual_df, monthly_avg_df], axis=1)
+                        #st.write(manual_df)
 
