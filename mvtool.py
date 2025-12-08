@@ -213,7 +213,7 @@ elif st.session_state.mode == "manual":
 
 
                         df_empty = pd.DataFrame("", index=range(1), columns=col_names)
-                        df_empty = pd.concat([df_empty, monthly_avg_df], ignore_index=True)
+                        df_empty = pd.concat([df_empty, monthly_avg_df], ignore_index=False)
 
                         st.subheader('Enter Dependent Variable Below:')
 
