@@ -220,9 +220,7 @@ elif st.session_state.mode == "manual":
 
                         # Create the initial dataframe only once
                         if "manual_df" not in st.session_state:
-                            st.session_state.manual_df = pd.DataFrame({
-                                "col1": [""],
-                            })
+                            st.session_state.manual_df = df_empty
 
                         # Show data editor
                         edited_df = st.data_editor(st.session_state.manual_df)
