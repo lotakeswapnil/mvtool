@@ -213,11 +213,18 @@ elif st.session_state.mode == "manual":
 
 
                         df_empty = pd.DataFrame("", index=range(1), columns=col_names)
-                        df_empty = pd.concat([df_empty, monthly_avg_df], ignore_index=False)
+                        df_empty = pd.concat([df_empty, monthly_avg_df], ignore_index=True)
 
                         st.subheader('Enter Dependent Variable Below:')
 
-                        edited_df = st.data_editor(df_empty)
+
+                        # --- Create session-state variable for Manual Mode---
+                        if "manual_df" not in st.session_state:
+                            st.session_state.manual_df = None
+
+                        if st.session_state.manual_df is None:
+                            edited_df = st.data_editor(df_empty)
+                            edited_df
 
                         if st.button('Create Data'):
                             st.success('Generated Data:')
