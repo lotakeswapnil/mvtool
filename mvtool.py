@@ -207,17 +207,17 @@ elif st.session_state.mode == "manual":
                         st.write("### Monthly Average Temperature")
                         st.dataframe(monthly_avg_df)
                         st.line_chart(monthly_avg_df.set_index("month")["avg_temperature"])
+            # Build column names automatically
+            col_names = ["Dependent Variable"]  # first column fixed
+            empty_df = pd.DataFrame("", index=range(1), columns=col_names)
 
-                        # Build column names automatically
-                        col_names = ["Dependent Variable"]  # first column fixed
-                        empty_df = pd.DataFrame("", index=range(1), columns=col_names)
 
+            st.subheader('Enter Dependent Variable Below:')
 
-                        st.subheader('Enter Dependent Variable Below:')
+            manual_df = st.data_editor(empty_df, num_rows="dynamic")
 
-                        manual_df = st.data_editor(empty_df, num_rows="dynamic")
+            if st.button('Create Data'):
+                st.success('Generated Data:')
+                st.dataframe(edited_df)
 
-                        if st.button('Create Data'):
-                            st.success('Generated Data:')
-                            st.dataframe(edited_df)
 
