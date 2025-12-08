@@ -225,10 +225,10 @@ elif st.session_state.mode == "manual":
                             })
 
                         # Show data editor
-                        edited_df = st.data_editor(st.session_state.df)
+                        edited_df = st.data_editor(st.session_state.manual_df)
 
                         # Save edits back to session state
-                        st.session_state.df = edited_df
+                        st.session_state.manual_df = edited_df
                         if st.button('Create Data'):
                             st.success('Generated Data:')
                             st.dataframe(edited_df)
