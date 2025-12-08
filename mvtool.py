@@ -217,7 +217,7 @@ elif st.session_state.mode == "manual":
 
 
                         for i in range(0,5):
-                            edited_df = st.data_editor(manual_df, key="editor")
+                            edited_df = st.data_editor(manual_df, key=f"editor {i}")
                             manual_df = edited_df
 
 
