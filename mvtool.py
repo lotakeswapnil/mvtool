@@ -217,12 +217,7 @@ elif st.session_state.mode == "manual":
 
                         st.subheader('Enter Dependent Variable Below:')
 
-                        # --- Create session-state variable for Manual Mode---
-                        if "manual_df" not in st.session_state:
-                            st.session_state.manual_df = None
-
-                        if st.session_state.manual_df is None:
-                            edited_df = st.data_editor(df_empty, num_rows="dynamic")
+                        edited_df = st.data_editor(df_empty, num_rows="dynamic")
 
                             if st.button('Create Data'):
                                 st.success('Generated Data:')
