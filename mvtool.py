@@ -306,7 +306,8 @@ elif st.session_state.mode == "manual":
 
             final_df = st.data_editor(empty_df, num_rows='dynamic')
 
-            st.write(np.dtype(final_df['Temperature']))
+            for col in final_df.columns:
+                final_df[col] = pd.to_numeric(final_df[col], errors='coerce')
 
             #final_df = st.dataframe(edited_df)
 
