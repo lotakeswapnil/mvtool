@@ -138,7 +138,7 @@ if st.session_state.mode == "upload":
                         st.write(f"**R²:** {three_res['r2']:.2f}")
 
                     with col2:
-                        st.subheader("5-Parameter model (deadband)")
+                        st.subheader("5-Parameter model")
                         st.write(f"**Tb_low (°C):** {five_res['Tb_low']:.2f}")
                         st.write(f"**Tb_high (°C):** {five_res['Tb_high']:.2f}")
                         st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
