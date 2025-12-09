@@ -219,27 +219,21 @@ elif st.session_state.mode == "manual":
 
                         st.session_state.df_weather_final = df_weather_final
 
-                        if st.session_state.df_weather_final is not None:
-                            # Build column names automatically
-                            col_names = ["Dependent Variable"]  # first column fixed
-                            empty_df = pd.DataFrame("", index=range(0), columns=col_names)
+                    if st.session_state.df_weather_final is not None:
+                        # Build column names automatically
+                        col_names = ["Dependent Variable"]  # first column fixed
+                        empty_df = pd.DataFrame("", index=range(0), columns=col_names)
 
-                            st.write('#### Enter Dependent Variable Below:')
+                        st.write('#### Enter Dependent Variable Below:')
 
-                            manual_df = st.data_editor(empty_df, num_rows="dynamic")
+                        manual_df = st.data_editor(empty_df, num_rows="dynamic")
 
-                            if st.button('Create Data'):
-                                st.success('Generated Data:')
-                                st.dataframe(manual_df)
+                        if st.button('Create Data'):
+                            st.success('Generated Data:')
+                            st.dataframe(manual_df)
 
-                                manual_df = pd.concat([df_monthly], ignore_index=True)
-                                st.write(manual_df)
-
-
-
-
-
-
+                            manual_df = pd.concat([df_monthly], ignore_index=True)
+                            st.write(manual_df)
 
 
 
