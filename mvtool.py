@@ -194,8 +194,8 @@ if st.session_state.mode == "upload":
             if temp_data == '':
                 st.error("Please add temperature column name.")
 
-            if energy_data == '':
-                st.error("Please add energy column name.")
+                if energy_data == '':
+                    st.error("Please add energy column name.")
 
 
 # -------------------------
