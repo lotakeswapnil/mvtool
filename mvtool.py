@@ -306,7 +306,7 @@ elif st.session_state.mode == "manual":
 
             final_df = st.data_editor(empty_df, num_rows='dynamic')
 
-            final_df = final_df.astype(float)
+            final_df['Temperature'] = final_df['Temperature'].astype(float)
 
             #final_df = st.dataframe(edited_df)
 
