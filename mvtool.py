@@ -3,7 +3,7 @@ from datetime import date
 
 import pandas as pd
 import streamlit as st
-from changepoint_models import (fit_three_param_cp, fit_five_param_deadband, select_model_by_rmse_r2,
+from change_point import (fit_three_param_cp, fit_five_param_deadband, select_model_by_rmse_r2,
                                 predict_3p_for_plot, predict_5p_for_plot)
 from sklearn.linear_model import LinearRegression, Lasso, Ridge
 from sklearn.metrics import root_mean_squared_error
