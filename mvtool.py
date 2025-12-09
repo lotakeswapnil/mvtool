@@ -195,31 +195,42 @@ elif st.session_state.mode == "manual":
 
                         df = df_weather.copy()
 
-                        # Create a monthly period column
-                        df["month"] = df["date_local"].dt.to_period("M")
+                        if weather_interval == "Hourly":
 
-                        # Group by month and compute averages
-                        df_monthly = (
-                            df.groupby("month")
-                            .mean(numeric_only=True)
-                            .reset_index()
-                        )
+                            df_weather_final = df
 
-                        st.write(df_monthly)
-        # Build column names automatically
-        col_names = ["Dependent Variable"]  # first column fixed
-        empty_df = pd.DataFrame("", index=range(0), columns=col_names)
+                        elif weather_interval == "Daily":
 
-        st.write('#### Enter Dependent Variable Below:')
+                            # Create a daily period column
+                            df["daily"] = df["date_local"].dt.to_period("D")
 
-        manual_df = st.data_editor(empty_df, num_rows="dynamic")
+                            # Group by day and compute averages
+                            df_weather_final = (df.groupby("day").mean(numeric_only=True).reset_index())
 
-        if st.button('Create Data'):
-            st.success('Generated Data:')
-            st.dataframe(manual_df)
+                        else:
 
-            manual_df = pd.concat([df_monthly], ignore_index=True)
-            st.write(manual_df)
+                            # Create a monthly period column
+                            df["month"] = df["date_local"].dt.to_period("M")
+
+                            # Group by month and compute averages
+                            df_weather_final = (df.groupby("month").mean(numeric_only=True).reset_index())
+
+                        st.write(df_weather_final)
+
+                        # Build column names automatically
+                        col_names = ["Dependent Variable"]  # first column fixed
+                        empty_df = pd.DataFrame("", index=range(0), columns=col_names)
+
+                        st.write('#### Enter Dependent Variable Below:')
+
+                        manual_df = st.data_editor(empty_df, num_rows="dynamic")
+
+                        if st.button('Create Data'):
+                            st.success('Generated Data:')
+                            st.dataframe(manual_df)
+
+                            manual_df = pd.concat([df_monthly], ignore_index=True)
+                            st.write(manual_df)
 
 
 
