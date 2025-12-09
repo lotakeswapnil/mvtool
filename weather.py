@@ -71,11 +71,8 @@ def fetch_openmeteo_archive(client: openmeteo_requests.Client,
             freq=pd.Timedelta(seconds=hourly.Interval()),
             inclusive="left",
         )
-        df = pd.DataFrame({
-            "date_local": times_local,
-            "date_utc": times_local.tz_convert("UTC"),
-            var: vals,
-        })
+        df = pd.DataFrame({"date_local": times})
+        df[var] = vals
     else:
         daily = response.Daily()
         vals = daily.Variables(0).ValuesAsNumpy()
