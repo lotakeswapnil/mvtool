@@ -270,7 +270,7 @@ elif st.session_state.mode == "manual":
             num_cols = st.number_input("Number of Independent Variables: ", 0, 10, 3)
 
             # Build column names automatically
-            col_names = ["Dependent Variable"]  # first column fixed
+            col_names = ["Energy"]  # first column fixed
             input_valid = True  # flag to track if all names are filled
 
             # Generate independent variable labels
