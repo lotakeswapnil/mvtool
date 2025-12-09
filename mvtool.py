@@ -131,7 +131,7 @@ elif st.session_state.mode == "manual":
         if st.session_state.temp is None:
             st.markdown('Does you data include Temperature or an Independent Variable?')
 
-            col1, col2 = st.columns([0.05, 0.5])
+            col1, col2 = st.columns([0.5, 0.5])
 
             with col1:
                 if st.button('Temperature'):
@@ -175,6 +175,11 @@ elif st.session_state.mode == "manual":
                 st.info('Please complete all Independent Variable names.')
 
         #if st.session_state.temp == 'yes':
+
+         #   st.write('### Select Weather Interval')
+          #  interval_dict = {'Hourly', 'Daily', 'Monthly'}
+           # weather_interval = st.selectbox('Select Interval', interval_dict)
+
 
 
 
