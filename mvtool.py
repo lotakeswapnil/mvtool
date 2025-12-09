@@ -52,8 +52,11 @@ if st.session_state.mode == "upload":
         df = pd.read_csv(uploaded)
         st.write('Preview:', df.head())
 
-        data_dict = {'Temperature', 'Independent Variable'}
+        data_dict = {'','Temperature', 'Independent Variable'}
         data_ind_var = st.selectbox('Select Independent Variable Type', data_dict)
+
+        if data_ind_var == '':
+            None
 
         if data_ind_var == 'Independent Variable':
 
