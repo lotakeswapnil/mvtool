@@ -57,7 +57,7 @@ if st.session_state.mode == "upload":
         data_ind_var = st.selectbox('Select Independent Variable Type', data_dict)
 
 
-        if data_ind_var == 'Independent Variable':
+        if data_ind_var == 'Independent Variable' and data_ind_var is not None:
 
             # Target (dependent) column
             energy_cons = st.text_input('Dependent Variable (target column name)')
@@ -97,7 +97,7 @@ if st.session_state.mode == "upload":
         # Sample data (heating + deadband + cooling)
         # -------------------------
 
-        if data_ind_var == 'Temperature':
+        if data_ind_var == 'Temperature' and data_ind_var is not None:
 
             st.write("### Sample data")
             st.dataframe(df)
