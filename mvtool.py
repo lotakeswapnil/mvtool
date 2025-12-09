@@ -49,6 +49,7 @@ if st.session_state.mode == "upload":
     uploaded = st.file_uploader('', type="csv", label_visibility='collapsed')
 
     if uploaded:
+
         df = pd.read_csv(uploaded)
         st.write('Preview:', df.head())
 
@@ -94,15 +95,12 @@ if st.session_state.mode == "upload":
                 else:
                     st.error('All variables not defined.')
 
+        # -------------------------
+        # Sample data (heating + deadband + cooling)
+        # -------------------------
+
         if data_ind_var == 'Temperature':
-                # -------------------------
-                # Sample data (heating + deadband + cooling)
-                # -------------------------
-            sample_data = {
-                "temp_C": [-5, -2, 0, 2, 5, 8, 10, 12, 15, 18, 20, 22, 25, 28, 30, 33],
-                "kwh": [260, 250, 240, 230, 220, 210, 200, 198, 195, 195, 205, 220, 240, 270, 300, 330]
-            }
-            df = pd.DataFrame(sample_data)
+
             st.write("### Sample data")
             st.dataframe(df)
 
@@ -189,12 +187,6 @@ if st.session_state.mode == "upload":
                 ax.grid(True)
                 ax.legend()
                 st.pyplot(fig)
-
-
-
-
-
-
 
 
 # -------------------------
