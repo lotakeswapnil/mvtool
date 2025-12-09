@@ -124,26 +124,26 @@ elif st.session_state.mode == "manual":
 
 
         # --- Create session-state variable for Manual Mode---
-        if "temp" not in st.session_state:
-            st.session_state.temp = None
+        if "data" not in st.session_state:
+            st.session_state.data = None
 
         # --- Display Start Buttons ---
-        if st.session_state.temp is None:
+        if st.session_state.data is None:
             st.markdown('Does you data include Temperature or an Independent Variable?')
 
             temp1, temp2 = st.columns([0.5, 0.5])
 
             with temp1:
                 if st.button('Temperature'):
-                    st.session_state.temp = 'temp'
+                    st.session_state.data = 'temp'
                     st.rerun()
 
             with temp2:
                 if st.button('Independent Variable'):
-                    st.session_state.temp = 'ind'
+                    st.session_state.data = 'ind'
                     st.rerun()
 
-        if st.session_state.temp == 'ind':
+        if st.session_state.data == 'ind':
 
             # Ask for number of rows & columns
             num_cols = st.number_input("Number of Independent Variables: ", 0, 10, 3)
