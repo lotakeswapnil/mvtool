@@ -303,10 +303,10 @@ elif st.session_state.mode == "manual":
 
             st.write('#### Enter Energy Data Below:')
 
-            edited_df = st.data_editor(empty_df, num_rows="dynamic")
+            final_df = st.data_editor(empty_df, num_rows="dynamic")
 
-            final_df = st.dataframe(edited_df)
-            final_df = final_df.dropna()
+            #final_df = st.dataframe(edited_df)
+
 
             # Sidebar settings
             st.sidebar.header("Model settings")
