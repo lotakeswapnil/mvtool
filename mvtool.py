@@ -169,7 +169,7 @@ elif st.session_state.mode == "manual":
 
         manual_df = st.data_editor(empty_df, num_rows="dynamic")
 
-        st.write(pd.concat([manual_df, df_weather_final], axis=1))
+
 
 
         interval_dict = {'Hourly', 'Daily', 'Monthly'}
@@ -228,6 +228,7 @@ elif st.session_state.mode == "manual":
                             df_weather_final = (df.groupby("month").mean(numeric_only=True).reset_index())
 
                         st.write(df_weather_final)
+                        st.write(pd.concat([manual_df, df_weather_final], axis=1))
 
 
 
