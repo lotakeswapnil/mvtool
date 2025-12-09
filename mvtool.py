@@ -217,6 +217,8 @@ elif st.session_state.mode == "manual":
 
                         st.write(df_weather_final)
 
+                        st.session_state.df_weather_final = df_weather_final
+
                         # Build column names automatically
                         col_names = ["Dependent Variable"]  # first column fixed
                         empty_df = pd.DataFrame("", index=range(0), columns=col_names)
