@@ -305,27 +305,16 @@ elif st.session_state.mode == "manual":
 
             final_df = st.data_editor(empty_df, num_rows="dynamic")
 
-            final_df = st.dataframe(final_df)
+            #final_df = st.dataframe(edited_df)
 
-            # safe defaults if Temperature column is empty / non-numeric
-            temps = pd.to_numeric(final_df.get("Temperature", pd.Series(dtype=float)), errors="coerce").dropna()
 
-            # choose simple fallbacks if no valid temps entered
-            if temps.empty:
-                Tmin_default = -10.0
-                Tmax_default = 40.0
-            else:
-                Tmin_default = float(np.floor(temps.min()))
-                Tmax_default = float(np.ceil(temps.max()))
-
-            # Sidebar controls using safe defaults
+            # Sidebar settings
             st.sidebar.header("Model settings")
-            Tmin = st.sidebar.number_input("Search Tmin (°C)", value=Tmin_default, format="%.1f")
-            Tmax = st.sidebar.number_input("Search Tmax (°C)", value=Tmax_default, format="%.1f")
-            step = st.sidebar.number_input("Search step (°C)", value=1.0, step=0.5, format="%.2f")
-            rel_tol_pct = st.sidebar.slider("RMSE tie tolerance (%)", 0.0, 5.0, 0.1, step=0.1)
+            Tmin = st.sidebar.number_input("Search Tmin (°C)",value=float(np.floor(final_df['Temperature'].min())))
+            Tmax = st.sidebar.number_input("Search Tmax (°C)",value=float(np.ceil(final_df['Temperature'].max())))
+            step = st.sidebar.number_input("Search step (°C)", value=1.0, step=0.5)
+            rel_tol_pct = st.sidebar.slider("RMSE tie tolerance (%)", min_value=0.0, max_value=5.0,value=0.1, step=0.1)
             run_button = st.sidebar.button("Run models")
-
 
             # Always run (or use run_button if you prefer explicit trigger)
             if run_button or True:
