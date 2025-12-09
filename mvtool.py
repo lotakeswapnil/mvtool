@@ -316,6 +316,7 @@ elif st.session_state.mode == "manual":
             rel_tol_pct = st.sidebar.slider("RMSE tie tolerance (%)", min_value=0.0, max_value=5.0,value=0.1, step=0.1)
             run_button = st.sidebar.button("Run models")
 
+
             # Always run (or use run_button if you prefer explicit trigger)
             if run_button or True:
                 temp = final_df['Temperature'].values
