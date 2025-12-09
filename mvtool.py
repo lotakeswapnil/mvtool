@@ -297,10 +297,12 @@ elif st.session_state.mode == "manual":
         if st.session_state.manual_data == 'temp':
 
             # Build column names automatically
-            col_names = ["Energy","Temperature"]  # first column fixed
-            empty_df = pd.DataFrame("", index=range(0), columns=col_names)
 
             number_rows = st.number_input('Select Number of Rows:', step=1, format="%d")
+
+            col_names = ["Energy","Temperature"]  # first column fixed
+            empty_df = pd.DataFrame("", index=range(number_rows), columns=col_names)
+
 
             st.write('#### Enter Energy Data Below:')
 
