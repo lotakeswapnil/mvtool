@@ -305,10 +305,10 @@ elif st.session_state.mode == "manual":
 
             final_df = st.data_editor(empty_df, num_rows="dynamic")
 
-            #final_df = st.dataframe(edited_df)
+            #final_df = st.dataframe(final_df)
 
             # safe defaults if Temperature column is empty / non-numeric
-            temps = pd.to_numeric(edited_df.get("Temperature", pd.Series(dtype=float)), errors="coerce").dropna()
+            temps = pd.to_numeric(final_df.get("Temperature", pd.Series(dtype=float)), errors="coerce").dropna()
 
             # choose simple fallbacks if no valid temps entered
             if temps.empty:
