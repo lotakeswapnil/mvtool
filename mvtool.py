@@ -131,7 +131,7 @@ elif st.session_state.mode == "manual":
         if st.session_state.manual_data is None:
             st.markdown('Does you data include Temperature or an Independent Variable?')
 
-            temp1, temp2 = st.columns([0.5, 0.5])
+            temp1, temp2 = st.columns([0.1, 0.5])
 
             with temp1:
                 if st.button('Temperature'):
@@ -178,11 +178,15 @@ elif st.session_state.mode == "manual":
             else:
                 st.info('Please complete all Independent Variable names.')
 
-        #if st.session_state.temp == 'yes':
+        if st.session_state.manual_data == 'temp':
 
-         #   st.write('### Select Weather Interval')
-          #  interval_dict = {'Hourly', 'Daily', 'Monthly'}
-           # weather_interval = st.selectbox('Select Interval', interval_dict)
+            # Build column names automatically
+            col_names = ["Dependent Variable","Temperature"]  # first column fixed
+            empty_df = pd.DataFrame("", index=range(0), columns=col_names)
+
+            st.write('#### Enter Dependent Variable Below:')
+
+            manual_df = st.data_editor(empty_df, num_rows="dynamic")
 
 
 
