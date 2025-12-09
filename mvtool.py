@@ -161,15 +161,6 @@ elif st.session_state.mode == "manual":
             st.rerun()
 
 
-        # Build column names automatically
-        col_names = ["Dependent Variable"]  # first column fixed
-        empty_df = pd.DataFrame("", index=range(0), columns=col_names)
-
-        st.write('#### Enter Dependent Variable Below:')
-
-        manual_df = st.data_editor(empty_df, num_rows="dynamic")
-
-
         interval_dict = {'Hourly', 'Daily', 'Monthly'}
         weather_interval = st.selectbox('Select Interval', interval_dict)
 
@@ -227,6 +218,13 @@ elif st.session_state.mode == "manual":
 
                         st.write(df_weather_final)
 
+        # Build column names automatically
+        col_names = ["Dependent Variable"]  # first column fixed
+        empty_df = pd.DataFrame("", index=range(0), columns=col_names)
+
+        st.write('#### Enter Dependent Variable Below:')
+
+        manual_df = st.data_editor(empty_df, num_rows="dynamic")
         st.write(pd.concat([manual_df, df_weather_final],axis=1))
 
 
