@@ -228,6 +228,7 @@ elif st.session_state.mode == "manual":
                         st.write(df_weather_final)
 
 
+        st.write(pd.concat([manual_df, df_weather_final]))
 
 
 
