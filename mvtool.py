@@ -91,7 +91,7 @@ if st.session_state.mode == "upload":
                     st.error('All variables not defined.')
 
         if data_ind_var == 'Temperature':
-                -------------------------
+                # -------------------------
                 # Sample data (heating + deadband + cooling)
                 # -------------------------
             sample_data = {
