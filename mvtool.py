@@ -230,7 +230,9 @@ elif st.session_state.mode == "manual":
                         st.write(df_weather_final)
 
                         st.subheader("Combined Dependent Variable and Weather Data")
-                        st.write(pd.concat([manual_df, df_weather_final], axis=1))
+                        final_df = pd.concat([manual_df, df_weather_final], axis=1)
+                        st.dataframe(final_df)
+                        st.write(final_df)
 
 
 
