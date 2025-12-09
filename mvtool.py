@@ -228,6 +228,8 @@ elif st.session_state.mode == "manual":
                             df_weather_final = (df.groupby("month").mean(numeric_only=True).reset_index())
 
                         st.write(df_weather_final)
+
+                        st.subheader("Combined Dependent Variable and Weather Data")
                         st.write(pd.concat([manual_df, df_weather_final], axis=1))
 
 
