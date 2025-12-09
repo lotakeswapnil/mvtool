@@ -9,6 +9,7 @@ from sklearn.linear_model import LinearRegression, Lasso, Ridge
 from sklearn.metrics import root_mean_squared_error
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
+import numpy as np
 
 from weather import make_openmeteo_client, fetch_openmeteo_archive
 
