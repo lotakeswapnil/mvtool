@@ -298,17 +298,15 @@ elif st.session_state.mode == "manual":
 
             # Build column names automatically
 
-            number_rows = st.number_input('Select Number of Rows:', step=1, format="%d")
-
             col_names = ["Energy","Temperature"]  # first column fixed
-            empty_df = pd.DataFrame("", index=range(number_rows), columns=col_names)
+            empty_df = pd.DataFrame("", index=range(0), columns=col_names)
 
 
             st.write('#### Enter Energy Data Below:')
 
-            edited_df = st.data_editor(empty_df, num_rows='fixed')
+            final_df = st.data_editor(empty_df, num_rows='dynamic')
 
-            final_df = st.dataframe(edited_df)
+            #final_df = st.dataframe(edited_df)
 
             # Sidebar settings
             st.sidebar.header("Model settings")
