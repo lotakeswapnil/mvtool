@@ -205,13 +205,20 @@ elif st.session_state.mode == "manual":
                         #st.json(meta)
                         st.write(df_weather)
 
+                        df = df_weather.copy()
 
+                        # Create a monthly period column
+                        df["month"] = df["date_local"].dt.to_period("M")
 
-                        #st.write("### Monthly Average Temperature")
-                        #st.dataframe(monthly_avg_df)
-                        #monthly_avg_df.reset_index()
-                        #st.line_chart(monthly_avg_df.set_index("month")["avg_temperature"])
+                        # Group by month and compute averages
+                        df_monthly = (
+                            df.groupby("month")
+                            .mean(numeric_only=True)
+                            .reset_index()
+                        )
 
-                        #manual_df = pd.concat([manual_df, monthly_avg_df], axis=1)
-                        #st.write(manual_df)
+                        # Convert period back to timestamp (optional)
+                        df_monthly["month"] = df_monthly["month"].dt.to_timestamp()
+
+                        st.write(df_monthly)
 
