@@ -46,6 +46,9 @@ if st.session_state.mode == "upload":
         df = pd.read_csv(uploaded)
         st.write('Preview:', df.head())
 
+        data_dict = {'Temperature', 'Independent Variable'}
+        data_ind_var = st.selectbox('Select Independent Variable Type', data_dict)
+
         # Target (dependent) column
         energy_cons = st.text_input('Dependent Variable (target column name)')
 
@@ -187,8 +190,6 @@ elif st.session_state.mode == "manual":
             st.write('#### Enter Dependent Variable Below:')
 
             manual_df = st.data_editor(empty_df, num_rows="dynamic")
-
-
 
 
 
