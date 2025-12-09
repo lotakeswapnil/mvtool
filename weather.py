@@ -73,7 +73,6 @@ def fetch_openmeteo_archive(client: openmeteo_requests.Client,
         )
         df = pd.DataFrame({
             "date_local": times,
-            "date_utc": times.tz_convert("UTC"),
             var: vals,
         })
     else:
