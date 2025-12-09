@@ -135,15 +135,15 @@ elif st.session_state.mode == "manual":
 
             with temp1:
                 if st.button('Temperature'):
-                    st.session_state.temp = 'yes'
+                    st.session_state.temp = 'temp'
                     st.rerun()
 
             with temp2:
                 if st.button('Independent Variable'):
-                    st.session_state.temp = 'no'
+                    st.session_state.temp = 'ind'
                     st.rerun()
 
-        if st.session_state.temp == 'no':
+        if st.session_state.temp == 'ind':
 
             # Ask for number of rows & columns
             num_cols = st.number_input("Number of Independent Variables: ", 0, 10, 3)
