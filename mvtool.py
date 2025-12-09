@@ -140,7 +140,7 @@ elif st.session_state.mode == "manual":
 
             with col2:
                 if st.button('Independent Variable'):
-                    st.session_state.yes_no = 'no'
+                    st.session_state.temp = 'no'
                     st.rerun()
 
         if st.session_state.temp == 'no':
