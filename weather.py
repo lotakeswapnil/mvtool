@@ -66,8 +66,8 @@ def fetch_openmeteo_archive(client: openmeteo_requests.Client,
         hourly = response.Hourly()
         vals = hourly.Variables(0).ValuesAsNumpy()
         times = pd.date_range(
-            start=pd.to_datetime(hourly.Time(), unit="i").tz_localize("UTC").tz_convert(timezone),
-            end=pd.to_datetime(hourly.TimeEnd(), unit="i").tz_localize("UTC").tz_convert(timezone),
+            start=pd.to_datetime(hourly.Time(), unit="ip").tz_localize("UTC").tz_convert(timezone),
+            end=pd.to_datetime(hourly.TimeEnd(), unit="ip").tz_localize("UTC").tz_convert(timezone),
             freq=pd.Timedelta(seconds=hourly.Interval()),
             inclusive="left",
         )
