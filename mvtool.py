@@ -219,3 +219,6 @@ elif st.session_state.mode == "manual":
 
                         st.write(df_monthly)
 
+                        manual_df = pd.concat([df_monthly])
+                        st.write(manual_df)
+
