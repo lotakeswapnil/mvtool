@@ -218,7 +218,7 @@ elif st.session_state.mode == "manual":
                         )
 
                         # Convert period back to timestamp (optional)
-                        df_monthly["month"] = df_monthly["month"].dt.to_timestamp()
+                        #df_monthly["month"] = df_monthly["month"].dt.to_timestamp()
 
                         st.write(df_monthly)
 
