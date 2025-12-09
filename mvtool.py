@@ -298,10 +298,10 @@ elif st.session_state.mode == "manual":
         if st.session_state.manual_data == 'temp':
 
             # Build column names automatically
-            col_names = ["Dependent Variable","Temperature"]  # first column fixed
+            col_names = ["Energy","Temperature"]  # first column fixed
             empty_df = pd.DataFrame("", index=range(0), columns=col_names)
 
-            st.write('#### Enter Dependent Variable Below:')
+            st.write('#### Enter Energy Data Below:')
 
             manual_df = st.data_editor(empty_df, num_rows="dynamic")
 
