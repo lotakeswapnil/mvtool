@@ -305,101 +305,102 @@ elif st.session_state.mode == "manual":
 
             final_df = st.dataframe(st.data_editor(empty_df, num_rows="dynamic"))
 
+            # Sidebar settings
+            st.sidebar.header("Model settings")
+            Tmin = st.sidebar.number_input("Search Tmin (°C)",
+                                           value=float(np.floor(final_df['Temperature'].min())))
+            Tmax = st.sidebar.number_input("Search Tmax (°C)",
+                                           value=float(np.ceil(final_df['Temperature'].max())))
+            step = st.sidebar.number_input("Search step (°C)", value=1.0, step=0.5)
+            rel_tol_pct = st.sidebar.slider("RMSE tie tolerance (%)", min_value=0.0, max_value=5.0,
+                                            value=0.1, step=0.1)
+            run_button = st.sidebar.button("Run models")
+
+            # Always run (or use run_button if you prefer explicit trigger)
+            if run_button or True:
+                temp = final_df['Temperature'].values
+                energy = final_df['Energy'].values
+
+                with st.spinner("Fitting models..."):
+                    three_res = fit_three_param_cp(temp, energy, Tmin=Tmin, Tmax=Tmax, step=step)
+                    five_res = fit_five_param_deadband(temp, energy, Tmin=Tmin, Tmax=Tmax, step=step)
+
+                mean_kwh = float(final_df['Energy'].mean())
+                preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res,
+                                                                            rel_tol_pct, mean_kwh)
+
+                # Present results (2 decimals)
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.subheader("3-Parameter model")
+                    st.write(f"**Tb (°C):** {three_res['Tb']:.2f}")
+                    st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
+                    st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
+                    st.write(f"**RMSE:** {three_res['rmse']:.2f}")
+                    st.write(f"**R²:** {three_res['r2']:.2f}")
+
+                with col2:
+                    st.subheader("5-Parameter model")
+                    st.write(f"**Tb_low (°C):** {five_res['Tb_low']:.2f}")
+                    st.write(f"**Tb_high (°C):** {five_res['Tb_high']:.2f}")
+                    st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
+                    st.write(f"**β_h:** {five_res['model'].coef_[0]:.2f}")
+                    st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
+                    st.write(f"**RMSE:** {five_res['rmse']:.2f}")
+                    st.write(f"**R²:** {five_res['r2']:.2f}")
+
+                st.success(f"Preferred model (RMSE primary, R² tiebreaker): **{preferred_label}**")
+
+                # Add predictions columns to dataframe (both models)
+                final_df = final_df.copy()
+                # 3p preds
+                Tb = three_res["Tb"]
+                final_df["pred_3p"] = three_res["model"].predict(
+                    np.maximum(0.0, final_df['Temperature'].values - Tb).reshape(-1, 1))
+                # 5p preds
+                Tb_low = five_res["Tb_low"];
+                Tb_high = five_res["Tb_high"]
+                heat = np.maximum(0.0, Tb_low - final_df['Temperature'].values)
+                cool = np.maximum(0.0, final_df['Temperature'].values - Tb_high)
+                final_df["pred_5p"] = five_res["model"].predict(np.column_stack([heat, cool]))
+
+                st.write("### Data with model predictions")
+                st.dataframe(
+                    final_df.style.format({'Temperature': "{:.2f}", 'Energy': "{:.2f}", "pred_3p": "{:.2f}",
+                                           "pred_5p": "{:.2f}"}))
+
+                # Plot measured points + both model curves
+                T_plot = np.linspace(final_df['Temperature'].min(), final_df['Temperature'].max(), 400)
+                Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"])
+                Y5_plot = predict_5p_for_plot(T_plot, five_res["Tb_low"], five_res["Tb_high"],
+                                              five_res["model"])
+
+                fig, ax = plt.subplots(figsize=(9, 5))
+                ax.scatter(final_df['Temperature'], final_df['Energy'], label="Measured Energy", s=50, zorder=3)
+
+                # highlight preferred
+                if preferred_label == "3-parameter":
+                    ax.plot(T_plot, Y3_plot, label="3-parameter (preferred)", linewidth=2.5)
+                    ax.plot(T_plot, Y5_plot, label="5-parameter", linewidth=2, linestyle='--',
+                            alpha=0.8)
+                else:
+                    ax.plot(T_plot, Y3_plot, label="3-parameter", linewidth=2, linestyle='--',
+                            alpha=0.8)
+                    ax.plot(T_plot, Y5_plot, label="5-parameter (preferred)", linewidth=2.5)
+
+                # shade deadband region (5p)
+                ax.axvspan(five_res["Tb_low"], five_res["Tb_high"], alpha=0.08, color="grey",
+                           label="Deadband")
+
+                ax.set_xlabel("Temperature")
+                ax.set_ylabel("Energy")
+                ax.set_title("Measured Energy and model fits (3p vs 5p)")
+                ax.grid(True)
+                ax.legend()
+                st.pyplot(fig)
 
 
-                # Sidebar settings
-                st.sidebar.header("Model settings")
-                Tmin = st.sidebar.number_input("Search Tmin (°C)",
-                                               value=float(np.floor(final_df['Temperature'].min())))
-                Tmax = st.sidebar.number_input("Search Tmax (°C)",
-                                               value=float(np.ceil(final_df['Temperature'].max())))
-                step = st.sidebar.number_input("Search step (°C)", value=1.0, step=0.5)
-                rel_tol_pct = st.sidebar.slider("RMSE tie tolerance (%)", min_value=0.0, max_value=5.0,
-                                                value=0.1, step=0.1)
-                run_button = st.sidebar.button("Run models")
 
-                # Always run (or use run_button if you prefer explicit trigger)
-                if run_button or True:
-                    temp = final_df['Temperature'].values
-                    energy = final_df['Energy'].values
-
-                    with st.spinner("Fitting models..."):
-                        three_res = fit_three_param_cp(temp, energy, Tmin=Tmin, Tmax=Tmax, step=step)
-                        five_res = fit_five_param_deadband(temp, energy, Tmin=Tmin, Tmax=Tmax, step=step)
-
-                    mean_kwh = float(final_df['Energy'].mean())
-                    preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res,
-                                                                                rel_tol_pct, mean_kwh)
-
-                    # Present results (2 decimals)
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        st.subheader("3-Parameter model")
-                        st.write(f"**Tb (°C):** {three_res['Tb']:.2f}")
-                        st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
-                        st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
-                        st.write(f"**RMSE:** {three_res['rmse']:.2f}")
-                        st.write(f"**R²:** {three_res['r2']:.2f}")
-
-                    with col2:
-                        st.subheader("5-Parameter model")
-                        st.write(f"**Tb_low (°C):** {five_res['Tb_low']:.2f}")
-                        st.write(f"**Tb_high (°C):** {five_res['Tb_high']:.2f}")
-                        st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
-                        st.write(f"**β_h:** {five_res['model'].coef_[0]:.2f}")
-                        st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
-                        st.write(f"**RMSE:** {five_res['rmse']:.2f}")
-                        st.write(f"**R²:** {five_res['r2']:.2f}")
-
-                    st.success(f"Preferred model (RMSE primary, R² tiebreaker): **{preferred_label}**")
-
-                    # Add predictions columns to dataframe (both models)
-                    final_df = final_df.copy()
-                    # 3p preds
-                    Tb = three_res["Tb"]
-                    final_df["pred_3p"] = three_res["model"].predict(
-                        np.maximum(0.0, final_df['Temperature'].values - Tb).reshape(-1, 1))
-                    # 5p preds
-                    Tb_low = five_res["Tb_low"];
-                    Tb_high = five_res["Tb_high"]
-                    heat = np.maximum(0.0, Tb_low - final_df['Temperature'].values)
-                    cool = np.maximum(0.0, final_df['Temperature'].values - Tb_high)
-                    final_df["pred_5p"] = five_res["model"].predict(np.column_stack([heat, cool]))
-
-                    st.write("### Data with model predictions")
-                    st.dataframe(
-                        final_df.style.format({'Temperature': "{:.2f}", 'Energy': "{:.2f}", "pred_3p": "{:.2f}",
-                                               "pred_5p": "{:.2f}"}))
-
-                    # Plot measured points + both model curves
-                    T_plot = np.linspace(final_df['Temperature'].min(), final_df['Temperature'].max(), 400)
-                    Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"])
-                    Y5_plot = predict_5p_for_plot(T_plot, five_res["Tb_low"], five_res["Tb_high"],
-                                                  five_res["model"])
-
-                    fig, ax = plt.subplots(figsize=(9, 5))
-                    ax.scatter(final_df['Temperature'], final_df['Energy'], label="Measured Energy", s=50, zorder=3)
-
-                    # highlight preferred
-                    if preferred_label == "3-parameter":
-                        ax.plot(T_plot, Y3_plot, label="3-parameter (preferred)", linewidth=2.5)
-                        ax.plot(T_plot, Y5_plot, label="5-parameter", linewidth=2, linestyle='--',
-                                alpha=0.8)
-                    else:
-                        ax.plot(T_plot, Y3_plot, label="3-parameter", linewidth=2, linestyle='--',
-                                alpha=0.8)
-                        ax.plot(T_plot, Y5_plot, label="5-parameter (preferred)", linewidth=2.5)
-
-                    # shade deadband region (5p)
-                    ax.axvspan(five_res["Tb_low"], five_res["Tb_high"], alpha=0.08, color="grey",
-                               label="Deadband")
-
-                    ax.set_xlabel("Temperature")
-                    ax.set_ylabel("Energy")
-                    ax.set_title("Measured Energy and model fits (3p vs 5p)")
-                    ax.grid(True)
-                    ax.legend()
-                    st.pyplot(fig)
 
 
 
