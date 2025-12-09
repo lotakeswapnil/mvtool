@@ -49,39 +49,45 @@ if st.session_state.mode == "upload":
         data_dict = {'Temperature', 'Independent Variable'}
         data_ind_var = st.selectbox('Select Independent Variable Type', data_dict)
 
-        # Target (dependent) column
-        energy_cons = st.text_input('Dependent Variable (target column name)')
+        if data_ind_var == 'Independent Variable':
 
-        # Number of independent vars
-        num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
+            # Target (dependent) column
+            energy_cons = st.text_input('Dependent Variable (target column name)')
 
-        for i in range(1,num_var+1):
-            globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
+            # Number of independent vars
+            num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
 
-        model_dict = {'Linear Regression': LinearRegression, 'Ridge Regression': Ridge, 'Lasso Regression': Lasso}
-        model_list = st.selectbox('Select models', model_dict)
+            for i in range(1,num_var+1):
+                globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
 
-        if st.button('Run Regression'):
-            if energy_cons is not None and globals()[f"ind_var_{i}"] != "":
-                if globals()[f"ind_var_{i}"] not in df.columns:
-                    st.error(f"Variable '{globals()[f'ind_var_{i}']}' not found in the uploaded CSV.")
+            model_dict = {'Linear Regression': LinearRegression, 'Ridge Regression': Ridge, 'Lasso Regression': Lasso}
+            model_list = st.selectbox('Select models', model_dict)
+
+            if st.button('Run Regression'):
+                if energy_cons is not None and globals()[f"ind_var_{i}"] != "":
+                    if globals()[f"ind_var_{i}"] not in df.columns:
+                        st.error(f"Variable '{globals()[f'ind_var_{i}']}' not found in the uploaded CSV.")
+                    else:
+                        X = df[globals()[f'ind_var_{i}']].to_frame()
+                        y = df[energy_cons]
+                        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+                        model = model_dict[model_list]()
+                        model.fit(X_train, y_train)
+                        preds = model.predict(X_test)
+                        regression = model.score(X_test, y_test)
+                        cvrmse = root_mean_squared_error(y_test, preds)/y_test.mean()
+
+                        st.write(f'Regression: {regression:.2%}')
+                        st.write(f'CVRMSE: {cvrmse:.2%}')
+                        st.line_chart(pd.DataFrame({'Actual': y_test, 'Predicted': preds}).reset_index(drop=True))
+
                 else:
-                    X = df[globals()[f'ind_var_{i}']].to_frame()
-                    y = df[energy_cons]
-                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+                    st.error('All variables not defined.')
 
-                    model = model_dict[model_list]()
-                    model.fit(X_train, y_train)
-                    preds = model.predict(X_test)
-                    regression = model.score(X_test, y_test)
-                    cvrmse = root_mean_squared_error(y_test, preds)/y_test.mean()
+        #if data_ind_var == 'Temperature':
 
-                    st.write(f'Regression: {regression:.2%}')
-                    st.write(f'CVRMSE: {cvrmse:.2%}')
-                    st.line_chart(pd.DataFrame({'Actual': y_test, 'Predicted': preds}).reset_index(drop=True))
 
-            else:
-                st.error('All variables not defined.')
 
 
 
