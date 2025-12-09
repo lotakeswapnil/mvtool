@@ -53,8 +53,7 @@ if st.session_state.mode == "upload":
         df = pd.read_csv(uploaded)
         st.write('Preview:', df.head())
 
-        data_dict = {'Temperature', 'Independent Variable'}
-        data_ind_var = st.selectbox('Select Independent Variable Type', data_dict)
+        data_ind_var = st.selectbox('Select Independent Variable Type', {'Temperature', 'Independent Variable'})
 
 
         if data_ind_var == 'Independent Variable':
@@ -301,12 +300,13 @@ elif st.session_state.mode == "manual":
             col_names = ["Energy","Temperature"]  # first column fixed
             empty_df = pd.DataFrame("", index=range(0), columns=col_names)
 
+            number_rows = st.number_input('Select Number of Rows:')
+
             st.write('#### Enter Energy Data Below:')
 
-            final_df = st.data_editor(empty_df, num_rows="dynamic")
+            final_df = st.data_editor(empty_df, num_rows=number_rows)
 
             #final_df = st.dataframe(edited_df)
-
 
             # Sidebar settings
             st.sidebar.header("Model settings")
