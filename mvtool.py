@@ -124,7 +124,7 @@ if st.session_state.mode == "upload":
                     three_res = fit_three_param_cp(temp, energy, Tmin=Tmin, Tmax=Tmax, step=step)
                     five_res = fit_five_param_deadband(temp, energy, Tmin=Tmin, Tmax=Tmax, step=step)
 
-                mean_kwh = float(df[energy].mean())
+                mean_kwh = float(df[energy_data].mean())
                 preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct, mean_kwh)
 
                 # Present results (2 decimals)
