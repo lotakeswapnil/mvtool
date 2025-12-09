@@ -300,7 +300,7 @@ elif st.session_state.mode == "manual":
             col_names = ["Energy","Temperature"]  # first column fixed
             empty_df = pd.DataFrame("", index=range(0), columns=col_names)
 
-            number_rows = st.number_input('Select Number of Rows:')
+            number_rows = st.number_input('Select Number of Rows:',format = int)
 
             st.write('#### Enter Energy Data Below:')
 
