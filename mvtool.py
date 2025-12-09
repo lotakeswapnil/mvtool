@@ -205,7 +205,7 @@ elif st.session_state.mode == "manual":
                             df["daily"] = df["date_local"].dt.to_period("D")
 
                             # Group by day and compute averages
-                            df_weather_final = (df.groupby("day").mean(numeric_only=True).reset_index())
+                            df_weather_final = (df.groupby("daily").mean(numeric_only=True).reset_index())
 
                         else:
 
