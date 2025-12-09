@@ -191,8 +191,8 @@ if st.session_state.mode == "upload":
                     ax.legend()
                     st.pyplot(fig)
 
-            if temp_data == '' and energy_data == '':
-                None
+            if temp_data == '' or energy_data == '':
+                st.error("Please add temperature and energy column names")
 
 
 # -------------------------
