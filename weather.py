@@ -4,6 +4,9 @@ import requests_cache
 from retry_requests import retry
 import openmeteo_requests
 from typing import Tuple, Dict
+from timezonefinder import TimezoneFinder
+
+
 
 def make_openmeteo_client(cache_name: str = ".cache", expire_after: int = -1,
                           retries: int = 5, backoff: float = 0.2) -> openmeteo_requests.Client:
@@ -12,6 +15,15 @@ def make_openmeteo_client(cache_name: str = ".cache", expire_after: int = -1,
     session = retry(session, retries=retries, backoff_factor=backoff)
     client = openmeteo_requests.Client(session=session)
     return client
+
+
+def get_timezone_from_coords(latitude: float, longitude: float) -> str:
+    """Return IANA timezone name (e.g., 'Europe/Berlin') from coordinates."""
+    tf = TimezoneFinder()
+    tz = tf.timezone_at(lat=latitude, lng=longitude)
+    if tz is None:
+        raise ValueError(f"Could not determine timezone for coords {latitude}, {longitude}")
+    return tz
 
 
 def fetch_openmeteo_archive(client: openmeteo_requests.Client,
@@ -26,12 +38,17 @@ def fetch_openmeteo_archive(client: openmeteo_requests.Client,
     Fetch archive data and return (metadata_dict, dataframe).
     start_date/end_date must be ISO strings 'YYYY-MM-DD'.
     """
+
+    # --- Detect timezone ---
+    timezone = get_timezone_from_coords(latitude, longitude)
+
     url = "https://archive-api.open-meteo.com/v1/archive"
     params = {
         "latitude": latitude,
         "longitude": longitude,
         "start_date": start_date,
         "end_date": end_date,
+        "timezone": timezone,
         which: var,
     }
     responses = client.weather_api(url, params=params)
@@ -42,19 +59,23 @@ def fetch_openmeteo_archive(client: openmeteo_requests.Client,
         "longitude": response.Longitude(),
         "elevation_m": response.Elevation(),
         "utc_offset_s": response.UtcOffsetSeconds(),
+        "timezone": timezone
     }
 
     if which == "hourly":
         hourly = response.Hourly()
         vals = hourly.Variables(0).ValuesAsNumpy()
         times = pd.date_range(
-            start=pd.to_datetime(hourly.Time(), unit="s", utc=True),
-            end=pd.to_datetime(hourly.TimeEnd(), unit="s", utc=True),
+            start=pd.to_datetime(hourly.Time(), unit="s").tz_localize("UTC").tz_convert(timezone),
+            end=pd.to_datetime(hourly.TimeEnd(), unit="s").tz_localize("UTC").tz_convert(timezone),
             freq=pd.Timedelta(seconds=hourly.Interval()),
             inclusive="left",
         )
-        df = pd.DataFrame({"date_utc": times})
-        df[var] = vals
+        df = pd.DataFrame({
+            "date_local": times_local,
+            "date_utc": times_local.tz_convert("UTC"),
+            var: vals,
+        })
     else:
         daily = response.Daily()
         vals = daily.Variables(0).ValuesAsNumpy()
