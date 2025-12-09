@@ -104,24 +104,27 @@ if st.session_state.mode == "upload":
             st.write("### Sample data")
             st.dataframe(df)
 
+            temp_data = st.text_input('Temperature column name')
+            energy_data = st.text_input('Energy column name')
+
             # Sidebar settings
             st.sidebar.header("Model settings")
-            Tmin = st.sidebar.number_input("Search Tmin (°C)", value=float(np.floor(df["temp_C"].min())))
-            Tmax = st.sidebar.number_input("Search Tmax (°C)", value=float(np.ceil(df["temp_C"].max())))
+            Tmin = st.sidebar.number_input("Search Tmin (°C)", value=float(np.floor(df[temp_data].min())))
+            Tmax = st.sidebar.number_input("Search Tmax (°C)", value=float(np.ceil(df[temp_data].max())))
             step = st.sidebar.number_input("Search step (°C)", value=1.0, step=0.5)
             rel_tol_pct = st.sidebar.slider("RMSE tie tolerance (%)", min_value=0.0, max_value=5.0, value=0.1, step=0.1)
             run_button = st.sidebar.button("Run models")
 
             # Always run (or use run_button if you prefer explicit trigger)
             if run_button or True:
-                temp = df["temp_C"].values
-                kwh = df["kwh"].values
+                temp = df[temp_data].values
+                energy = df[energy_data].values
 
                 with st.spinner("Fitting models..."):
-                    three_res = fit_three_param_cp(temp, kwh, Tmin=Tmin, Tmax=Tmax, step=step)
-                    five_res = fit_five_param_deadband(temp, kwh, Tmin=Tmin, Tmax=Tmax, step=step)
+                    three_res = fit_three_param_cp(temp, energy, Tmin=Tmin, Tmax=Tmax, step=step)
+                    five_res = fit_five_param_deadband(temp, energy, Tmin=Tmin, Tmax=Tmax, step=step)
 
-                mean_kwh = float(df["kwh"].mean())
+                mean_kwh = float(df[energy].mean())
                 preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct, mean_kwh)
 
                 # Present results (2 decimals)
@@ -150,25 +153,25 @@ if st.session_state.mode == "upload":
                 df = df.copy()
                 # 3p preds
                 Tb = three_res["Tb"]
-                df["pred_3p"] = three_res["model"].predict(np.maximum(0.0, df["temp_C"].values - Tb).reshape(-1, 1))
+                df["pred_3p"] = three_res["model"].predict(np.maximum(0.0, df[temp_data].values - Tb).reshape(-1, 1))
                 # 5p preds
                 Tb_low = five_res["Tb_low"];
                 Tb_high = five_res["Tb_high"]
-                heat = np.maximum(0.0, Tb_low - df["temp_C"].values)
-                cool = np.maximum(0.0, df["temp_C"].values - Tb_high)
+                heat = np.maximum(0.0, Tb_low - df[temp_data].values)
+                cool = np.maximum(0.0, df[temp_data].values - Tb_high)
                 df["pred_5p"] = five_res["model"].predict(np.column_stack([heat, cool]))
 
                 st.write("### Data with model predictions")
                 st.dataframe(
-                    df.style.format({"temp_C": "{:.2f}", "kwh": "{:.2f}", "pred_3p": "{:.2f}", "pred_5p": "{:.2f}"}))
+                    df.style.format({temp_data: "{:.2f}", energy_data: "{:.2f}", "pred_3p": "{:.2f}", "pred_5p": "{:.2f}"}))
 
                 # Plot measured points + both model curves
-                T_plot = np.linspace(df["temp_C"].min(), df["temp_C"].max(), 400)
+                T_plot = np.linspace(df[temp_data].min(), df[temp_data].max(), 400)
                 Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"])
                 Y5_plot = predict_5p_for_plot(T_plot, five_res["Tb_low"], five_res["Tb_high"], five_res["model"])
 
                 fig, ax = plt.subplots(figsize=(9, 5))
-                ax.scatter(df["temp_C"], df["kwh"], label="Measured kWh", s=50, zorder=3)
+                ax.scatter(df[temp_data], df[energy_data], label="Measured Energy", s=50, zorder=3)
 
                 # highlight preferred
                 if preferred_label == "3-parameter":
@@ -181,9 +184,9 @@ if st.session_state.mode == "upload":
                 # shade deadband region (5p)
                 ax.axvspan(five_res["Tb_low"], five_res["Tb_high"], alpha=0.08, color="grey", label="Deadband")
 
-                ax.set_xlabel("Temperature (°C)")
-                ax.set_ylabel("kWh")
-                ax.set_title("Measured kWh and model fits (3p vs 5p)")
+                ax.set_xlabel("Temperature")
+                ax.set_ylabel("Energy")
+                ax.set_title("Measured Energy and model fits (3p vs 5p)")
                 ax.grid(True)
                 ax.legend()
                 st.pyplot(fig)
