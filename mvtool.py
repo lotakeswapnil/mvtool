@@ -401,11 +401,6 @@ elif st.session_state.mode == "manual":
 
 
 
-
-
-
-
-
     elif st.session_state.yes_no == 'yes':
 
         if st.button("Back to Weather Data selection"):
