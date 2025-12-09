@@ -203,7 +203,7 @@ elif st.session_state.mode == "manual":
                     else:
                         st.success("Fetched weather data")
                         #st.json(meta)
-                        st.write(df_weather)
+                        #st.write(df_weather)
 
                         df = df_weather.copy()
 
@@ -216,9 +216,6 @@ elif st.session_state.mode == "manual":
                             .mean(numeric_only=True)
                             .reset_index()
                         )
-
-                        # Convert period back to timestamp (optional)
-                        #df_monthly["month"] = df_monthly["month"].dt.to_timestamp()
 
                         st.write(df_monthly)
 
