@@ -131,14 +131,14 @@ elif st.session_state.mode == "manual":
         if st.session_state.temp is None:
             st.markdown('Does you data include Temperature or an Independent Variable?')
 
-            col1, col2 = st.columns([0.5, 0.5])
+            temp1, temp2 = st.columns([0.5, 0.5])
 
-            with col1:
+            with temp1:
                 if st.button('Temperature'):
                     st.session_state.temp = 'yes'
                     st.rerun()
 
-            with col2:
+            with temp2:
                 if st.button('Independent Variable'):
                     st.session_state.temp = 'no'
                     st.rerun()
