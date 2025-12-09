@@ -296,6 +296,10 @@ elif st.session_state.mode == "manual":
 
         if st.session_state.manual_data == 'temp':
 
+            if st.button("Back to Temperature or Variable selection"):
+                st.session_state.manual_data = None
+                st.rerun()
+
             # Build column names automatically
 
             col_names = ["Energy","Temperature"]  # first column fixed
