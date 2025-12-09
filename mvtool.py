@@ -106,7 +106,7 @@ if st.session_state.mode == "upload":
             energy_data = st.text_input('Energy column name')
 
 
-            if temp_data is not None and energy_data is not None:
+            if temp_data != '' and energy_data != '':
                 # Sidebar settings
                 st.sidebar.header("Model settings")
                 Tmin = st.sidebar.number_input("Search Tmin (°C)", value=float(np.floor(df[temp_data].min())))
@@ -191,7 +191,7 @@ if st.session_state.mode == "upload":
                     ax.legend()
                     st.pyplot(fig)
 
-            if temp_data is None and energy_data is None:
+            if temp_data == '' and energy_data == '':
                 None
 
 
