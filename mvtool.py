@@ -122,36 +122,61 @@ elif st.session_state.mode == "manual":
             st.session_state.yes_no = None
             st.rerun()
 
-        # Ask for number of rows & columns
-        num_cols = st.number_input("Number of Independent Variables: ", 0, 10, 3)
 
-        # Build column names automatically
-        col_names = ["Dependent Variable"]  # first column fixed
-        input_valid = True  # flag to track if all names are filled
+        # --- Create session-state variable for Manual Mode---
+        if "temp" not in st.session_state:
+            st.session_state.temp = None
 
-        # Generate independent variable labels
-        for i in range(1, num_cols + 1):
-            dependent = st.text_input(f'Independent Variable {i}:', key=f"var_{i}")
+        # --- Display Start Buttons ---
+        if st.session_state.temp is None:
+            st.markdown('Does you data include Temperature or an Independent Variable?')
 
-            # If blank, trigger error and mark input as invalid
-            if dependent.strip() == "":
-                st.error(f'Independent Variable {i} cannot be blank.')
-                input_valid = False
+            col1, col2 = st.columns([0.05, 0.5])
 
-            col_names.append(dependent)
+            with col1:
+                if st.button('Temperature'):
+                    st.session_state.temp = 'yes'
+                    st.rerun()
 
-        # Only proceed if all variable names are valid
-        if input_valid:
-            df_empty = pd.DataFrame("", index=range(1), columns=col_names)
+            with col2:
+                if st.button('Independent Variable'):
+                    st.session_state.yes_no = 'no'
+                    st.rerun()
 
-            st.subheader('Enter Data Below:')
-            edited_df = st.data_editor(df_empty, num_rows="dynamic")
+        if st.session_state.temp == 'no':
 
-            if st.button('Create Data'):
-                st.success('Generated Data:')
-                st.dataframe(edited_df)
-        else:
-            st.info('Please complete all Independent Variable names.')
+            # Ask for number of rows & columns
+            num_cols = st.number_input("Number of Independent Variables: ", 0, 10, 3)
+
+            # Build column names automatically
+            col_names = ["Dependent Variable"]  # first column fixed
+            input_valid = True  # flag to track if all names are filled
+
+            # Generate independent variable labels
+            for i in range(1, num_cols + 1):
+                dependent = st.text_input(f'Independent Variable {i}:', key=f"var_{i}")
+
+                # If blank, trigger error and mark input as invalid
+                if dependent.strip() == "":
+                    st.error(f'Independent Variable {i} cannot be blank.')
+                    input_valid = False
+
+                col_names.append(dependent)
+
+            # Only proceed if all variable names are valid
+            if input_valid:
+                df_empty = pd.DataFrame("", index=range(1), columns=col_names)
+
+                st.subheader('Enter Data Below:')
+                final_df = st.data_editor(df_empty, num_rows="dynamic")
+                st.dataframe(final_df)
+
+            else:
+                st.info('Please complete all Independent Variable names.')
+
+        if st.session_state.temp == 'yes':
+
+
 
 
     elif st.session_state.yes_no == 'yes':
@@ -169,9 +194,7 @@ elif st.session_state.mode == "manual":
 
         manual_df = st.data_editor(empty_df, num_rows="dynamic")
 
-
-
-
+        # Fetch Weather Data
         interval_dict = {'Hourly', 'Daily', 'Monthly'}
         weather_interval = st.selectbox('Select Interval', interval_dict)
 
@@ -227,12 +250,10 @@ elif st.session_state.mode == "manual":
                             # Group by month and compute averages
                             df_weather_final = (df.groupby("month").mean(numeric_only=True).reset_index())
 
-                        st.write(df_weather_final)
 
                         st.subheader("Combined Dependent Variable and Weather Data")
                         final_df = pd.concat([manual_df, df_weather_final], axis=1)
                         st.dataframe(final_df)
-                        #st.write(final_df)
 
 
 
