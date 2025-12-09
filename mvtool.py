@@ -227,8 +227,7 @@ elif st.session_state.mode == "manual":
 
                         st.write(df_weather_final)
 
-        df = pd.concat([manual_df, df_weather_final]),axis=1
-        st.write(df)
+        st.write(pd.concat([manual_df, df_weather_final],axis=1))
 
 
 
