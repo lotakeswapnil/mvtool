@@ -309,7 +309,7 @@ elif st.session_state.mode == "manual":
                     y = final_df['Energy']
 
                     model = model_dict[model_list]()
-                    model.fit(X, y_t)
+                    model.fit(X, y)
                     preds = model.predict(X)
                     regression = model.score(X, y)
                     cvrmse = root_mean_squared_error(y, preds) / y.mean()
