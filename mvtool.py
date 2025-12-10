@@ -15,6 +15,7 @@ from weather import make_openmeteo_client, fetch_openmeteo_archive
 
 st.title('Energy M&V Tool')
 
+st.sidebar.header("Menu")
 
 # --- Create session-state variable ---
 if "mode" not in st.session_state:
@@ -45,7 +46,8 @@ if st.session_state.mode is None:
 
 elif st.session_state.mode == "upload":
 
-    if st.button("Back to Menu"):
+
+    if st.sidebar.button("Back to Main Menu"):
         st.session_state.mode = None
         st.rerun()
 
