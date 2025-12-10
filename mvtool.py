@@ -499,19 +499,21 @@ elif st.session_state.mode == "manual":
             # -------------------------
             T_plot = np.linspace(final_df['Temperature'].min(), final_df['Temperature'].max(), 400)
 
-            Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"])
-            Y5_plot = predict_5p_for_plot(T_plot, five_res["Tb_low"], five_res["Tb_high"], five_res["model"])
 
             fig, ax = plt.subplots(figsize=(9, 5))
             ax.scatter(final_df['Temperature'], final_df['Energy'], label="Measured kWh", s=50)
 
             if model_choice == "3-parameter":
+                Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"])
                 ax.plot(T_plot, Y3_plot, label="3-parameter", linewidth=2.5)
 
             elif model_choice == "5-parameter":
+                Y5_plot = predict_5p_for_plot(T_plot, five_res["Tb_low"], five_res["Tb_high"], five_res["model"])
                 ax.plot(T_plot, Y5_plot, label="5-parameter", linewidth=2.5)
 
             else:  # Both
+                Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"])
+                Y5_plot = predict_5p_for_plot(T_plot, five_res["Tb_low"], five_res["Tb_high"], five_res["model"])
                 ax.plot(T_plot, Y3_plot, label="3-parameter", linewidth=2.5)
                 ax.plot(T_plot, Y5_plot, label="5-parameter", linewidth=2.5)
 
