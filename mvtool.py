@@ -309,7 +309,7 @@ elif st.session_state.mode == "manual":
 
             empty_df = pd.DataFrame({
                                         "Energy": pd.Series([198,195,195,205,220,240,270,300,330], dtype=float),
-                                        "Temperature (°C)": pd.Series([12.0,15.0,18.0,20.0,22.0,25.0,28.0,30.0,33.0], dtype=float)
+                                        "Temperature": pd.Series([12.0,15.0,18.0,20.0,22.0,25.0,28.0,30.0,33.0], dtype=float)
                                     })
 
 
