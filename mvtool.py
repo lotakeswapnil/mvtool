@@ -51,7 +51,7 @@ if st.session_state.mode == "upload":
     if uploaded:
 
         df = pd.read_csv(uploaded)
-        st.write('Preview:', df.head())
+        st.write('### Preview:', df.head())
 
         data_ind_var = st.selectbox('Select Independent Variable Type', {'Temperature', 'Independent Variable'})
 
@@ -97,9 +97,6 @@ if st.session_state.mode == "upload":
         # -------------------------
 
         if data_ind_var == 'Temperature':
-
-            st.write("### Sample data")
-            st.dataframe(df)
 
             temp_data = st.text_input('Temperature column name')
             energy_data = st.text_input('Energy column name')
