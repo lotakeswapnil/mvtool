@@ -285,14 +285,14 @@ elif st.session_state.mode == "manual":
 
             # Generate independent variable labels
             for i in range(1, num_cols + 1):
-                dependent = st.text_input(f'Independent Variable {i}:', key=f"ind_var_{i}")
+                independent = st.text_input(f'Independent Variable {i}:', key=f"ind_var_{i}")
 
                 # If blank, trigger error and mark input as invalid
-                if dependent.strip() == "":
+                if independent.strip() == "":
                     st.error(f'Independent Variable {i} cannot be blank.')
                     input_valid = False
 
-                col_names.append(dependent)
+                col_names.append(independent)
 
             # Only proceed if all variable names are valid
             if input_valid:
