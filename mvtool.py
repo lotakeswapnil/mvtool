@@ -307,7 +307,7 @@ elif st.session_state.mode == "manual":
 
             # Build column names automatically
 
-            empty_df = pd.DataFrame({'Energy':'','Temperature':''},dtype=float)
+            empty_df = pd.DataFrame({'Energy':'','Temperature':''})
 
 
             st.write('#### Enter Energy Data Below:')
