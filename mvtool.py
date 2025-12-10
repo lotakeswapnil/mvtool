@@ -338,7 +338,7 @@ elif st.session_state.mode == "manual":
                     # -----------------------------------------------------------------
 
                     # ---------- MODIFIED MINIMALLY: use the list instead of single var ----------
-                    X = df[independent]  # <- works for 1 or many variables
+                    X = fina_df[independent]  # <- works for 1 or many variables
                     # ------------------------------------------------------------------------------
                     y = final_df['Energy']
 
