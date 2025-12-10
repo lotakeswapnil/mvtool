@@ -470,9 +470,28 @@ elif st.session_state.mode == "manual":
             # -------------------------
             st.write("## Model Results")
 
-            col1, col2 = st.columns(2)
 
-            if model_choice in ["3-parameter", "Both"]:
+
+            if model_choice in ["3-parameter"]:
+                st.subheader("3-Parameter Model")
+                st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
+                st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
+                st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
+                st.write(f"**RMSE:** {three_res['rmse']:.2f}")
+                st.write(f"**R²:** {three_res['r2']:.2f}")
+
+            if model_choice in ["5-parameter"]:
+                st.subheader("5-Parameter Model")
+                st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °C")
+                st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °C")
+                st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
+                st.write(f"**β_h:** {five_res['model'].coef_[0]:.2f}")
+                st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
+                st.write(f"**RMSE:** {five_res['rmse']:.2f}")
+                st.write(f"**R²:** {five_res['r2']:.2f}")
+
+            if model_choice in ["Both"]:
+                col1, col2 = st.columns(2)
                 with col1:
                     st.subheader("3-Parameter Model")
                     st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
@@ -480,8 +499,6 @@ elif st.session_state.mode == "manual":
                     st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
                     st.write(f"**RMSE:** {three_res['rmse']:.2f}")
                     st.write(f"**R²:** {three_res['r2']:.2f}")
-
-            if model_choice in ["5-parameter", "Both"]:
                 with col2:
                     st.subheader("5-Parameter Model")
                     st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °C")
@@ -491,6 +508,7 @@ elif st.session_state.mode == "manual":
                     st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
                     st.write(f"**RMSE:** {five_res['rmse']:.2f}")
                     st.write(f"**R²:** {five_res['r2']:.2f}")
+
 
 
             # -------------------------
