@@ -336,7 +336,7 @@ elif st.session_state.mode == "manual":
 
                     independent = [
                         globals()[f"ind_var_{i}"]
-                        for i in range(1, num_var + 1)
+                        for i in range(1, num_cols + 1)
                         if globals()[f"ind_var_{i}"] in df.columns
                     ]
 
