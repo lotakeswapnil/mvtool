@@ -285,7 +285,7 @@ elif st.session_state.mode == "manual":
 
             # Generate independent variable labels
             for i in range(1, num_cols + 1):
-                dependent = st.text_input(f'Independent Variable {i}:', key=f"var_{i}")
+                dependent = st.text_input(f'Independent Variable {i}:', key=f"ind_var_{i}")
 
                 # If blank, trigger error and mark input as invalid
                 if dependent.strip() == "":
@@ -306,8 +306,8 @@ elif st.session_state.mode == "manual":
                 model_list = st.selectbox('Select models', model_dict)
 
                 if st.button('Run Regression'):
-                    X = df[globals()[f'ind_var_{i}']].to_frame()
-                    y = df[energy_cons]
+                    X = final_df[globals()[f'ind_var_{i}']].to_frame()
+                    y = final_df['Energy']
                     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
                     model = model_dict[model_list]()
