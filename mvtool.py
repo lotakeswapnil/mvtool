@@ -333,10 +333,7 @@ elif st.session_state.mode == "manual":
 
                 if st.button('Run Regression'):
                     # ---------- ADDED: build list of independent variables ----------
-                    independent = [
-                        globals()[f"ind_var_{j}"]
-                        for j in range(1, num_var + 1)
-                        if globals()[f"ind_var_{j}"] in df.columns
+
                     ]
                     # -----------------------------------------------------------------
 
