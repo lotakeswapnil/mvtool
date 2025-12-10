@@ -313,7 +313,7 @@ elif st.session_state.mode == "manual":
 
             st.write('#### Enter Energy Data Below:')
 
-            final_df = st.data_editor(empty_df, num_rows='dynamic')
+            final_df = st.data_editor(empty_df, num_rows='dynamic', column_config={"Temperature": st.column_config.NumberColumn("Temperature (°C)", format="%.2f")})
 
             # -------------------------
             # DEFAULT MODEL SETTINGS
