@@ -135,16 +135,10 @@ if st.session_state.mode == "upload":
                 # -------------------------
                 st.write("## Model Equations")
 
-                st.latex(r"""
-                \textbf{3-Parameter Model:} \quad
-                \text{kWh} = \beta_0 + \beta_1 \cdot \max(0, T - T_b)
-                """)
+                st.latex(fr"\text{{kWh}} = {three_res['model'].intercept_:.2f} + {three_res['model'].coef_[0]:.2f}\,\max(0,\,T - {three_res['Tb']:.2f})")
 
-                st.latex(r"""
-                \textbf{5-Parameter Model (Deadband):} \quad
-                \text{kWh} = \beta_0 + \beta_h \cdot \max(0, T_b^{low} - T)
-                + \beta_c \cdot \max(0, T - T_b^{high})
-                """)
+                st.latex(fr"\text{{kWh}} = {five_res['model'].intercept_:.2f} + {five_res['model'].coef_[0]:.2f}\,\max(0,\,{five_res['Tb_low']:.2f} - T) + {five_res['model'].coef_[1]:.2f}\,\max(0,\,T - {five_res['Tb_high']:.2f})")
+
 
                 # -------------------------
                 # DISPLAY RESULTS
