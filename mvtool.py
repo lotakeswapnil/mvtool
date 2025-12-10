@@ -307,7 +307,7 @@ elif st.session_state.mode == "manual":
 
         if st.session_state.manual_data == 'temp':
 
-            if st.button("Back to Temperature or Variable selection"):
+            if st.sidebar.button("Back to Temperature or Variable selection"):
                 st.session_state.manual_data = None
                 st.rerun()
 
@@ -417,7 +417,7 @@ elif st.session_state.mode == "manual":
 
     elif st.session_state.yes_no == 'yes':
 
-        if st.button("Back to Weather Data selection"):
+        if st.sidebar.button("Back to Weather Data selection"):
             st.session_state.yes_no = None
             st.rerun()
 
