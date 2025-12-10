@@ -110,22 +110,22 @@ if st.session_state.mode == "upload":
                 # DEFAULT MODEL SETTINGS
                 # (No sidebar; automatic)
                 # -------------------------
-                Tmin = float(np.floor(df["temp_C"].min()))
-                Tmax = float(np.ceil(df["temp_C"].max()))
+                Tmin = float(np.floor(df[temp_data].min()))
+                Tmax = float(np.ceil(df[temp_data].max()))
                 step = 1.0
                 rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
 
                 # -------------------------
                 # RUN MODELS
                 # -------------------------
-                temp = df["temp_C"].values
-                kwh = df["kwh"].values
+                temp = df[temp_data].values
+                kwh = df[energy_data].values
 
                 with st.spinner("Running change-point models..."):
                     three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step)
                     five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
 
-                mean_kwh = float(df["kwh"].mean())
+                mean_kwh = float(df[energy_data].mean())
                 preferred_label, preferred_result = select_model_by_rmse_r2(
                     three_res, five_res, rel_tol_pct, mean_kwh
                 )
@@ -160,13 +160,13 @@ if st.session_state.mode == "upload":
                 # -------------------------
                 # PLOT MODELS
                 # -------------------------
-                T_plot = np.linspace(df["temp_C"].min(), df["temp_C"].max(), 400)
+                T_plot = np.linspace(df[temp_data].min(), df[temp_data].max(), 400)
 
                 Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"])
                 Y5_plot = predict_5p_for_plot(T_plot, five_res["Tb_low"], five_res["Tb_high"], five_res["model"])
 
                 fig, ax = plt.subplots(figsize=(9, 5))
-                ax.scatter(df["temp_C"], df["kwh"], label="Measured kWh", s=50)
+                ax.scatter(df[temp_data], df[energy_data], label="Measured kWh", s=50)
 
                 if preferred_label == "3-parameter":
                     ax.plot(T_plot, Y3_plot, label="3-parameter (preferred)", linewidth=2.5)
