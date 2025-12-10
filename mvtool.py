@@ -73,6 +73,7 @@ elif st.session_state.mode == "upload":
             for i in range(1,num_var+1):
                 globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
 
+
             model_dict = {'Linear Regression': LinearRegression, 'Ridge Regression': Ridge, 'Lasso Regression': Lasso}
             model_list = st.selectbox('Select models', model_dict)
 
@@ -81,7 +82,18 @@ elif st.session_state.mode == "upload":
                     if globals()[f"ind_var_{i}"] not in df.columns:
                         st.error(f"Variable '{globals()[f'ind_var_{i}']}' not found in the uploaded CSV.")
                     else:
-                        X = df[globals()[f'ind_var_{i}']].to_frame()
+                        # ---------- ADDED: build list of independent variables ----------
+                        independent = [
+                            globals()[f"ind_var_{j}"]
+                            for j in range(1, num_var + 1)
+                            if globals()[f"ind_var_{j}"] in df.columns
+                        ]
+                        # -----------------------------------------------------------------
+
+                        # ---------- MODIFIED MINIMALLY: use the list instead of single var ----------
+                        X = df[independent]  # <- works for 1 or many variables
+                        # ------------------------------------------------------------------------------
+
                         y = df[energy_cons]
 
                         model = model_dict[model_list]()
@@ -94,22 +106,19 @@ elif st.session_state.mode == "upload":
                         st.write(f'CVRMSE: {cvrmse:.2%}')
                         st.line_chart(pd.DataFrame({'Actual': y, 'Predicted': preds}).reset_index(drop=True))
 
-                        # ---- Show regression equation ----
+                        # ---------- ADDED: Regression Equation Display ----------
                         coef = model.coef_
                         intercept = model.intercept_
 
-                        # If only one independent variable
-                        if len(independent) == 1:
-                            var = independent[0]
-                            equation = f"Energy = {intercept:.4f} + {coef[0]:.4f} × {var}"
-
-                        # For multiple variables (if `independent` is a list)
-                        else:
-                            terms = [f"{coef[i]:.4f} × {independent[i]}" for i in range(len(independent))]
-                            equation = "Energy = {:.4f} + ".format(intercept) + " + ".join(terms)
+                        equation_latex = (
+                                "Energy = " +
+                                f"{intercept:.4f} + " +
+                                " + ".join([f"{coef[k]:.4f} \\times {independent[k]}" for k in range(len(independent))])
+                        )
 
                         st.subheader("Regression Equation")
-                        st.latex(equation.replace("×", "\\times "))
+                        st.latex(equation_latex)
+                        # --------------------------------------------------------
 
                 else:
                     st.error('All variables not defined.')
