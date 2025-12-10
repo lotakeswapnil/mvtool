@@ -164,10 +164,10 @@ elif st.session_state.mode == "upload":
                 st.write("## Model Equations")
 
                 st.write('### 3-parameter:')
-                st.latex(fr"\text{{kWh}} = {three_res['model'].intercept_:.2f} + {three_res['model'].coef_[0]:.2f}\,\max(0,\,T - {three_res['Tb']:.2f})")
+                st.latex(fr"\text{{Energy}} = {three_res['model'].intercept_:.2f} + {three_res['model'].coef_[0]:.2f}\,\max(0,\,T - {three_res['Tb']:.2f})")
 
                 st.write('### 5-parameter:')
-                st.latex(fr"\text{{kWh}} = {five_res['model'].intercept_:.2f} + {five_res['model'].coef_[0]:.2f}\,\max(0,\,{five_res['Tb_low']:.2f} - T) + {five_res['model'].coef_[1]:.2f}\,\max(0,\,T - {five_res['Tb_high']:.2f})")
+                st.latex(fr"\text{{Energy}} = {five_res['model'].intercept_:.2f} + {five_res['model'].coef_[0]:.2f}\,\max(0,\,{five_res['Tb_low']:.2f} - T) + {five_res['model'].coef_[1]:.2f}\,\max(0,\,T - {five_res['Tb_high']:.2f})")
 
 
                 # -------------------------
@@ -206,7 +206,7 @@ elif st.session_state.mode == "upload":
                 Y5_plot = predict_5p_for_plot(T_plot, five_res["Tb_low"], five_res["Tb_high"], five_res["model"])
 
                 fig, ax = plt.subplots(figsize=(9, 5))
-                ax.scatter(df[temp_data], df[energy_data], label="Measured kWh", s=50)
+                ax.scatter(df[temp_data], df[energy_data], label="Measured Energy", s=50)
 
                 if preferred_label == "3-parameter":
                     ax.plot(T_plot, Y3_plot, label="3-parameter (preferred)", linewidth=2.5)
@@ -219,7 +219,7 @@ elif st.session_state.mode == "upload":
                 ax.axvspan(five_res["Tb_low"], five_res["Tb_high"], alpha=0.08, color="gray", label="Deadband")
 
                 ax.set_xlabel("Temperature (°C)")
-                ax.set_ylabel("kWh")
+                ax.set_ylabel("Energy")
                 ax.set_title("3-Parameter vs 5-Parameter Change-Point Models")
                 ax.legend()
                 ax.grid(True)
@@ -452,14 +452,14 @@ elif st.session_state.mode == "manual":
             if model_choice in ["3-parameter", "Both"]:
                 st.write('### 3-parameter:')
                 st.latex(
-                    fr"\text{{kWh}} = {three_res['model'].intercept_:.2f} + "
+                    fr"\text{{Energy}} = {three_res['model'].intercept_:.2f} + "
                     fr"{three_res['model'].coef_[0]:.2f}\,\max(0,\,T - {three_res['Tb']:.2f})"
                 )
 
             if model_choice in ["5-parameter", "Both"]:
                 st.write('### 5-parameter:')
                 st.latex(
-                    fr"\text{{kWh}} = {five_res['model'].intercept_:.2f} + "
+                    fr"\text{{Energy}} = {five_res['model'].intercept_:.2f} + "
                     fr"{five_res['model'].coef_[0]:.2f}\,\max(0,\,{five_res['Tb_low']:.2f} - T) + "
                     fr"{five_res['model'].coef_[1]:.2f}\,\max(0,\,T - {five_res['Tb_high']:.2f})"
                 )
@@ -515,7 +515,7 @@ elif st.session_state.mode == "manual":
 
 
             fig, ax = plt.subplots(figsize=(9, 5))
-            ax.scatter(final_df['Temperature'], final_df['Energy'], label="Measured kWh", s=50)
+            ax.scatter(final_df['Temperature'], final_df['Energy'], label="Measured Energy", s=50)
 
             if model_choice == "3-parameter":
                 Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"])
@@ -536,7 +536,7 @@ elif st.session_state.mode == "manual":
                 ax.axvspan(five_res["Tb_low"], five_res["Tb_high"], alpha=0.08, color="gray", label="Deadband")
 
             ax.set_xlabel("Temperature (°C)")
-            ax.set_ylabel("kWh")
+            ax.set_ylabel("Energy")
             ax.set_title("3-Parameter vs 5-Parameter Change-Point Models")
             ax.legend()
             ax.grid(True)
@@ -672,14 +672,14 @@ elif st.session_state.mode == "manual":
                         if model_choice in ["3-parameter", "Both"]:
                             st.write('### 3-parameter:')
                             st.latex(
-                                    fr"\text{{kWh}} = {three_res['model'].intercept_:.2f} + "
+                                    fr"\text{{Energy}} = {three_res['model'].intercept_:.2f} + "
                                     fr"{three_res['model'].coef_[0]:.2f}\,\max(0,\,T - {three_res['Tb']:.2f})"
                                     )
 
                         if model_choice in ["5-parameter", "Both"]:
                             st.write('### 5-parameter:')
                             st.latex(
-                                    fr"\text{{kWh}} = {five_res['model'].intercept_:.2f} + "
+                                    fr"\text{{Energy}} = {five_res['model'].intercept_:.2f} + "
                                     fr"{five_res['model'].coef_[0]:.2f}\,\max(0,\,{five_res['Tb_low']:.2f} - T) + "
                                     fr"{five_res['model'].coef_[1]:.2f}\,\max(0,\,T - {five_res['Tb_high']:.2f})"
                                     )
@@ -733,7 +733,7 @@ elif st.session_state.mode == "manual":
                         T_plot = np.linspace(final_df['temperature'].min(), final_df['temperature'].max(), 400)
 
                         fig, ax = plt.subplots(figsize=(9, 5))
-                        ax.scatter(final_df['temperature'], final_df['Energy'], label="Measured kWh", s=50)
+                        ax.scatter(final_df['temperature'], final_df['Energy'], label="Measured Energy", s=50)
 
                         if model_choice == "3-parameter":
                             Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"])
@@ -755,7 +755,7 @@ elif st.session_state.mode == "manual":
                             ax.axvspan(five_res["Tb_low"], five_res["Tb_high"], alpha=0.08, color="gray", label="Deadband")
 
                         ax.set_xlabel("Temperature (°C)")
-                        ax.set_ylabel("kWh")
+                        ax.set_ylabel("Energy")
                         ax.set_title("3-Parameter vs 5-Parameter Change-Point Models")
                         ax.legend()
                         ax.grid(True)
