@@ -46,11 +46,10 @@ if st.session_state.mode is None:
 
 elif st.session_state.mode == "upload":
 
-    # --- Sidebar Back Button (only after a mode is selected) ---
-    if st.session_state.mode is not None:
-        if st.sidebar.button("Back to Main Menu"):
-            st.session_state.mode = None
-            st.rerun()
+
+    if st.sidebar.button("Back to Main Menu"):
+        st.session_state.mode = None
+        st.rerun()
 
     st.subheader('Upload Data (CSV)')
     uploaded = st.file_uploader('', type="csv", label_visibility='collapsed')
