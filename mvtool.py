@@ -306,26 +306,20 @@ elif st.session_state.mode == "manual":
                 model_list = st.selectbox('Select models', model_dict)
 
                 if st.button('Run Regression'):
-                    if energy_cons is not None and globals()[f"ind_var_{i}"] != "":
-                        if globals()[f"ind_var_{i}"] not in df.columns:
-                            st.error(f"Variable '{globals()[f'ind_var_{i}']}' not found in the uploaded CSV.")
-                        else:
-                            X = df[globals()[f'ind_var_{i}']].to_frame()
-                            y = df[energy_cons]
-                            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+                    X = df[globals()[f'ind_var_{i}']].to_frame()
+                    y = df[energy_cons]
+                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-                            model = model_dict[model_list]()
-                            model.fit(X_train, y_train)
-                            preds = model.predict(X_test)
-                            regression = model.score(X_test, y_test)
-                            cvrmse = root_mean_squared_error(y_test, preds) / y_test.mean()
+                    model = model_dict[model_list]()
+                    model.fit(X_train, y_train)
+                    preds = model.predict(X_test)
+                    regression = model.score(X_test, y_test)
+                    cvrmse = root_mean_squared_error(y_test, preds) / y_test.mean()
 
-                            st.write(f'Regression: {regression:.2%}')
-                            st.write(f'CVRMSE: {cvrmse:.2%}')
-                            st.line_chart(pd.DataFrame({'Actual': y_test, 'Predicted': preds}).reset_index(drop=True))
+                    st.write(f'Regression: {regression:.2%}')
+                    st.write(f'CVRMSE: {cvrmse:.2%}')
+                    st.line_chart(pd.DataFrame({'Actual': y_test, 'Predicted': preds}).reset_index(drop=True))
 
-                    else:
-                        st.error('All variables not defined.')
 
             else:
                 st.info('Please complete all Independent Variable names.')
