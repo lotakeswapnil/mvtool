@@ -428,8 +428,14 @@ elif st.session_state.mode == "manual":
         interval_dict = {'Hourly', 'Daily', 'Monthly'}
         weather_interval = st.selectbox('Select Interval', interval_dict)
 
-        lat = st.number_input("Latitude", format="%.4f")
-        lon = st.number_input("Longitude", format="%.4f")
+        lat, lon = st.columns(2)
+
+        with lat:
+            lat = st.number_input("Latitude", format="%.4f")
+
+        with lon:
+            lon = st.number_input("Longitude", format="%.4f")
+
         start_date = st.date_input("Start date", value=date.today().replace(year=date.today().year-1).replace(day=date.today().day-1))
         end_date = st.date_input("End date", value=date.today().replace(day=date.today().day-2))
         var = "temperature"   # or let user pick
