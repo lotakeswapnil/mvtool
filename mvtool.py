@@ -442,7 +442,7 @@ elif st.session_state.mode == "manual":
 
 
             mean_kwh = float(final_df['Energy'].mean())
-            preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct, mean_kwh)
+            #preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct, mean_kwh)
 
             # -------------------------
             # EQUATION DISPLAY
