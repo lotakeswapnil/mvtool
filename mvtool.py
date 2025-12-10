@@ -447,7 +447,6 @@ elif st.session_state.mode == "manual":
             # -------------------------
             # EQUATION DISPLAY
             # -------------------------
-            st.write("## Model Equations")
 
             st.write("## Model Equations")
 
@@ -472,6 +471,9 @@ elif st.session_state.mode == "manual":
             st.write("## Model Results")
 
             if model_choice in ["3-parameter", "Both"]:
+
+                col1, col2 = st.columns(2)
+
                 with col1:
                     st.subheader("3-Parameter Model")
                     st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
