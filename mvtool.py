@@ -418,7 +418,7 @@ elif st.session_state.mode == "manual":
 
         # Build column names automatically
         col_names = ["Energy"]  # first column fixed
-        empty_df = pd.DataFrame("", index=range(0), columns=col_names)
+        empty_df = pd.DataFrame({"Energy": pd.Series([0], dtype=float))
 
         st.write('#### Enter Dependent Variable Below:')
 
