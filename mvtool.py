@@ -316,12 +316,12 @@ elif st.session_state.mode == "manual":
             #final_df = st.dataframe(edited_df)
 
             # Sidebar settings
-            st.sidebar.header("Model settings")
-            Tmin = st.sidebar.number_input("Search Tmin (°C)",value=float(np.floor(final_df['Temperature'].min())))
-            Tmax = st.sidebar.number_input("Search Tmax (°C)",value=float(np.ceil(final_df['Temperature'].max())))
-            step = st.sidebar.number_input("Search step (°C)", value=1.0, step=0.5)
-            rel_tol_pct = st.sidebar.slider("RMSE tie tolerance (%)", min_value=0.0, max_value=5.0,value=0.1, step=0.1)
-            run_button = st.sidebar.button("Run models")
+            #st.sidebar.header("Model settings")
+            #Tmin = st.sidebar.number_input("Search Tmin (°C)",value=float(np.floor(final_df['Temperature'].min())))
+            #Tmax = st.sidebar.number_input("Search Tmax (°C)",value=float(np.ceil(final_df['Temperature'].max())))
+            #step = st.sidebar.number_input("Search step (°C)", value=1.0, step=0.5)
+            #rel_tol_pct = st.sidebar.slider("RMSE tie tolerance (%)", min_value=0.0, max_value=5.0,value=0.1, step=0.1)
+            #run_button = st.sidebar.button("Run models")
 
             # Always run (or use run_button if you prefer explicit trigger)
             if run_button or True:
