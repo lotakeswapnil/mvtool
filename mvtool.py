@@ -277,7 +277,7 @@ elif st.session_state.mode == "manual":
                 st.rerun()
 
             # Ask for number of rows & columns
-            num_cols = st.number_input("Number of Independent Variables: ", 0, 10, 3)
+            num_cols = st.number_input("Number of Independent Variables: ", 0, 10, 1)
 
             # Build column names automatically
             col_names = ["Energy"]  # first column fixed
