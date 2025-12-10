@@ -26,25 +26,24 @@ if "mode" not in st.session_state:
 if st.session_state.mode is None:
     st.subheader('Select Any One of the Options')
 
-man,up = st.columns(2)
+if st.session_state.mode is None:
+    man, up = st.columns(2)
 
-with man:
-    if st.button("Enter Data (Manual)"):
-        st.session_state.mode = "manual"
-        st.rerun()
+    with man:
+        if st.button("Enter Data (Manual)"):
+            st.session_state.mode = "manual"
+            st.rerun()
 
-with up:
-    if st.button("Upload Data (CSV)"):
-        st.session_state.mode = "upload"
-        st.rerun()
-
-
+    with up:
+        if st.button("Upload Data (CSV)"):
+            st.session_state.mode = "upload"
+            st.rerun()
 
 # -------------------------
 # UPLOAD DATA MODE
 # -------------------------
 
-if st.session_state.mode == "upload":
+elif st.session_state.mode == "upload":
 
     if st.button("Back to Menu"):
         st.session_state.mode = None
