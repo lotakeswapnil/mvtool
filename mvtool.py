@@ -321,6 +321,32 @@ elif st.session_state.mode == "manual":
             final_df = st.data_editor(empty_df, num_rows='dynamic')
 
             # -------------------------
+            # VALIDATE USER INPUT
+            # -------------------------
+
+            # Check for empty DataFrame
+            if len(final_df) == 0 or final_df.isna().all().all():
+                st.error("Please enter at least one row of Energy and Temperature data.")
+                st.stop()
+
+            # Check for missing values
+            if final_df.isna().any().any():
+                st.error("Some cells are empty. Please fill in all Energy and Temperature values.")
+                st.stop()
+
+            # Check for numeric values
+            try:
+                final_df = final_df.astype(float)
+            except ValueError:
+                st.error("All values must be numeric. Please correct invalid entries.")
+                st.stop()
+
+            # Check minimum dataset size for regression
+            if len(final_df) < 2:
+                st.error("At least two data points are required to fit a model.")
+                st.stop()
+
+            # -------------------------
             # DEFAULT MODEL SETTINGS
             # (No sidebar; automatic)
             # -------------------------
