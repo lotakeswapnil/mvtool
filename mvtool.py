@@ -307,8 +307,7 @@ elif st.session_state.mode == "manual":
 
             # Build column names automatically
 
-            col_names = ["Energy","Temperature"]  # first column fixed
-            empty_df = pd.DataFrame("", index=range(0), columns=col_names)
+            empty_df = pd.DataFrame("", index=range(0), columns=["Energy","Temperature"],dtype=float)
 
 
             st.write('#### Enter Energy Data Below:')
@@ -319,7 +318,6 @@ elif st.session_state.mode == "manual":
             # DEFAULT MODEL SETTINGS
             # (No sidebar; automatic)
             # -------------------------
-            final_df = st.dataframe(final_df)
             st.write(final_df['Temperature'].dtypes)
             final_df['Temperature'] = pd.to_numeric(final_df['Temperature'], errors='coerce')
             st.write(final_df['Temperature'].dtypes)
