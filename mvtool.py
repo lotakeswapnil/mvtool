@@ -325,6 +325,8 @@ elif st.session_state.mode == "manual":
             step = 1.0
             rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
 
+            st.write(Tmin, Tmax, step, rel_tol_pct)
+
             # -------------------------
             # RUN MODELS
             # -------------------------
