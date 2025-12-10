@@ -135,10 +135,10 @@ if st.session_state.mode == "upload":
                 # -------------------------
                 st.write("## Model Equations")
 
-                st.write('3-parameter:')
+                st.write('### 3-parameter:')
                 st.latex(fr"\text{{kWh}} = {three_res['model'].intercept_:.2f} + {three_res['model'].coef_[0]:.2f}\,\max(0,\,T - {three_res['Tb']:.2f})")
 
-                st.write('5-parameter:')
+                st.write('### 5-parameter:')
                 st.latex(fr"\text{{kWh}} = {five_res['model'].intercept_:.2f} + {five_res['model'].coef_[0]:.2f}\,\max(0,\,{five_res['Tb_low']:.2f} - T) + {five_res['model'].coef_[1]:.2f}\,\max(0,\,T - {five_res['Tb_high']:.2f})")
 
 
