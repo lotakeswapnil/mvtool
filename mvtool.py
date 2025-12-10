@@ -590,6 +590,8 @@ elif st.session_state.mode == "manual":
 
         client = get_client()
 
+        model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
+
         if st.button("Fetch Weather Data"):
             if start_date > end_date:
                 st.error("Start must be <= end")
@@ -631,7 +633,6 @@ elif st.session_state.mode == "manual":
 
                         # -------------------------
                         # DEFAULT MODEL SETTINGS
-                        # (No sidebar; automatic)
                         # -------------------------
 
                         Tmin = float(np.floor(final_df['temperature'].min()))
@@ -639,7 +640,6 @@ elif st.session_state.mode == "manual":
                         step = 1.0
                         rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
 
-                        model_choice = st.selectbox("Select Change-Point Model:",["3-parameter", "5-parameter", "Both"])
 
                         # -------------------------
                         # RUN MODELS
