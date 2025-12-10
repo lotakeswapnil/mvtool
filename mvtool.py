@@ -432,7 +432,7 @@ elif st.session_state.mode == "manual":
         lon = st.number_input("Longitude", format="%.4f")
         start_date = st.date_input("Start date", value=date.today().replace(year=date.today().year-1).replace(day=date.today().day-1))
         end_date = st.date_input("End date", value=date.today().replace(day=date.today().day-2))
-        var = "Temperature"   # or let user pick
+        var = "temperature"   # or let user pick
         which = "hourly"
 
         # create client once (you can cache it)
@@ -490,15 +490,15 @@ elif st.session_state.mode == "manual":
                         # (No sidebar; automatic)
                         # -------------------------
 
-                        Tmin = float(np.floor(final_df['Temperature'].min()))
-                        Tmax = float(np.ceil(final_df['Temperature'].max()))
+                        Tmin = float(np.floor(final_df['temperature'].min()))
+                        Tmax = float(np.ceil(final_df['temperature'].max()))
                         step = 1.0
                         rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
 
                         # -------------------------
                         # RUN MODELS
                         # -------------------------
-                        temp = final_df['Temperature'].values
+                        temp = final_df['temperature'].values
                         kwh = final_df['Energy'].values
 
                         with st.spinner("Running change-point models..."):
@@ -552,14 +552,14 @@ elif st.session_state.mode == "manual":
                         # -------------------------
                         # PLOT MODELS
                         # -------------------------
-                        T_plot = np.linspace(final_df['Temperature'].min(), final_df['Temperature'].max(), 400)
+                        T_plot = np.linspace(final_df['temperature'].min(), final_df['temperature'].max(), 400)
 
                         Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"])
                         Y5_plot = predict_5p_for_plot(T_plot, five_res["Tb_low"], five_res["Tb_high"],
                                                       five_res["model"])
 
                         fig, ax = plt.subplots(figsize=(9, 5))
-                        ax.scatter(final_df['Temperature'], final_df['Energy'], label="Measured kWh", s=50)
+                        ax.scatter(final_df['temperature'], final_df['Energy'], label="Measured kWh", s=50)
 
                         if preferred_label == "3-parameter":
                             ax.plot(T_plot, Y3_plot, label="3-parameter (preferred)", linewidth=2.5)
