@@ -22,16 +22,21 @@ if "mode" not in st.session_state:
 
 
 # --- Display Start Buttons ---
+
+man,up = st.columns(2)
+
 if st.session_state.mode is None:
     st.subheader('Select Any One of the Options')
 
-    if st.button("Enter Data (Manual)"):
-        st.session_state.mode = "manual"
-        st.rerun()
+    with man:
+        if st.button("Enter Data (Manual)"):
+            st.session_state.mode = "manual"
+            st.rerun()
 
-    if st.button("Upload Data (CSV)"):
-        st.session_state.mode = "upload"
-        st.rerun()
+    with up:
+        if st.button("Upload Data (CSV)"):
+            st.session_state.mode = "upload"
+            st.rerun()
 
 
 
