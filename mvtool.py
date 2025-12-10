@@ -578,11 +578,3 @@ elif st.session_state.mode == "manual":
                         ax.grid(True)
 
                         st.pyplot(fig)
-
-                        if temp_data == '':
-                            st.error("Please add temperature column name.")
-
-                        if energy_data == '':
-                            st.error("Please add energy column name.")
-
-
