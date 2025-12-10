@@ -65,7 +65,7 @@ elif st.session_state.mode == "upload":
         if data_ind_var == 'Independent Variable':
 
             # Target (dependent) column
-            energy_cons = st.text_input('Dependent Variable (target column name)')
+            energy_cons = st.text_input('Energy Consumption column name')
 
             # Number of independent vars
             num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
@@ -332,7 +332,17 @@ elif st.session_state.mode == "manual":
                 model_list = st.selectbox('Select models', model_dict)
 
                 if st.button('Run Regression'):
-                    X = final_df[independent].to_frame()
+                    # ---------- ADDED: build list of independent variables ----------
+                    independent = [
+                        globals()[f"ind_var_{j}"]
+                        for j in range(1, num_var + 1)
+                        if globals()[f"ind_var_{j}"] in df.columns
+                    ]
+                    # -----------------------------------------------------------------
+
+                    # ---------- MODIFIED MINIMALLY: use the list instead of single var ----------
+                    X = df[independent]  # <- works for 1 or many variables
+                    # ------------------------------------------------------------------------------
                     y = final_df['Energy']
 
                     model = model_dict[model_list]()
@@ -340,6 +350,20 @@ elif st.session_state.mode == "manual":
                     preds = model.predict(X)
                     regression = model.score(X, y)
                     cvrmse = root_mean_squared_error(y, preds) / y.mean()
+
+                    # ---------- ADDED: Regression Equation Display ----------
+                    coef = model.coef_
+                    intercept = model.intercept_
+
+                    equation_latex = (
+                            "Energy = " +
+                            f"{intercept:.4f} + " +
+                            " + ".join([f"{coef[k]:.4f} \\times {independent[k]}" for k in range(len(independent))])
+                    )
+
+                    st.subheader("Regression Equation")
+                    st.latex(equation_latex)
+                    # --------------------------------------------------------
 
                     st.write(f'Regression: {regression:.2%}')
                     st.write(f'CVRMSE: {cvrmse:.2%}')
