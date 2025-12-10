@@ -296,7 +296,7 @@ elif st.session_state.mode == "manual":
 
             # Only proceed if all variable names are valid
             if input_valid:
-                df_empty = pd.DataFrame("", index=range(1), columns=col_names)
+                df_empty = pd.DataFrame({"Energy": pd.Series([0], dtype=float)}, index=range(1), columns=col_names)
 
                 st.subheader('Enter Data Below:')
                 final_df = st.data_editor(df_empty, num_rows="dynamic")
