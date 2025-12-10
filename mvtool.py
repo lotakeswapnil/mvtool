@@ -28,15 +28,15 @@ if st.session_state.mode is None:
 
 man,up = st.columns(2)
 
-    with man:
-        if st.button("Enter Data (Manual)"):
-            st.session_state.mode = "manual"
-            st.rerun()
+with man:
+    if st.button("Enter Data (Manual)"):
+        st.session_state.mode = "manual"
+        st.rerun()
 
-    with up:
-        if st.button("Upload Data (CSV)"):
-            st.session_state.mode = "upload"
-            st.rerun()
+with up:
+    if st.button("Upload Data (CSV)"):
+        st.session_state.mode = "upload"
+        st.rerun()
 
 
 
