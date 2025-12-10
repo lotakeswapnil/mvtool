@@ -319,6 +319,7 @@ elif st.session_state.mode == "manual":
             # DEFAULT MODEL SETTINGS
             # (No sidebar; automatic)
             # -------------------------
+            st.write(final_df['Temperature'].head(10))
             final_df['Temperature'] = pd.to_numeric(final_df['Temperature'], errors='coerce')
             Tmin = float(np.floor(final_df['Temperature'].min()))
             Tmax = float(np.ceil(final_df['Temperature'].max()))
