@@ -83,17 +83,16 @@ elif st.session_state.mode == "upload":
                     else:
                         X = df[globals()[f'ind_var_{i}']].to_frame()
                         y = df[energy_cons]
-                        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
                         model = model_dict[model_list]()
-                        model.fit(X_train, y_train)
-                        preds = model.predict(X_test)
-                        regression = model.score(X_test, y_test)
-                        cvrmse = root_mean_squared_error(y_test, preds)/y_test.mean()
+                        model.fit(X, y)
+                        preds = model.predict(X)
+                        regression = model.score(X, y)
+                        cvrmse = root_mean_squared_error(y, preds)/y.mean()
 
                         st.write(f'Regression: {regression:.2%}')
                         st.write(f'CVRMSE: {cvrmse:.2%}')
-                        st.line_chart(pd.DataFrame({'Actual': y_test, 'Predicted': preds}).reset_index(drop=True))
+                        st.line_chart(pd.DataFrame({'Actual': y, 'Predicted': preds}).reset_index(drop=True))
 
                 else:
                     st.error('All variables not defined.')
@@ -308,17 +307,16 @@ elif st.session_state.mode == "manual":
                 if st.button('Run Regression'):
                     X = final_df[independent].to_frame()
                     y = final_df['Energy']
-                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
                     model = model_dict[model_list]()
-                    model.fit(X_train, y_train)
-                    preds = model.predict(X_test)
-                    regression = model.score(X_test, y_test)
-                    cvrmse = root_mean_squared_error(y_test, preds) / y_test.mean()
+                    model.fit(X, y_t)
+                    preds = model.predict(X)
+                    regression = model.score(X, y)
+                    cvrmse = root_mean_squared_error(y, preds) / y.mean()
 
                     st.write(f'Regression: {regression:.2%}')
                     st.write(f'CVRMSE: {cvrmse:.2%}')
-                    st.line_chart(pd.DataFrame({'Actual': y_test, 'Predicted': preds}).reset_index(drop=True))
+                    st.line_chart(pd.DataFrame({'Actual': y, 'Predicted': preds}).reset_index(drop=True))
 
 
             else:
