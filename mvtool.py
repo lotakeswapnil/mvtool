@@ -300,7 +300,6 @@ elif st.session_state.mode == "manual":
 
                 st.subheader('Enter Data Below:')
                 final_df = st.data_editor(df_empty, num_rows="dynamic")
-                st.dataframe(final_df)
 
             else:
                 st.info('Please complete all Independent Variable names.')
