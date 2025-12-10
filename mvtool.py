@@ -310,6 +310,9 @@ elif st.session_state.mode == "manual":
             input_valid = True  # flag to track if all names are filled
 
             # Generate independent variable labels
+            independent_vars = []
+
+            # Generate independent variable labels
             for i in range(1, num_cols + 1):
                 independent = st.text_input(f'Independent Variable {i}:', key=f"ind_var_{i}")
 
@@ -319,6 +322,7 @@ elif st.session_state.mode == "manual":
                     input_valid = False
 
                 col_names.append(independent)
+                independent_vars.append(independent)
 
             # Only proceed if all variable names are valid
             if input_valid:
@@ -332,19 +336,7 @@ elif st.session_state.mode == "manual":
                 model_list = st.selectbox('Select models', model_dict)
 
                 if st.button('Run Regression'):
-                    # ---------- ADDED: build list of independent variables ----------
-
-                    independent = [
-                        globals()[f"ind_var_{i}"]
-                        for i in range(1, num_cols + 1)
-                        if globals()[f"ind_var_{i}"] in df.columns
-                    ]
-
-                    # -----------------------------------------------------------------
-
-                    # ---------- MODIFIED MINIMALLY: use the list instead of single var ----------
-                    X = final_df[independent]  # <- works for 1 or many variables
-                    # ------------------------------------------------------------------------------
+                    X = final_df[independent_vars]
                     y = final_df['Energy']
 
                     model = model_dict[model_list]()
@@ -353,40 +345,25 @@ elif st.session_state.mode == "manual":
                     regression = model.score(X, y)
                     cvrmse = root_mean_squared_error(y, preds) / y.mean()
 
-                    # ---------- ADDED: Regression Equation Display ----------
+                    # ---------- ADDED: Regression Equation Output ----------
                     coef = model.coef_
                     intercept = model.intercept_
 
                     equation_latex = (
-                            "Energy = " +
-                            f"{intercept:.4f} + " +
-                            " + ".join([f"{coef[k]:.4f} \\times {independent[k]}" for k in range(len(independent))])
+                            "Energy = "
+                            f"{intercept:.4f} + "
+                            + " + ".join([
+                        f"{coef[i]:.4f} \\times {independent_vars[i]}"
+                        for i in range(len(independent_vars))
+                    ])
                     )
 
                     st.subheader("Regression Equation")
                     st.latex(equation_latex)
-                    # --------------------------------------------------------
 
                     st.write(f'Regression: {regression:.2%}')
                     st.write(f'CVRMSE: {cvrmse:.2%}')
                     st.line_chart(pd.DataFrame({'Actual': y, 'Predicted': preds}).reset_index(drop=True))
-
-                    # ---- Show regression equation ----
-                    coef = model.coef_
-                    intercept = model.intercept_
-
-                    # If only one independent variable
-                    if len(independent) == 1:
-                        var = independent[0]
-                        equation = f"Energy = {intercept:.4f} + {coef[0]:.4f} × {var}"
-
-                    # For multiple variables (if `independent` is a list)
-                    else:
-                        terms = [f"{coef[i]:.4f} × {independent[i]}" for i in range(len(independent))]
-                        equation = "Energy = {:.4f} + ".format(intercept) + " + ".join(terms)
-
-                    st.subheader("Regression Equation")
-                    st.latex(equation.replace("×", "\\times "))
 
 
             else:
