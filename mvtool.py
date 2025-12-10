@@ -131,9 +131,25 @@ if st.session_state.mode == "upload":
                 )
 
                 # -------------------------
+                # EQUATION DISPLAY
+                # -------------------------
+                st.write("## Model Equations")
+
+                st.latex(r"""
+                \textbf{3-Parameter Model:} \quad
+                \text{kWh} = \beta_0 + \beta_1 \cdot \max(0, T - T_b)
+                """)
+
+                st.latex(r"""
+                \textbf{5-Parameter Model (Deadband):} \quad
+                \text{kWh} = \beta_0 + \beta_h \cdot \max(0, T_b^{low} - T)
+                + \beta_c \cdot \max(0, T - T_b^{high})
+                """)
+
+                # -------------------------
                 # DISPLAY RESULTS
                 # -------------------------
-                st.write("## Model Results (2 decimals)")
+                st.write("## Model Results")
 
                 col1, col2 = st.columns(2)
 
