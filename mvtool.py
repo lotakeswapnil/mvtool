@@ -523,22 +523,18 @@ elif st.session_state.mode == "manual":
 
                             df_weather_final = df
 
-                        elif weather_interval == "Daily":
+                        elif weather_interval == "Monthly":
 
-                            # Create a daily period column
-                            df["daily"] = df["date_local"].dt.to_period("D")
+                            df["month"] = df["date_local"].dt.month  # 1–12
 
-                            # Group by day and compute averages
-                            df_weather_final = (df.groupby("daily").mean(numeric_only=True).reset_index())
+                            df_weather_final = (df.groupby("month", as_index=False).mean(numeric_only=True))
 
                         else:
 
-                            # Create a monthly period column
-                            df["month"] = df["date_local"].dt.to_period("M")
+                            df["month"] = df["date_local"].dt.month
+                            df["day"] = df["date_local"].dt.day
 
-                            # Group by month and compute averages
-                            df_weather_final = (df.groupby("month").mean(numeric_only=True).reset_index())
-
+                            df_weather_final = (df.groupby(["month", "day"], as_index=False).mean(numeric_only=True))
 
                         st.subheader("Combined Dependent Variable and Weather Data")
                         final_df = pd.concat([manual_df, df_weather_final], axis=1)
