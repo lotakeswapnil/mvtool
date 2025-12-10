@@ -215,7 +215,7 @@ elif st.session_state.mode == "upload":
 
 elif st.session_state.mode == "manual":
 
-    if st.button("Back to Menu"):
+    if st.sidebar.button("Back to Menu"):
         st.session_state.mode = None
         st.rerun()
 
@@ -245,7 +245,7 @@ elif st.session_state.mode == "manual":
 
     if st.session_state.yes_no == 'no':
 
-        if st.button("Back to Weather Data selection"):
+        if st.sidebar.button("Back to Temperature or Variable selection"):
             st.session_state.yes_no = None
             st.rerun()
 
@@ -272,7 +272,7 @@ elif st.session_state.mode == "manual":
 
         if st.session_state.manual_data == 'ind':
 
-            if st.button("Back to Temperature or Variable selection"):
+            if st.sidebar.button("Back to Temperature or Variable selection"):
                 st.session_state.manual_data = None
                 st.rerun()
 
