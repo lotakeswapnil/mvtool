@@ -307,12 +307,12 @@ elif st.session_state.mode == "manual":
 
             # Build column names automatically
 
-            empty_df = pd.DataFrame("", index=range(0), columns=["Energy","Temperature"],dtype=float)
+            empty_df = pd.DataFrame({'Energy':'','Temperature':''},dtype=float)
 
 
             st.write('#### Enter Energy Data Below:')
 
-            final_df = st.data_editor(empty_df, num_rows='dynamic', column_config={"Temperature": st.column_config.NumberColumn("Temperature (°C)", format="%.2f")})
+            final_df = st.data_editor(empty_df, num_rows='dynamic')
 
             # -------------------------
             # DEFAULT MODEL SETTINGS
