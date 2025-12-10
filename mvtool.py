@@ -334,7 +334,7 @@ elif st.session_state.mode == "manual":
                 if st.button('Run Regression'):
                     # ---------- ADDED: build list of independent variables ----------
 
-                    ]
+
                     # -----------------------------------------------------------------
 
                     # ---------- MODIFIED MINIMALLY: use the list instead of single var ----------
