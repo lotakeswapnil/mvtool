@@ -472,7 +472,7 @@ elif st.session_state.mode == "manual":
         col_names = ["Energy"]  # first column fixed
         empty_df = pd.DataFrame({"Energy": pd.Series([0], dtype=float)})
 
-        st.write('#### Enter Dependent Variable Below:')
+        st.write('#### Enter Energy Data Below:')
 
         manual_df = st.data_editor(empty_df, num_rows="dynamic")
 
