@@ -102,10 +102,6 @@ elif st.session_state.mode == "upload":
                         regression = model.score(X, y)
                         cvrmse = root_mean_squared_error(y, preds)/y.mean()
 
-                        st.write(f'Regression: {regression:.2%}')
-                        st.write(f'CVRMSE: {cvrmse:.2%}')
-                        st.line_chart(pd.DataFrame({'Actual': y, 'Predicted': preds}).reset_index(drop=True))
-
                         # ---------- ADDED: Regression Equation Display ----------
                         coef = model.coef_
                         intercept = model.intercept_
@@ -118,7 +114,12 @@ elif st.session_state.mode == "upload":
 
                         st.subheader("Regression Equation")
                         st.latex(equation_latex)
-                        # --------------------------------------------------------
+
+                        st.write(f'Regression: {regression:.2%}')
+                        st.write(f'CVRMSE: {cvrmse:.2%}')
+                        st.line_chart(pd.DataFrame({'Actual': y, 'Predicted': preds}).reset_index(drop=True))
+
+
 
                 else:
                     st.error('All variables not defined.')
