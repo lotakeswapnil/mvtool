@@ -94,6 +94,23 @@ elif st.session_state.mode == "upload":
                         st.write(f'CVRMSE: {cvrmse:.2%}')
                         st.line_chart(pd.DataFrame({'Actual': y, 'Predicted': preds}).reset_index(drop=True))
 
+                        # ---- Show regression equation ----
+                        coef = model.coef_
+                        intercept = model.intercept_
+
+                        # If only one independent variable
+                        if len(independent) == 1:
+                            var = independent[0]
+                            equation = f"Energy = {intercept:.4f} + {coef[0]:.4f} × {var}"
+
+                        # For multiple variables (if `independent` is a list)
+                        else:
+                            terms = [f"{coef[i]:.4f} × {independent[i]}" for i in range(len(independent))]
+                            equation = "Energy = {:.4f} + ".format(intercept) + " + ".join(terms)
+
+                        st.subheader("Regression Equation")
+                        st.latex(equation.replace("×", "\\times "))
+
                 else:
                     st.error('All variables not defined.')
 
@@ -317,6 +334,23 @@ elif st.session_state.mode == "manual":
                     st.write(f'Regression: {regression:.2%}')
                     st.write(f'CVRMSE: {cvrmse:.2%}')
                     st.line_chart(pd.DataFrame({'Actual': y, 'Predicted': preds}).reset_index(drop=True))
+
+                    # ---- Show regression equation ----
+                    coef = model.coef_
+                    intercept = model.intercept_
+
+                    # If only one independent variable
+                    if len(independent) == 1:
+                        var = independent[0]
+                        equation = f"Energy = {intercept:.4f} + {coef[0]:.4f} × {var}"
+
+                    # For multiple variables (if `independent` is a list)
+                    else:
+                        terms = [f"{coef[i]:.4f} × {independent[i]}" for i in range(len(independent))]
+                        equation = "Energy = {:.4f} + ".format(intercept) + " + ".join(terms)
+
+                    st.subheader("Regression Equation")
+                    st.latex(equation.replace("×", "\\times "))
 
 
             else:
