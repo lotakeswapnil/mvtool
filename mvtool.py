@@ -324,7 +324,7 @@ elif st.session_state.mode == "manual":
             #run_button = st.sidebar.button("Run models")
 
             # Always run (or use run_button if you prefer explicit trigger)
-            if run_button or True:
+            if True:
                 temp = final_df['Temperature'].values
                 energy = final_df['Energy'].values
 
