@@ -566,8 +566,7 @@ elif st.session_state.mode == "manual":
 
 
         # Fetch Weather Data
-        interval_dict = {'Hourly', 'Daily', 'Monthly'}
-        weather_interval = st.selectbox('Select Interval', interval_dict)
+
 
         lat, lon = st.columns(2)
 
@@ -590,7 +589,13 @@ elif st.session_state.mode == "manual":
 
         client = get_client()
 
-        model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
+        weather_i,model_c = st.columns(2)
+
+        with weather_i:
+            weather_interval = st.selectbox('Select Interval', {'Hourly', 'Daily', 'Monthly'})
+
+        with model_c:
+            model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
 
         if st.button("Fetch Weather Data"):
             if start_date > end_date:
