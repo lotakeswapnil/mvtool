@@ -476,6 +476,10 @@ elif st.session_state.mode == "manual":
 
         manual_df = st.data_editor(empty_df, num_rows="dynamic")
 
+        if len(manual_df) < 2:
+            st.error("Please enter at least 2 rows.")
+
+
         # Fetch Weather Data
         interval_dict = {'Hourly', 'Daily', 'Monthly'}
         weather_interval = st.selectbox('Select Interval', interval_dict)
