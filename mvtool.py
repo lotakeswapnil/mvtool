@@ -306,7 +306,7 @@ elif st.session_state.mode == "manual":
                 model_list = st.selectbox('Select models', model_dict)
 
                 if st.button('Run Regression'):
-                    X = final_df[globals()[f'ind_var_{i}']].to_frame()
+                    X = final_df[independent].to_frame()
                     y = final_df['Energy']
                     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
