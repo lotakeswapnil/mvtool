@@ -319,7 +319,7 @@ elif st.session_state.mode == "manual":
             # DEFAULT MODEL SETTINGS
             # (No sidebar; automatic)
             # -------------------------
-
+            final_df = st.dataframe(final_df)
             st.write(final_df['Temperature'].dtypes)
             final_df['Temperature'] = pd.to_numeric(final_df['Temperature'], errors='coerce')
             st.write(final_df['Temperature'].dtypes)
