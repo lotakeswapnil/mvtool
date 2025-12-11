@@ -415,7 +415,6 @@ elif st.session_state.mode == "manual":
 
             Tmin = float(np.floor(final_df['Temperature'].min()))
             Tmax = float(np.ceil(final_df['Temperature'].max()))
-
             step = 1.0
             rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
 
@@ -425,8 +424,14 @@ elif st.session_state.mode == "manual":
             # -------------------------
             temp = final_df['Temperature'].values
             kwh = final_df['Energy'].values
-            mode = st.selectbox("Select Change-Point Model Type:",["auto", "heating", "cooling"],index=0)
-            model_choice = st.selectbox("Select Change-Point Model:",["3-parameter", "5-parameter", "Both"])
+
+            mod1,mod2 = st.columns([0.25,0.25])
+
+            with mod1:
+                model_choice = st.selectbox("Select Change-Point Model:",["3-parameter", "5-parameter", "Both"])
+
+            with mod2:
+                mode = st.selectbox("Select Change-Point Model Type:",["auto", "heating", "cooling"],index=0)
 
             with st.spinner("Running change-point models..."):
                 three_res = None
