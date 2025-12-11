@@ -144,28 +144,55 @@ def select_model_by_rmse_r2(
             return "5-parameter", five_res
 
 
-def predict_3p_for_plot(
-        T_plot: np.ndarray,
-        Tb: float,
-        model: LinearRegression,
-        mode: str = "cooling",  # "heating" or "cooling"
-) -> np.ndarray:
-    """Return predictions for a temperature array using a 3-parameter CP model."""
+def plot_3p_model(temp, kwh, three_res):
+    """
+    Plots the 3-parameter change-point model with shading and breakpoint annotation.
+    Handles heating, cooling, and auto-detected modes.
+    """
+    Tb = three_res["Tb"]
+    mode = three_res["mode"]       # "heating" or "cooling"
+    model = three_res["model"]
 
-    mode = mode.lower()
+    # Create smooth temperature array for plotting
+    T_plot = np.linspace(min(temp), max(temp), 200)
 
-    if mode == "cooling":
-        # Cooling model: max(0, T - Tb)
-        X = np.maximum(0.0, T_plot - Tb).reshape(-1, 1)
+    # Get predictions using your updated predict function
+    y_pred = predict_3p_for_plot(T_plot, Tb, model, mode)
 
-    elif mode == "heating":
-        # Heating model: max(0, Tb - T)
-        X = np.maximum(0.0, Tb - T_plot).reshape(-1, 1)
+    # Start figure
+    plt.figure(figsize=(8, 5))
+    plt.scatter(temp, kwh, color="gray", alpha=0.6, label="Actual Data")
 
+    # ------------------------------
+    # Heating mode
+    # ------------------------------
+    if mode == "heating":
+        plt.plot(T_plot, y_pred, color="red", label="Heating CP Model")
+        # Shade heating region (temperatures below Tb)
+        plt.axvspan(min(temp), Tb, color="red", alpha=0.1)
+
+    # ------------------------------
+    # Cooling mode
+    # ------------------------------
     else:
-        raise ValueError("mode must be 'heating' or 'cooling'")
+        plt.plot(T_plot, y_pred, color="blue", label="Cooling CP Model")
+        # Shade cooling region (temperatures above Tb)
+        plt.axvspan(Tb, max(temp), color="blue", alpha=0.1)
 
-    return model.predict(X)
+    # Breakpoint annotation
+    plt.axvline(Tb, color="black", linestyle="--", linewidth=1)
+    plt.text(Tb, max(kwh), f"  Tb = {Tb:.1f}°F", verticalalignment="bottom")
+
+    # Labels, title, legend
+    plt.xlabel("Temperature (°F)")
+    plt.ylabel("Energy (kWh)")
+    plt.title("3-Parameter Change-Point Model")
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+
+    # Display in Streamlit
+    st.pyplot(plt)
 
 
 def predict_5p_for_plot(T_plot: np.ndarray, Tb_low: float, Tb_high: float, model: LinearRegression) -> np.ndarray:
