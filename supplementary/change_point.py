@@ -143,10 +143,30 @@ def select_model_by_rmse_r2(
         else:
             return "5-parameter", five_res
 
-def predict_3p_for_plot(T_plot: np.ndarray, Tb: float, model: LinearRegression) -> np.ndarray:
-    """Return model predictions for a temperature array using a 3p model object."""
-    X = np.maximum(0.0, T_plot - Tb).reshape(-1, 1)
+
+def predict_3p_for_plot(
+        T_plot: np.ndarray,
+        Tb: float,
+        model: LinearRegression,
+        mode: str = "cooling",  # "heating" or "cooling"
+) -> np.ndarray:
+    """Return predictions for a temperature array using a 3-parameter CP model."""
+
+    mode = mode.lower()
+
+    if mode == "cooling":
+        # Cooling model: max(0, T - Tb)
+        X = np.maximum(0.0, T_plot - Tb).reshape(-1, 1)
+
+    elif mode == "heating":
+        # Heating model: max(0, Tb - T)
+        X = np.maximum(0.0, Tb - T_plot).reshape(-1, 1)
+
+    else:
+        raise ValueError("mode must be 'heating' or 'cooling'")
+
     return model.predict(X)
+
 
 def predict_5p_for_plot(T_plot: np.ndarray, Tb_low: float, Tb_high: float, model: LinearRegression) -> np.ndarray:
     """Return model predictions for a temperature array using a 5p model object."""
