@@ -619,13 +619,27 @@ elif st.session_state.mode == "manual":
 
         client = get_client()
 
-        weather_i,model_c = st.columns(2)
+        weather_i,model_c,model_m = st.columns(2)
 
         with weather_i:
             weather_interval = st.selectbox('Select Interval', {'Hourly', 'Daily', 'Monthly'})
 
         with model_c:
             model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
+
+        with model_m:
+            if model_choice == "3-parameter":
+                mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
+                                    index=0)
+            elif model_choice == "5-parameter":
+                # Disable the mode selection if the model is not "3-parameter"
+                mode_disabled = model_choice != "3-parameter"
+
+                mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
+                                    index=0, disabled=mode_disabled)
+            else:
+                mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
+                                    index=0)
 
         if st.button("Fetch Weather Data"):
             if start_date > end_date:
@@ -682,25 +696,7 @@ elif st.session_state.mode == "manual":
                         temp = final_df['temperature'].values
                         kwh = final_df['Energy'].values
 
-                        mod1, mod2 = st.columns([0.25, 0.25])
 
-                        with mod1:
-                            model_choice = st.selectbox("Select Change-Point Model:",
-                                                        ["3-parameter", "5-parameter", "Both"])
-
-                        with mod2:
-                            if model_choice == "3-parameter":
-                                mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
-                                                    index=0)
-                            elif model_choice == "5-parameter":
-                                # Disable the mode selection if the model is not "3-parameter"
-                                mode_disabled = model_choice != "3-parameter"
-
-                                mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
-                                                    index=0, disabled=mode_disabled)
-                            else:
-                                mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
-                                                    index=0)
 
                         with st.spinner("Running change-point models..."):
                             three_res = None
