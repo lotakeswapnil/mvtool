@@ -530,7 +530,7 @@ elif st.session_state.mode == "manual":
             ax.scatter(final_df['Temperature'], final_df['Energy'], label="Measured Energy", s=50)
 
             if model_choice == "3-parameter":
-                Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"])
+                Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"], mode = three_res["mode"])
                 ax.plot(T_plot, Y3_plot, label="3-parameter", linewidth=2.5)
 
             elif model_choice == "5-parameter":
