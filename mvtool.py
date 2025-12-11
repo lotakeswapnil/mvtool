@@ -413,8 +413,10 @@ elif st.session_state.mode == "manual":
             # DEFAULT MODEL SETTINGS
             # -------------------------
 
-            Tmin = st.number_input('Lower Temperature', min_value=(np.floor(final_df['Temperature'].min())), max_value=(np.floor(final_df['Temperature'].max())), step=1)
-            Tmax = st.number_input('Lower Temperature', min_value=(np.floor(final_df['Temperature'].min())), max_value=(np.floor(final_df['Temperature'].max())), step=1)
+            T_min = float(np.floor(final_df['Temperature'].min()))
+            T_max = float(np.ceil(final_df['Temperature'].max()))
+            Tmin = st.number_input('Lower Temperature', min = T_min, max = T_max)
+            Tmax = st.number_input('Lower Temperature', min=T_min, max=T_max)
             step = 1.0
             rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
 
