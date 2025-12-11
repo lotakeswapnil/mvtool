@@ -433,21 +433,26 @@ elif st.session_state.mode == "manual":
             with mod2:
                 if model_choice == "3-parameter":
                     mode = st.selectbox("Select Change-Point Model Type:",["auto", "heating", "cooling"],index=0)
-                else:
+                elif model_choice == "5-parameter":
                     # Disable the mode selection if the model is not "3-parameter"
                     mode_disabled = model_choice != "3-parameter"
 
                     mode = st.selectbox("Select Change-Point Model Type:",["auto", "heating", "cooling"],
                         index=0, disabled=mode_disabled)
 
+
             with st.spinner("Running change-point models..."):
                 three_res = None
                 five_res = None
 
-                if model_choice in ["3-parameter", "Both"]:
+                if model_choice == "3-parameter":
                     three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step, mode = mode)
 
-                if model_choice in ["5-parameter", "Both"]:
+                if model_choice == "5-parameter":
+                    five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
+
+                if model_choice == "Both":
+                    three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step, mode = mode)
                     five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
 
 
