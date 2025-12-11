@@ -433,7 +433,7 @@ elif st.session_state.mode == "manual":
                 five_res = None
 
                 if model_choice in ["3-parameter", "Both"]:
-                    three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step)
+                    three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step, mode = mode)
 
                 if model_choice in ["5-parameter", "Both"]:
                     five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
