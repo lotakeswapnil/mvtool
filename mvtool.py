@@ -439,6 +439,8 @@ elif st.session_state.mode == "manual":
 
                     mode = st.selectbox("Select Change-Point Model Type:",["auto", "heating", "cooling"],
                         index=0, disabled=mode_disabled)
+                else:
+                    mode = st.selectbox("Select Change-Point Model Type:",["auto", "heating", "cooling"],index=0)
 
 
             with st.spinner("Running change-point models..."):
