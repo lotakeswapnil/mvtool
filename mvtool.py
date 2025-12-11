@@ -431,7 +431,14 @@ elif st.session_state.mode == "manual":
                 model_choice = st.selectbox("Select Change-Point Model:",["3-parameter", "5-parameter", "Both"])
 
             with mod2:
-                mode = st.selectbox("Select Change-Point Model Type:",["auto", "heating", "cooling"],index=0)
+                if model_choice == "3-parameter":
+                    mode = st.selectbox("Select Change-Point Model Type:",["auto", "heating", "cooling"],index=0)
+                else:
+                    # Disable the mode selection if the model is not "3-parameter"
+                    mode_disabled = model_choice != "3-parameter"
+
+                    mode = st.selectbox("Select Change-Point Model Type:",["auto", "heating", "cooling"],
+                        index=0, disabled=mode_disabled)
 
             with st.spinner("Running change-point models..."):
                 three_res = None
