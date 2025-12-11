@@ -640,6 +640,7 @@ elif st.session_state.mode == "manual":
             else:
                 mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
                                     index=0)
+        st.write(mode)
 
         if st.button("Fetch Weather Data"):
             if start_date > end_date:
@@ -695,8 +696,6 @@ elif st.session_state.mode == "manual":
                         # -------------------------
                         temp = final_df['temperature'].values
                         kwh = final_df['Energy'].values
-
-
 
                         with st.spinner("Running change-point models..."):
                             three_res = None
