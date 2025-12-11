@@ -640,7 +640,6 @@ elif st.session_state.mode == "manual":
             else:
                 mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
                                     index=0)
-        st.write(mode)
 
         if st.button("Fetch Weather Data"):
             if start_date > end_date:
