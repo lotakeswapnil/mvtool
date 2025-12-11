@@ -7,7 +7,7 @@ def rmse(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """Root mean squared error."""
     return float(np.sqrt(np.mean((y_true - y_pred) ** 2)))
 
-def fit_three_param_cp_auto(
+def fit_three_param_cp(
     temp: np.ndarray,
     kwh: np.ndarray,
     Tmin: float,
