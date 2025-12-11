@@ -7,7 +7,7 @@ def rmse(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """Root mean squared error."""
     return float(np.sqrt(np.mean((y_true - y_pred) ** 2)))
 
-def fit_three_param_cp(
+def fit_three_param_cp_auto(
     temp: np.ndarray,
     kwh: np.ndarray,
     Tmin: float,
@@ -15,28 +15,63 @@ def fit_three_param_cp(
     step: float = 1.0
 ) -> Dict[str, Any]:
     """
-    Fit 3-parameter change-point model:
-      kwh = beta0 + beta1 * max(0, T - Tb)
-    by grid-searching Tb in [Tmin, Tmax] with given step.
-    Returns dict with Tb, fitted sklearn model, pred, rmse, r2.
+    Fit BOTH heating and cooling 3-parameter change-point (CP) models:
+
+    Cooling CP:  kWh = b0 + b1 * max(0, T - Tb)
+    Heating CP:  kWh = b0 + b1 * max(0, Tb - T)
+
+    Grid-search Tb in [Tmin, Tmax], choose the model with lowest RMSE.
+
+    Returns:
+      {
+        "mode": "heating" or "cooling",
+        "Tb": balance point,
+        "model": sklearn model,
+        "pred": predictions,
+        "rmse": RMSE,
+        "r2": R²
+      }
     """
     best = {"rmse": np.inf}
     candidates = np.arange(Tmin, Tmax + step/2, step)
+
     for Tb in candidates:
-        X = np.maximum(0.0, temp - Tb).reshape(-1, 1)
-        model = LinearRegression().fit(X, kwh)
-        pred = model.predict(X)
-        r = rmse(kwh, pred)
-        r2 = model.score(X, kwh)
-        if r < best["rmse"]:
+        # --- Cooling model ----------------------------------------------------
+        X_cool = np.maximum(0.0, temp - Tb).reshape(-1, 1)
+        model_cool = LinearRegression().fit(X_cool, kwh)
+        pred_cool = model_cool.predict(X_cool)
+        rmse_cool = rmse(kwh, pred_cool)
+        r2_cool = model_cool.score(X_cool, kwh)
+
+        if rmse_cool < best["rmse"]:
             best = {
+                "mode": "cooling",
                 "Tb": float(Tb),
-                "model": model,
-                "pred": pred,
-                "rmse": r,
-                "r2": float(r2)
+                "model": model_cool,
+                "pred": pred_cool,
+                "rmse": rmse_cool,
+                "r2": float(r2_cool)
             }
+
+        # --- Heating model ----------------------------------------------------
+        X_heat = np.maximum(0.0, Tb - temp).reshape(-1, 1)
+        model_heat = LinearRegression().fit(X_heat, kwh)
+        pred_heat = model_heat.predict(X_heat)
+        rmse_heat = rmse(kwh, pred_heat)
+        r2_heat = model_heat.score(X_heat, kwh)
+
+        if rmse_heat < best["rmse"]:
+            best = {
+                "mode": "heating",
+                "Tb": float(Tb),
+                "model": model_heat,
+                "pred": pred_heat,
+                "rmse": rmse_heat,
+                "r2": float(r2_heat)
+            }
+
     return best
+
 
 def fit_five_param_deadband(
     temp: np.ndarray,
