@@ -413,7 +413,7 @@ elif st.session_state.mode == "manual":
             # DEFAULT MODEL SETTINGS
             # -------------------------
 
-            Tmin = st.number_input('Lower Temperature', min = final_df['Temperature'].min().values(), max = final_df['Temperature'].max().values)
+            Tmin = float(np.floor(final_df['Temperature'].min()))
             Tmax = float(np.ceil(final_df['Temperature'].max()))
 
             step = 1.0
