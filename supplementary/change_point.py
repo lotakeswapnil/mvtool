@@ -7,68 +7,73 @@ def rmse(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """Root mean squared error."""
     return float(np.sqrt(np.mean((y_true - y_pred) ** 2)))
 
+
 def fit_three_param_cp(
-    temp: np.ndarray,
-    kwh: np.ndarray,
-    Tmin: float,
-    Tmax: float,
-    step: float = 1.0
+        temp: np.ndarray,
+        kwh: np.ndarray,
+        Tmin: float,
+        Tmax: float,
+        step: float = 1.0,
+        mode: str = "auto",  # NEW: "heating", "cooling", or "auto"
 ) -> Dict[str, Any]:
     """
-    Fit BOTH heating and cooling 3-parameter change-point (CP) models:
+    Fit 3-parameter change-point model.
 
-    Cooling CP:  kWh = b0 + b1 * max(0, T - Tb)
+    mode:
+        "heating": use heating model only
+        "cooling": use cooling model only
+        "auto":    evaluate both and pick lowest RMSE
+
     Heating CP:  kWh = b0 + b1 * max(0, Tb - T)
-
-    Grid-search Tb in [Tmin, Tmax], choose the model with lowest RMSE.
-
-    Returns:
-      {
-        "mode": "heating" or "cooling",
-        "Tb": balance point,
-        "model": sklearn model,
-        "pred": predictions,
-        "rmse": RMSE,
-        "r2": R²
-      }
+    Cooling CP:  kWh = b0 + b1 * max(0, T - Tb)
     """
+
+    mode = mode.lower()
+    if mode not in ("heating", "cooling", "auto"):
+        raise ValueError("mode must be 'heating', 'cooling', or 'auto'")
+
     best = {"rmse": np.inf}
-    candidates = np.arange(Tmin, Tmax + step/2, step)
+    candidates = np.arange(Tmin, Tmax + step / 2, step)
 
     for Tb in candidates:
-        # --- Cooling model ----------------------------------------------------
-        X_cool = np.maximum(0.0, temp - Tb).reshape(-1, 1)
-        model_cool = LinearRegression().fit(X_cool, kwh)
-        pred_cool = model_cool.predict(X_cool)
-        rmse_cool = rmse(kwh, pred_cool)
-        r2_cool = model_cool.score(X_cool, kwh)
 
-        if rmse_cool < best["rmse"]:
-            best = {
-                "mode": "cooling",
-                "Tb": float(Tb),
-                "model": model_cool,
-                "pred": pred_cool,
-                "rmse": rmse_cool,
-                "r2": float(r2_cool)
-            }
+        # ----------------------------
+        # Cooling Model
+        # ----------------------------
+        if mode in ("cooling", "auto"):
+            X_cool = np.maximum(0.0, temp - Tb).reshape(-1, 1)
+            mdl = LinearRegression().fit(X_cool, kwh)
+            pred = mdl.predict(X_cool)
+            rmse_val = rmse(kwh, pred)
 
-        # --- Heating model ----------------------------------------------------
-        X_heat = np.maximum(0.0, Tb - temp).reshape(-1, 1)
-        model_heat = LinearRegression().fit(X_heat, kwh)
-        pred_heat = model_heat.predict(X_heat)
-        rmse_heat = rmse(kwh, pred_heat)
-        r2_heat = model_heat.score(X_heat, kwh)
+            if rmse_val < best["rmse"]:
+                best = {
+                    "mode": "cooling",
+                    "Tb": float(Tb),
+                    "model": mdl,
+                    "pred": pred,
+                    "rmse": rmse_val,
+                    "r2": mdl.score(X_cool, kwh),
+                }
 
-        if rmse_heat < best["rmse"]:
-            best = {
-                "mode": "heating",
-                "Tb": float(Tb),
-                "model": model_heat,
-                "pred": pred_heat,
-                "rmse": rmse_heat,
-                "r2": float(r2_heat)
-            }
+        # ----------------------------
+        # Heating Model
+        # ----------------------------
+        if mode in ("heating", "auto"):
+            X_heat = np.maximum(0.0, Tb - temp).reshape(-1, 1)
+            mdl = LinearRegression().fit(X_heat, kwh)
+            pred = mdl.predict(X_heat)
+            rmse_val = rmse(kwh, pred)
+
+            if rmse_val < best["rmse"]:
+                best = {
+                    "mode": "heating",
+                    "Tb": float(Tb),
+                    "model": mdl,
+                    "pred": pred,
+                    "rmse": rmse_val,
+                    "r2": mdl.score(X_heat, kwh),
+                }
 
     return best
 

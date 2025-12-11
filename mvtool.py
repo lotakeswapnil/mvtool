@@ -425,7 +425,7 @@ elif st.session_state.mode == "manual":
             # -------------------------
             temp = final_df['Temperature'].values
             kwh = final_df['Energy'].values
-
+            mode = st.selectbox("Select Change-Point Model Type:",["auto", "heating", "cooling"],index=0)
             model_choice = st.selectbox("Select Change-Point Model:",["3-parameter", "5-parameter", "Both"])
 
             with st.spinner("Running change-point models..."):
