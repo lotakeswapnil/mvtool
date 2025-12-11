@@ -619,7 +619,7 @@ elif st.session_state.mode == "manual":
 
         client = get_client()
 
-        weather_i,model_c,model_m = st.columns(2)
+        weather_i,model_c,model_m = st.columns(3)
 
         with weather_i:
             weather_interval = st.selectbox('Select Interval', {'Hourly', 'Daily', 'Monthly'})
