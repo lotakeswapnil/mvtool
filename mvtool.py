@@ -557,7 +557,7 @@ elif st.session_state.mode == "manual":
                 ax.plot(T_plot, Y5_plot, label="5-parameter", linewidth=2.5)
 
             else:  # Both
-                Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"])
+                Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"], mode = three_res["mode"])
                 Y5_plot = predict_5p_for_plot(T_plot, five_res["Tb_low"], five_res["Tb_high"], five_res["model"])
                 ax.plot(T_plot, Y3_plot, label="3-parameter", linewidth=2.5)
                 ax.plot(T_plot, Y5_plot, label="5-parameter", linewidth=2.5)
