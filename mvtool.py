@@ -667,6 +667,7 @@ elif st.session_state.mode == "manual":
             for i in range(len(manual_df)):
                 start_date = st.write(manual_df['Start Date (yyyy-mm-dd)'][i])
                 end_date = st.write(manual_df['End Date (yyyy-mm-dd)'][i])
+                st.write(fetch_openmeteo_archive(client, lat, lon, start_date, end_date, which,var))
 
         if st.session_state.interval == 'no':
 
