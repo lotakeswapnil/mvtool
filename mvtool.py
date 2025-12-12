@@ -601,7 +601,53 @@ elif st.session_state.mode == "manual":
                     st.session_state.interval = 'no'
                     st.rerun()
 
-        #if st.session_state.interval == 'yes':
+        if st.session_state.interval == 'yes':
+
+            if st.sidebar.button("Back to Weather Data Interval selection"):
+                st.session_state.interval = None
+                st.rerun()
+
+            lat, lon = st.columns(2)
+
+            with lat:
+                lat = st.number_input("Latitude", format="%.4f")
+
+            with lon:
+                lon = st.number_input("Longitude", format="%.4f")
+
+            var = "temperature"  # or let user pick
+            which = "hourly"
+
+
+            # create client once (you can cache it)
+            @st.cache_resource
+            def get_client():
+                return make_openmeteo_client()
+
+
+            client = get_client()
+
+            weather_i, model_c, model_m = st.columns(3)
+
+            with weather_i:
+                weather_interval = st.selectbox('Select Interval', {'Hourly', 'Daily', 'Monthly'})
+
+            with model_c:
+                model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
+
+            with model_m:
+                if model_choice == "3-parameter":
+                    mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
+                                        index=0)
+                elif model_choice == "5-parameter":
+                    # Disable the mode selection if the model is not "3-parameter"
+                    mode_disabled = model_choice != "3-parameter"
+
+                    mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
+                                        index=0, disabled=mode_disabled)
+                else:
+                    mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
+                                        index=0)
 
         if st.session_state.interval == 'no':
 
