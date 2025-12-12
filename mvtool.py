@@ -631,7 +631,7 @@ elif st.session_state.mode == "manual":
             temp, model_c, model_m = st.columns(3)
 
             with temp:
-                temperature_unit = st.selectbox('Select Temperature Unit:',['celsius','farenheit'])
+                temperature_unit = st.selectbox('Select Temperature Unit:',['celsius','fahrenheit'])
 
             with model_c:
                 model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
