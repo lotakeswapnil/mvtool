@@ -664,6 +664,10 @@ elif st.session_state.mode == "manual":
                 st.error("Please enter at least 2 rows.")
 
 
+            for i in len(manual_df['Start Date']):
+                st.write(f'Entries'i)
+
+
         if st.session_state.interval == 'no':
 
             if st.sidebar.button("Back to Weather Data Interval selection"):
