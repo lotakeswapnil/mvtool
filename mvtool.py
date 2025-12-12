@@ -658,18 +658,164 @@ elif st.session_state.mode == "manual":
 
             st.write('#### Enter Energy Data Below:')
 
-            manual_df = st.data_editor(empty_df, num_rows="dynamic")
+            final_df = st.data_editor(empty_df, num_rows="dynamic")
 
-            if len(manual_df) < 2:
+            if len(final_df) < 2:
                 st.error("Please enter at least 2 rows.")
 
 
-            for i in range(len(manual_df)):
-                start_date = manual_df['Start Date (yyyy-mm-dd)'][i].date().isoformat()
-                end_date = manual_df['End Date (yyyy-mm-dd)'][i].date().isoformat()
+            for i in range(len(final_df)):
+                start_date = final_df['Start Date (yyyy-mm-dd)'][i].date().isoformat()
+                end_date = final_df['End Date (yyyy-mm-dd)'][i].date().isoformat()
                 meta, temperature_data = fetch_openmeteo_archive(client, lat, lon, start_date, end_date, which,var)
-                manual_df.loc[i, 'temperature'] = temperature_data["temperature"].mean()
-            st.write(manual_df)
+                final_df.loc[i, 'temperature'] = temperature_data["temperature"].mean()
+                #st.write(manual_df)
+
+            # -------------------------
+            # DEFAULT MODEL SETTINGS
+            # -------------------------
+
+            Tmin = float(np.floor(final_df['temperature'].min()))
+            Tmax = float(np.ceil(final_df['temperature'].max()))
+            step = 1.0
+            rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
+
+            # -------------------------
+            # RUN MODELS
+            # -------------------------
+            temp = final_df['temperature'].values
+            kwh = final_df['Energy'].values
+
+            with st.spinner("Running change-point models..."):
+                three_res = None
+                five_res = None
+
+                if model_choice == "3-parameter":
+                    three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step, mode=mode)
+
+                if model_choice == "5-parameter":
+                    five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
+
+                if model_choice == "Both":
+                    three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step, mode=mode)
+                    five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
+
+            mean_kwh = float(final_df['Energy'].mean())
+            # preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct,mean_kwh)
+
+            # -------------------------
+            # EQUATION DISPLAY
+            # -------------------------
+            st.write("## Model Equations")
+
+            if model_choice in ["3-parameter", "Both"]:
+                st.write('### 3-parameter:')
+                Tb = three_res["Tb"]
+                b0 = three_res["model"].intercept_
+                b1 = three_res["model"].coef_[0]
+                mode_used = three_res["mode"]  # "heating" or "cooling"
+
+                if mode_used == "cooling":
+                    # Cooling: Energy = b0 + b1 * max(0, T - Tb)
+                    st.latex(
+                        fr"\text{{Energy}} = {b0:.2f} + {b1:.2f}\,\max(0,\,T - {Tb:.2f})"
+                    )
+
+                elif mode_used == "heating":
+                    # Heating: Energy = b0 + b1 * max(0, Tb - T)
+                    st.latex(
+                        fr"\text{{Energy}} = {b0:.2f} + {b1:.2f}\,\max(0,\,{Tb:.2f} - T)"
+                    )
+
+            if model_choice in ["5-parameter", "Both"]:
+                st.write('### 5-parameter:')
+                st.latex(
+                    fr"\text{{Energy}} = {five_res['model'].intercept_:.2f} + "
+                    fr"{five_res['model'].coef_[0]:.2f}\,\max(0,\,{five_res['Tb_low']:.2f} - T) + "
+                    fr"{five_res['model'].coef_[1]:.2f}\,\max(0,\,T - {five_res['Tb_high']:.2f})"
+                )
+
+            # -------------------------
+            # DISPLAY RESULTS
+            # -------------------------
+            st.write("## Model Results")
+
+            if model_choice in ["3-parameter"]:
+                st.subheader("3-Parameter Model")
+                st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
+                st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
+                st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
+                st.write(f"**RMSE:** {three_res['rmse']:.2f}")
+                st.write(f"**R²:** {three_res['r2']:.2f}")
+
+            if model_choice in ["5-parameter"]:
+                st.subheader("5-Parameter Model")
+                st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °C")
+                st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °C")
+                st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
+                st.write(f"**β_h:** {five_res['model'].coef_[0]:.2f}")
+                st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
+                st.write(f"**RMSE:** {five_res['rmse']:.2f}")
+                st.write(f"**R²:** {five_res['r2']:.2f}")
+
+            if model_choice in ["Both"]:
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.subheader("3-Parameter Model")
+                    st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
+                    st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
+                    st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
+                    st.write(f"**RMSE:** {three_res['rmse']:.2f}")
+                    st.write(f"**R²:** {three_res['r2']:.2f}")
+                with col2:
+                    st.subheader("5-Parameter Model")
+                    st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °C")
+                    st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °C")
+                    st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
+                    st.write(f"**β_h:** {five_res['model'].coef_[0]:.2f}")
+                    st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
+                    st.write(f"**RMSE:** {five_res['rmse']:.2f}")
+                    st.write(f"**R²:** {five_res['r2']:.2f}")
+
+            # -------------------------
+            # PLOT MODELS
+            # -------------------------
+            T_plot = np.linspace(final_df['temperature'].min(), final_df['temperature'].max(), 400)
+
+            fig, ax = plt.subplots(figsize=(9, 5))
+            ax.scatter(final_df['temperature'], final_df['Energy'], label="Measured Energy", s=50)
+
+            if model_choice == "3-parameter":
+                Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"],
+                                              mode=three_res["mode"])
+                ax.plot(T_plot, Y3_plot, label="3-parameter", linewidth=2.5)
+
+            elif model_choice == "5-parameter":
+                Y5_plot = predict_5p_for_plot(T_plot, five_res["Tb_low"], five_res["Tb_high"],
+                                              five_res["model"])
+                ax.plot(T_plot, Y5_plot, label="5-parameter", linewidth=2.5)
+
+            else:  # Both
+                Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"],
+                                              mode=three_res["mode"])
+                Y5_plot = predict_5p_for_plot(T_plot, five_res["Tb_low"], five_res["Tb_high"],
+                                              five_res["model"])
+                ax.plot(T_plot, Y3_plot, label="3-parameter", linewidth=2.5)
+                ax.plot(T_plot, Y5_plot, label="5-parameter", linewidth=2.5)
+
+            # Deadband shade
+            if model_choice in ["5-parameter", "Both"]:
+                ax.axvspan(five_res["Tb_low"], five_res["Tb_high"], alpha=0.08, color="gray",
+                           label="Deadband")
+
+            ax.set_xlabel("Temperature (°C)")
+            ax.set_ylabel("Energy")
+            ax.set_title("3-Parameter vs 5-Parameter Change-Point Models")
+            ax.legend()
+            ax.grid(True)
+
+            st.pyplot(fig)
+
 
         if st.session_state.interval == 'no':
 
