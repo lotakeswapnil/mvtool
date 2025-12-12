@@ -664,7 +664,7 @@ elif st.session_state.mode == "manual":
                 st.error("Please enter at least 2 rows.")
 
 
-            for i in range(len(manual_df.rows)):
+            for i in range(len(manual_df)):
                 st.write(manual_df['Start Date'][i])
 
 
