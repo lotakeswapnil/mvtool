@@ -615,6 +615,7 @@ elif st.session_state.mode == "manual":
             with lon:
                 lon = st.number_input("Longitude", format="%.4f")
 
+
             var = "temperature"  # or let user pick
             which = "hourly"
 
