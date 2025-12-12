@@ -669,6 +669,7 @@ elif st.session_state.mode == "manual":
                 end_date = manual_df['End Date (yyyy-mm-dd)'][i].date().isoformat()
                 temperature_data = fetch_openmeteo_archive(client, lat, lon, start_date, end_date, which,var)
                 temperature_data = pd.DataFrame(temperature_data)
+                st.write(temperature_data)
 
         if st.session_state.interval == 'no':
 
