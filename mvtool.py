@@ -575,209 +575,216 @@ elif st.session_state.mode == "manual":
             st.pyplot(fig)
 
 
-
     elif st.session_state.yes_no == 'yes':
 
         if st.sidebar.button("Back to Weather Data selection"):
             st.session_state.yes_no = None
             st.rerun()
 
+        # --- Create session-state variable for Manual Mode---
+        if "interval" not in st.session_state:
+            st.session_state.interval = None
 
-        # Build column names automatically
-        col_names = ["Energy"]  # first column fixed
-        empty_df = pd.DataFrame({"Energy": pd.Series([0], dtype=float)})
+        # --- Display Start Buttons ---
+        if st.session_state.interval is None:
+            st.markdown('Do you want Weather Data using Intervals?')
 
-        st.write('#### Enter Energy Data Below:')
+            col1, col2 = st.columns([0.05, 0.5])
 
-        manual_df = st.data_editor(empty_df, num_rows="dynamic")
+            with col1:
+                if st.button('Yes'):
+                    st.session_state.interval = 'yes'
+                    st.rerun()
 
-        if len(manual_df) < 2:
-            st.error("Please enter at least 2 rows.")
+            with col2:
+                if st.button('No'):
+                    st.session_state.interval = 'no'
+                    st.rerun()
+
+        #if st.session_state.interval == 'yes':
+
+        if st.session_state.interval == 'no':
+
+            if st.sidebar.button("Back to Weather Data Interval selection"):
+                st.session_state.interval = None
+                st.rerun()
+
+            # Build column names automatically
+            col_names = ["Energy"]  # first column fixed
+            empty_df = pd.DataFrame({"Energy": pd.Series([0], dtype=float)})
+
+            st.write('#### Enter Energy Data Below:')
+
+            manual_df = st.data_editor(empty_df, num_rows="dynamic")
+
+            if len(manual_df) < 2:
+                st.error("Please enter at least 2 rows.")
+
+            # Fetch Weather Data
+
+            lat, lon = st.columns(2)
+
+            with lat:
+                lat = st.number_input("Latitude", format="%.4f")
+                start_date = st.date_input("Start date",
+                                           value=date.today().replace(year=date.today().year - 1).replace(
+                                               day=date.today().day - 1))
+
+            with lon:
+                lon = st.number_input("Longitude", format="%.4f")
+                end_date = st.date_input("End date", value=date.today().replace(day=date.today().day - 2))
+
+            var = "temperature"  # or let user pick
+            which = "hourly"
 
 
-        # Fetch Weather Data
+            # create client once (you can cache it)
+            @st.cache_resource
+            def get_client():
+                return make_openmeteo_client()
 
 
-        lat, lon = st.columns(2)
+            client = get_client()
 
-        with lat:
-            lat = st.number_input("Latitude", format="%.4f")
-            start_date = st.date_input("Start date", value=date.today().replace(year=date.today().year - 1).replace(
-                day=date.today().day - 1))
+            weather_i, model_c, model_m = st.columns(3)
 
-        with lon:
-            lon = st.number_input("Longitude", format="%.4f")
-            end_date = st.date_input("End date", value=date.today().replace(day=date.today().day - 2))
+            with weather_i:
+                weather_interval = st.selectbox('Select Interval', {'Hourly', 'Daily', 'Monthly'})
 
-        var = "temperature"   # or let user pick
-        which = "hourly"
+            with model_c:
+                model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
 
-        # create client once (you can cache it)
-        @st.cache_resource
-        def get_client():
-            return make_openmeteo_client()
+            with model_m:
+                if model_choice == "3-parameter":
+                    mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
+                                        index=0)
+                elif model_choice == "5-parameter":
+                    # Disable the mode selection if the model is not "3-parameter"
+                    mode_disabled = model_choice != "3-parameter"
 
-        client = get_client()
+                    mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
+                                        index=0, disabled=mode_disabled)
+                else:
+                    mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
+                                        index=0)
 
-        weather_i,model_c,model_m = st.columns(3)
-
-        with weather_i:
-            weather_interval = st.selectbox('Select Interval', {'Hourly', 'Daily', 'Monthly'})
-
-        with model_c:
-            model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
-
-        with model_m:
-            if model_choice == "3-parameter":
-                mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
-                                    index=0)
-            elif model_choice == "5-parameter":
-                # Disable the mode selection if the model is not "3-parameter"
-                mode_disabled = model_choice != "3-parameter"
-
-                mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
-                                    index=0, disabled=mode_disabled)
-            else:
-                mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
-                                    index=0)
-
-        if st.button("Fetch Weather Data"):
-            if start_date > end_date:
-                st.error("Start must be <= end")
-            else:
-                start_str = start_date.isoformat()
-                end_str = end_date.isoformat()
-                with st.spinner("Fetching..."):
-                    try:
-                        meta, df_weather = fetch_openmeteo_archive(client, lat, lon, start_str, end_str, which, var)
-                    except Exception as e:
-                        st.error(f"Weather fetch failed: {e}")
-                    else:
-                        st.success("Fetched weather data")
-                        #st.json(meta)
-                        #st.write(df_weather)
-
-                        df = df_weather.copy()
-
-                        if weather_interval == "Hourly":
-
-                            df_weather_final = df
-
-                        elif weather_interval == "Monthly":
-
-                            df["month"] = df["date_local"].dt.month  # 1–12
-
-                            df_weather_final = (df.groupby("month", as_index=False).mean(numeric_only=True))
-
+            if st.button("Fetch Weather Data"):
+                if start_date > end_date:
+                    st.error("Start must be <= end")
+                else:
+                    start_str = start_date.isoformat()
+                    end_str = end_date.isoformat()
+                    with st.spinner("Fetching..."):
+                        try:
+                            meta, df_weather = fetch_openmeteo_archive(client, lat, lon, start_str, end_str, which,
+                                                                       var)
+                        except Exception as e:
+                            st.error(f"Weather fetch failed: {e}")
                         else:
+                            st.success("Fetched weather data")
 
-                            df["month"] = df["date_local"].dt.month
-                            df["day"] = df["date_local"].dt.day
+                            df = df_weather.copy()
 
-                            df_weather_final = (df.groupby(["month", "day"], as_index=False).mean(numeric_only=True))
+                            if weather_interval == "Hourly":
 
-                        st.subheader("Combined Dependent Variable and Weather Data")
-                        final_df = pd.concat([manual_df, df_weather_final], axis=1)
-                        st.dataframe(final_df)
+                                df_weather_final = df
 
-                        # -------------------------
-                        # DEFAULT MODEL SETTINGS
-                        # -------------------------
+                            elif weather_interval == "Monthly":
 
-                        Tmin = float(np.floor(final_df['temperature'].min()))
-                        Tmax = float(np.ceil(final_df['temperature'].max()))
-                        step = 1.0
-                        rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
+                                df["month"] = df["date_local"].dt.month  # 1–12
 
+                                df_weather_final = (df.groupby("month", as_index=False).mean(numeric_only=True))
 
-                        # -------------------------
-                        # RUN MODELS
-                        # -------------------------
-                        temp = final_df['temperature'].values
-                        kwh = final_df['Energy'].values
+                            else:
 
-                        with st.spinner("Running change-point models..."):
-                            three_res = None
-                            five_res = None
+                                df["month"] = df["date_local"].dt.month
+                                df["day"] = df["date_local"].dt.day
 
-                            if model_choice == "3-parameter":
-                                three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step, mode=mode)
+                                df_weather_final = (
+                                    df.groupby(["month", "day"], as_index=False).mean(numeric_only=True))
 
-                            if model_choice == "5-parameter":
-                                five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
+                            st.subheader("Combined Dependent Variable and Weather Data")
+                            final_df = pd.concat([manual_df, df_weather_final], axis=1)
+                            st.dataframe(final_df)
 
-                            if model_choice == "Both":
-                                three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step, mode=mode)
-                                five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
+                            # -------------------------
+                            # DEFAULT MODEL SETTINGS
+                            # -------------------------
 
-                        mean_kwh = float(final_df['Energy'].mean())
-                        #preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct,mean_kwh)
+                            Tmin = float(np.floor(final_df['temperature'].min()))
+                            Tmax = float(np.ceil(final_df['temperature'].max()))
+                            step = 1.0
+                            rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
 
-                        # -------------------------
-                        # EQUATION DISPLAY
-                        # -------------------------
-                        st.write("## Model Equations")
+                            # -------------------------
+                            # RUN MODELS
+                            # -------------------------
+                            temp = final_df['temperature'].values
+                            kwh = final_df['Energy'].values
 
-                        if model_choice in ["3-parameter", "Both"]:
-                            st.write('### 3-parameter:')
-                            Tb = three_res["Tb"]
-                            b0 = three_res["model"].intercept_
-                            b1 = three_res["model"].coef_[0]
-                            mode_used = three_res["mode"]  # "heating" or "cooling"
+                            with st.spinner("Running change-point models..."):
+                                three_res = None
+                                five_res = None
 
-                            if mode_used == "cooling":
-                                # Cooling: Energy = b0 + b1 * max(0, T - Tb)
+                                if model_choice == "3-parameter":
+                                    three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step, mode=mode)
+
+                                if model_choice == "5-parameter":
+                                    five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
+
+                                if model_choice == "Both":
+                                    three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step, mode=mode)
+                                    five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
+
+                            mean_kwh = float(final_df['Energy'].mean())
+                            # preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct,mean_kwh)
+
+                            # -------------------------
+                            # EQUATION DISPLAY
+                            # -------------------------
+                            st.write("## Model Equations")
+
+                            if model_choice in ["3-parameter", "Both"]:
+                                st.write('### 3-parameter:')
+                                Tb = three_res["Tb"]
+                                b0 = three_res["model"].intercept_
+                                b1 = three_res["model"].coef_[0]
+                                mode_used = three_res["mode"]  # "heating" or "cooling"
+
+                                if mode_used == "cooling":
+                                    # Cooling: Energy = b0 + b1 * max(0, T - Tb)
+                                    st.latex(
+                                        fr"\text{{Energy}} = {b0:.2f} + {b1:.2f}\,\max(0,\,T - {Tb:.2f})"
+                                    )
+
+                                elif mode_used == "heating":
+                                    # Heating: Energy = b0 + b1 * max(0, Tb - T)
+                                    st.latex(
+                                        fr"\text{{Energy}} = {b0:.2f} + {b1:.2f}\,\max(0,\,{Tb:.2f} - T)"
+                                    )
+
+                            if model_choice in ["5-parameter", "Both"]:
+                                st.write('### 5-parameter:')
                                 st.latex(
-                                    fr"\text{{Energy}} = {b0:.2f} + {b1:.2f}\,\max(0,\,T - {Tb:.2f})"
-                                )
-
-                            elif mode_used == "heating":
-                                # Heating: Energy = b0 + b1 * max(0, Tb - T)
-                                st.latex(
-                                    fr"\text{{Energy}} = {b0:.2f} + {b1:.2f}\,\max(0,\,{Tb:.2f} - T)"
-                                )
-
-                        if model_choice in ["5-parameter", "Both"]:
-                            st.write('### 5-parameter:')
-                            st.latex(
                                     fr"\text{{Energy}} = {five_res['model'].intercept_:.2f} + "
                                     fr"{five_res['model'].coef_[0]:.2f}\,\max(0,\,{five_res['Tb_low']:.2f} - T) + "
                                     fr"{five_res['model'].coef_[1]:.2f}\,\max(0,\,T - {five_res['Tb_high']:.2f})"
-                                    )
+                                )
 
-                        # -------------------------
-                        # DISPLAY RESULTS
-                        # -------------------------
-                        st.write("## Model Results")
+                            # -------------------------
+                            # DISPLAY RESULTS
+                            # -------------------------
+                            st.write("## Model Results")
 
-                        if model_choice in ["3-parameter"]:
-                            st.subheader("3-Parameter Model")
-                            st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
-                            st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
-                            st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
-                            st.write(f"**RMSE:** {three_res['rmse']:.2f}")
-                            st.write(f"**R²:** {three_res['r2']:.2f}")
-
-                        if model_choice in ["5-parameter"]:
-                            st.subheader("5-Parameter Model")
-                            st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °C")
-                            st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °C")
-                            st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
-                            st.write(f"**β_h:** {five_res['model'].coef_[0]:.2f}")
-                            st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
-                            st.write(f"**RMSE:** {five_res['rmse']:.2f}")
-                            st.write(f"**R²:** {five_res['r2']:.2f}")
-
-                        if model_choice in ["Both"]:
-                            col1, col2 = st.columns(2)
-                            with col1:
+                            if model_choice in ["3-parameter"]:
                                 st.subheader("3-Parameter Model")
                                 st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
                                 st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
                                 st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
                                 st.write(f"**RMSE:** {three_res['rmse']:.2f}")
                                 st.write(f"**R²:** {three_res['r2']:.2f}")
-                            with col2:
+
+                            if model_choice in ["5-parameter"]:
                                 st.subheader("5-Parameter Model")
                                 st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °C")
                                 st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °C")
@@ -787,42 +794,60 @@ elif st.session_state.mode == "manual":
                                 st.write(f"**RMSE:** {five_res['rmse']:.2f}")
                                 st.write(f"**R²:** {five_res['r2']:.2f}")
 
+                            if model_choice in ["Both"]:
+                                col1, col2 = st.columns(2)
+                                with col1:
+                                    st.subheader("3-Parameter Model")
+                                    st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
+                                    st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
+                                    st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
+                                    st.write(f"**RMSE:** {three_res['rmse']:.2f}")
+                                    st.write(f"**R²:** {three_res['r2']:.2f}")
+                                with col2:
+                                    st.subheader("5-Parameter Model")
+                                    st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °C")
+                                    st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °C")
+                                    st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
+                                    st.write(f"**β_h:** {five_res['model'].coef_[0]:.2f}")
+                                    st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
+                                    st.write(f"**RMSE:** {five_res['rmse']:.2f}")
+                                    st.write(f"**R²:** {five_res['r2']:.2f}")
 
-                        # -------------------------
-                        # PLOT MODELS
-                        # -------------------------
-                        T_plot = np.linspace(final_df['temperature'].min(), final_df['temperature'].max(), 400)
+                            # -------------------------
+                            # PLOT MODELS
+                            # -------------------------
+                            T_plot = np.linspace(final_df['temperature'].min(), final_df['temperature'].max(), 400)
 
-                        fig, ax = plt.subplots(figsize=(9, 5))
-                        ax.scatter(final_df['temperature'], final_df['Energy'], label="Measured Energy", s=50)
+                            fig, ax = plt.subplots(figsize=(9, 5))
+                            ax.scatter(final_df['temperature'], final_df['Energy'], label="Measured Energy", s=50)
 
-                        if model_choice == "3-parameter":
-                            Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"],
-                                                          mode=three_res["mode"])
-                            ax.plot(T_plot, Y3_plot, label="3-parameter", linewidth=2.5)
+                            if model_choice == "3-parameter":
+                                Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"],
+                                                              mode=three_res["mode"])
+                                ax.plot(T_plot, Y3_plot, label="3-parameter", linewidth=2.5)
 
-                        elif model_choice == "5-parameter":
-                            Y5_plot = predict_5p_for_plot(T_plot, five_res["Tb_low"], five_res["Tb_high"],
-                                                          five_res["model"])
-                            ax.plot(T_plot, Y5_plot, label="5-parameter", linewidth=2.5)
+                            elif model_choice == "5-parameter":
+                                Y5_plot = predict_5p_for_plot(T_plot, five_res["Tb_low"], five_res["Tb_high"],
+                                                              five_res["model"])
+                                ax.plot(T_plot, Y5_plot, label="5-parameter", linewidth=2.5)
 
-                        else:  # Both
-                            Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"],
-                                                          mode=three_res["mode"])
-                            Y5_plot = predict_5p_for_plot(T_plot, five_res["Tb_low"], five_res["Tb_high"],
-                                                          five_res["model"])
-                            ax.plot(T_plot, Y3_plot, label="3-parameter", linewidth=2.5)
-                            ax.plot(T_plot, Y5_plot, label="5-parameter", linewidth=2.5)
+                            else:  # Both
+                                Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"],
+                                                              mode=three_res["mode"])
+                                Y5_plot = predict_5p_for_plot(T_plot, five_res["Tb_low"], five_res["Tb_high"],
+                                                              five_res["model"])
+                                ax.plot(T_plot, Y3_plot, label="3-parameter", linewidth=2.5)
+                                ax.plot(T_plot, Y5_plot, label="5-parameter", linewidth=2.5)
 
+                            # Deadband shade
+                            if model_choice in ["5-parameter", "Both"]:
+                                ax.axvspan(five_res["Tb_low"], five_res["Tb_high"], alpha=0.08, color="gray",
+                                           label="Deadband")
 
-                        # Deadband shade
-                        if model_choice in ["5-parameter", "Both"]:
-                            ax.axvspan(five_res["Tb_low"], five_res["Tb_high"], alpha=0.08, color="gray", label="Deadband")
+                            ax.set_xlabel("Temperature (°C)")
+                            ax.set_ylabel("Energy")
+                            ax.set_title("3-Parameter vs 5-Parameter Change-Point Models")
+                            ax.legend()
+                            ax.grid(True)
 
-                        ax.set_xlabel("Temperature (°C)")
-                        ax.set_ylabel("Energy")
-                        ax.set_title("3-Parameter vs 5-Parameter Change-Point Models")
-                        ax.legend()
-                        ax.grid(True)
-
-                        st.pyplot(fig)
+                            st.pyplot(fig)
