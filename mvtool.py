@@ -628,7 +628,7 @@ elif st.session_state.mode == "manual":
 
             client = get_client()
 
-            temp,model_c, model_m = st.columns(2)
+            temp, model_c, model_m = st.columns(3)
 
             with temp:
                 temperature_data = st.selectbox('Select Temperature Unit:',['Celsius','Farenheit'])
