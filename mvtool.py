@@ -618,7 +618,6 @@ elif st.session_state.mode == "manual":
 
             var = "temperature"  # or let user pick
             which = "hourly"
-            temp_unit = st.selectbox("Temperature Unit", ["C", "F"])
 
 
             # create client once (you can cache it)
@@ -665,7 +664,7 @@ elif st.session_state.mode == "manual":
             for i in range(len(final_df)):
                 start_date = final_df['Start Date (yyyy-mm-dd)'][i].date().isoformat()
                 end_date = final_df['End Date (yyyy-mm-dd)'][i].date().isoformat()
-                meta, temperature_data = fetch_openmeteo_archive(client, lat, lon, start_date, end_date, which,var,temp_unit)
+                meta, temperature_data = fetch_openmeteo_archive(client, lat, lon, start_date, end_date, which,var)
                 final_df.loc[i, 'temperature'] = temperature_data["temperature"].mean()
                 #st.write(manual_df)
 

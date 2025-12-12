@@ -1,17 +1,42 @@
-def fetch_openmeteo_archive(
-        client: openmeteo_requests.Client,
-        latitude: float,
-        longitude: float,
-        start_date: str,
-        end_date: str,
-        which: str,        # "hourly" or "daily"
-        var: str,          # e.g. "temperature_2m"
-        temp_unit: str = "celsius"  # NEW: "celsius" or "fahrenheit"
-    ) -> Tuple[Dict, pd.DataFrame]:
+# weather_api.py
+import pandas as pd
+import requests_cache
+from retry_requests import retry
+import openmeteo_requests
+from typing import Tuple, Dict
+from timezonefinder import TimezoneFinder
+
+
+
+def make_openmeteo_client(cache_name: str = ".cache", expire_after: int = -1,
+                          retries: int = 5, backoff: float = 0.2) -> openmeteo_requests.Client:
+    """Return an openmeteo_requests.Client using a cached & retrying session."""
+    session = requests_cache.CachedSession(cache_name, expire_after=expire_after)
+    session = retry(session, retries=retries, backoff_factor=backoff)
+    client = openmeteo_requests.Client(session=session)
+    return client
+
+
+def get_timezone_from_coords(latitude: float, longitude: float) -> str:
+    """Return IANA timezone name (e.g., 'Europe/Berlin') from coordinates."""
+    tf = TimezoneFinder()
+    tz = tf.timezone_at(lat=latitude, lng=longitude)
+    if tz is None:
+        raise ValueError(f"Could not determine timezone for coords {latitude}, {longitude}")
+    return tz
+
+
+def fetch_openmeteo_archive(client: openmeteo_requests.Client,
+                            latitude: float,
+                            longitude: float,
+                            start_date: str,
+                            end_date: str,
+                            which: str,   # "hourly" or "daily"
+                            var: str      # variable name like "temperature_2m"
+                            ) -> Tuple[Dict, pd.DataFrame]:
     """
     Fetch archive data and return (metadata_dict, dataframe).
     start_date/end_date must be ISO strings 'YYYY-MM-DD'.
-    temp_unit: "celsius" (default) or "fahrenheit".
     """
 
     # --- Detect timezone ---
@@ -26,7 +51,6 @@ def fetch_openmeteo_archive(
         "timezone": timezone,
         which: var,
     }
-
     responses = client.weather_api(url, params=params)
     response = responses[0]
 
@@ -35,45 +59,25 @@ def fetch_openmeteo_archive(
         "longitude": response.Longitude(),
         "elevation_m": response.Elevation(),
         "utc_offset_s": response.UtcOffsetSeconds(),
-        "timezone": timezone,
-        "temp_unit": temp_unit
+        "timezone": timezone
     }
 
-    # --- Helper: convert C → F ---
-    def convert_temp(values):
-        if temp_unit.lower() == "fahrenheit":
-            return values * 9/5 + 32
-        return values  # keep Celsius
-
-    # --- Hourly data ---
     if which == "hourly":
         hourly = response.Hourly()
         vals = hourly.Variables(0).ValuesAsNumpy()
-
-        # Convert temperatures only if var looks like a temperature field
-        if "temp" in var or "temperature" in var:
-            vals = convert_temp(vals)
-
         times = pd.date_range(
             start=pd.to_datetime(hourly.Time(), unit="s").tz_localize("UTC").tz_convert(timezone),
             end=pd.to_datetime(hourly.TimeEnd(), unit="s").tz_localize("UTC").tz_convert(timezone),
             freq=pd.Timedelta(seconds=hourly.Interval()),
             inclusive="left",
         )
-
         df = pd.DataFrame({
             "date_local": times,
             var: vals,
         })
-
-    # --- Daily data ---
     else:
         daily = response.Daily()
         vals = daily.Variables(0).ValuesAsNumpy()
-
-        if "temp" in var or "temperature" in var:
-            vals = convert_temp(vals)
-
         times = pd.to_datetime(daily.Time(), unit="s", utc=True)
         df = pd.DataFrame({"date_utc": times})
         df[var] = vals
