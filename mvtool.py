@@ -609,6 +609,7 @@ elif st.session_state.mode == "manual":
 
             lat, lon = st.columns(2)
 
+
             with lat:
                 lat = st.number_input("Latitude", format="%.4f")
 
