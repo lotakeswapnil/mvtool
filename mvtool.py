@@ -668,8 +668,8 @@ elif st.session_state.mode == "manual":
                 start_date = manual_df['Start Date (yyyy-mm-dd)'][i].date().isoformat()
                 end_date = manual_df['End Date (yyyy-mm-dd)'][i].date().isoformat()
                 meta, temperature_data = fetch_openmeteo_archive(client, lat, lon, start_date, end_date, which,var)
-
-                st.write(temperature_data)
+                average_temperature = np.mean(temperature_data)
+                st.write(average_temperature)
 
         if st.session_state.interval == 'no':
 
