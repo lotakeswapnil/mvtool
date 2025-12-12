@@ -628,10 +628,7 @@ elif st.session_state.mode == "manual":
 
             client = get_client()
 
-            weather_i, model_c, model_m = st.columns(3)
-
-            with weather_i:
-                weather_interval = st.selectbox('Select Interval', {'Hourly', 'Daily', 'Monthly'})
+            model_c, model_m = st.columns(2)
 
             with model_c:
                 model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
