@@ -31,6 +31,7 @@ def fetch_openmeteo_archive(client: openmeteo_requests.Client,
                             longitude: float,
                             start_date: str,
                             end_date: str,
+                            temperature_unit: str,
                             which: str,   # "hourly" or "daily"
                             var: str      # variable name like "temperature_2m"
                             ) -> Tuple[Dict, pd.DataFrame]:
@@ -49,6 +50,7 @@ def fetch_openmeteo_archive(client: openmeteo_requests.Client,
         "start_date": start_date,
         "end_date": end_date,
         "timezone": timezone,
+        "temperature_unit": temperature_unit,
         which: var,
     }
     responses = client.weather_api(url, params=params)

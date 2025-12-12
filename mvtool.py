@@ -628,7 +628,10 @@ elif st.session_state.mode == "manual":
 
             client = get_client()
 
-            model_c, model_m = st.columns(2)
+            temp,model_c, model_m = st.columns(2)
+
+            with temp:
+                temperature_data = st.selectbox('Select Temperature Unit:',['Celsius','Farenheit'])
 
             with model_c:
                 model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
@@ -666,7 +669,7 @@ elif st.session_state.mode == "manual":
                 for i in range(len(final_df)):
                     start_date = final_df['Start Date (yyyy-mm-dd)'][i].date().isoformat()
                     end_date = final_df['End Date (yyyy-mm-dd)'][i].date().isoformat()
-                    meta, temperature_data = fetch_openmeteo_archive(client, lat, lon, start_date, end_date, which, var)
+                    meta, temperature_data = fetch_openmeteo_archive(client, lat, lon, start_date, end_date, temperature_unit, which, var)
                     final_df.loc[i, 'temperature'] = temperature_data["temperature"].mean()
                     # st.write(manual_df)
 
