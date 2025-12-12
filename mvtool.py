@@ -609,7 +609,6 @@ elif st.session_state.mode == "manual":
 
             lat, lon = st.columns(2)
 
-
             with lat:
                 lat = st.number_input("Latitude", format="%.4f")
 
@@ -650,6 +649,18 @@ elif st.session_state.mode == "manual":
                 else:
                     mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
                                         index=0)
+
+            # Build column names automatically
+            col_names = ['Start Date','End Date','Energy']  # first column fixed
+            empty_df = pd.DataFrame({'Energy': pd.Series([0], dtype=float)})
+
+            st.write('#### Enter Energy Data Below:')
+
+            manual_df = st.data_editor(empty_df, num_rows="dynamic")
+
+            if len(manual_df) < 2:
+                st.error("Please enter at least 2 rows.")
+
 
         if st.session_state.interval == 'no':
 
