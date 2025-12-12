@@ -652,7 +652,8 @@ elif st.session_state.mode == "manual":
 
             # Build column names automatically
             col_names = ['Start Date','End Date','Energy']  # first column fixed
-            empty_df = pd.DataFrame({'Start Date': pd.Series([0], dtype=date),'End Date': pd.Series([0], dtype=date),'Energy': pd.Series([0], dtype=float)})
+            empty_df = pd.DataFrame({'Start Date': pd.Series([0], dtype=datetime),'End Date': pd.Series([0], dtype=datetime),
+                                     'Energy': pd.Series([0], dtype=float)})
 
             st.write('#### Enter Energy Data Below:')
 
