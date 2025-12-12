@@ -661,14 +661,14 @@ elif st.session_state.mode == "manual":
                 st.error("Please enter at least 2 rows.")
 
 
-            for i in range(len(final_df)):
-                start_date = final_df['Start Date (yyyy-mm-dd)'][i].date().isoformat()
-                end_date = final_df['End Date (yyyy-mm-dd)'][i].date().isoformat()
-                meta, temperature_data = fetch_openmeteo_archive(client, lat, lon, start_date, end_date, which,var)
-                final_df.loc[i, 'temperature'] = temperature_data["temperature"].mean()
-                #st.write(manual_df)
-
             if st.button("Fetch Weather Data"):
+
+                for i in range(len(final_df)):
+                    start_date = final_df['Start Date (yyyy-mm-dd)'][i].date().isoformat()
+                    end_date = final_df['End Date (yyyy-mm-dd)'][i].date().isoformat()
+                    meta, temperature_data = fetch_openmeteo_archive(client, lat, lon, start_date, end_date, which, var)
+                    final_df.loc[i, 'temperature'] = temperature_data["temperature"].mean()
+                    # st.write(manual_df)
 
                 # -------------------------
                 # DEFAULT MODEL SETTINGS
