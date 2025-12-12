@@ -1,6 +1,5 @@
 # import necessary packages
 from datetime import date
-import datetime
 
 import pandas as pd
 import streamlit as st
@@ -653,7 +652,7 @@ elif st.session_state.mode == "manual":
 
             # Build column names automatically
             col_names = ['Start Date','End Date','Energy']  # first column fixed
-            empty_df = pd.DataFrame({'Start Date': pd.Series([datetime.date.today()], dtype='object'),'End Date': pd.Series([0], dtype='datetime64[ns]'),
+            empty_df = pd.DataFrame({'Start Date': pd.Series([0], dtype='datetime64[ns]'),'End Date': pd.Series([0], dtype='datetime64[ns]'),
                                      'Energy': pd.Series([0], dtype=float)})
 
             st.write('#### Enter Energy Data Below:')
