@@ -665,7 +665,7 @@ elif st.session_state.mode == "manual":
 
 
             for i in len(manual_df['Start Date']):
-                st.write(f'Entries'i)
+                st.write(manual_df['Start Date'][i])
 
 
         if st.session_state.interval == 'no':
