@@ -226,12 +226,7 @@ elif st.session_state.mode == "upload":
                     step = 1.0
                     rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
 
-                    #--------------------------
-                    y_r = df_r[rep_energy]
-                    x_r = df_r[temp_data]
-                    pred_r = model.predict(x_r)
-                    savings = pred_r.sum() - df_r[rep_energy].sum()
-                    st.write(f'### Savings: {savings:.2f}')
+
 
                     # -------------------------
                     # RUN MODELS
@@ -255,6 +250,13 @@ elif st.session_state.mode == "upload":
 
                     mean_energy = float(df_b[base_energy].mean())
                     #preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct, mean_kwh)
+
+                    # --------------------------
+                    y_r = df_r[rep_energy]
+                    x_r = df_r[temp_data]
+                    pred_r = model_choice.predict(x_r)
+                    savings = pred_r.sum() - df_r[rep_energy].sum()
+                    st.write(f'### Savings: {savings:.2f}')
 
                     # -------------------------
                     # EQUATION DISPLAY
