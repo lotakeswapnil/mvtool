@@ -1004,9 +1004,8 @@ elif st.session_state.mode == "manual":
                                 df_weather_final = (
                                     df.groupby(['month', 'day'], as_index=False).mean(numeric_only=True))
 
-                            st.subheader('Combined Dependent Variable and Weather Data')
+
                             final_df = pd.concat([manual_df, df_weather_final], axis=1)
-                            st.dataframe(final_df)
 
                             # -------------------------
                             # DEFAULT MODEL SETTINGS
