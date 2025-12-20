@@ -57,10 +57,11 @@ elif st.session_state.mode == "upload":
 
         if uploaded.name.endswith(".csv"):
             df = pd.read_csv(uploaded)
+            st.write('### Preview:', df.head())
         else:
             df = pd.read_excel(uploaded)
+            st.write('### Preview:', df.head())
 
-        st.write('### Preview:', df.head())
 
         col1, col2 = st.columns(2)
 
