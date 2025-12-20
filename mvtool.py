@@ -171,8 +171,8 @@ elif st.session_state.mode == "upload":
 
                         equation_latex = (
                                 "Energy = " +
-                                f"{intercept:.4f} + " +
-                                " + ".join([f"{coef[k]:.4f} \\times {independent[k]}" for k in range(len(independent))])
+                                f"{intercept:.2f} + " +
+                                " + ".join([f"{coef[k]:.2f} \\times {independent[k]}" for k in range(len(independent))])
                         )
 
                         st.subheader("Regression Equation")
@@ -509,9 +509,9 @@ elif st.session_state.mode == "manual":
 
                     equation_latex = (
                             "Energy = "
-                            f"{intercept:.4f} + "
+                            f"{intercept:.2f} + "
                             + " + ".join([
-                        f"{coef[i]:.4f} \\times {independent_vars[i]}"
+                        f"{coef[i]:.2f} \\times {independent_vars[i]}"
                         for i in range(len(independent_vars))
                     ])
                     )
