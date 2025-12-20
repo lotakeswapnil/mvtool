@@ -103,7 +103,7 @@ elif st.session_state.mode == "upload":
                     globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
 
             else:
-                energy_data = st.text_input('Energy column name')
+                base_energy_data = st.text_input('Energy column name')
                 temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
 
         st.subheader('Reported Data details:')
@@ -117,7 +117,6 @@ elif st.session_state.mode == "upload":
         with rep2:
             st.write(f'###### Reported Energy column name: \n {base_energy}')
 
-
         with rep3:
             if rep_ind_var == 'Independent Variable':
                 st.write(f'###### Reported Data Independent Variable Names:')
@@ -125,7 +124,7 @@ elif st.session_state.mode == "upload":
                     st.write(globals()[f"ind_var_{i}"])
 
             else:
-                energy_data = st.text_input('Energy column name')
+                base_energy_data = st.text_input('Energy column name')
                 temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
 
 
@@ -208,7 +207,7 @@ elif st.session_state.mode == "upload":
 
 
             if st.button('Run Regression'):
-                if temp_data != '' and energy_data != '':
+                if temp_data != '' and base_energy_data != '':
 
                     # -------------------------
                     # DEFAULT MODEL SETTINGS
@@ -222,7 +221,7 @@ elif st.session_state.mode == "upload":
                     # RUN MODELS
                     # -------------------------
                     temp = df_b[temp_data].values
-                    energy = df_b[energy_data].values
+                    energy = df_b[base_energy_data].values
 
                     with st.spinner("Running change-point models..."):
                         three_res = None
@@ -238,7 +237,7 @@ elif st.session_state.mode == "upload":
                             three_res = fit_three_param_cp(temp, energy, Tmin, Tmax, step, mode=mode)
                             five_res = fit_five_param_deadband(temp, energy, Tmin, Tmax, step)
 
-                    mean_energy = float(df_b[energy_data].mean())
+                    mean_energy = float(df_b[base_energy_data].mean())
                     #preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct, mean_kwh)
 
                     # -------------------------
@@ -340,7 +339,7 @@ elif st.session_state.mode == "upload":
                     T_plot = np.linspace(df_b[temp_data].min(), df_b[temp_data].max(), 400)
 
                     fig, ax = plt.subplots(figsize=(9, 5))
-                    ax.scatter(df_b[temp_data], df_b[energy_data], label="Measured Energy", s=50)
+                    ax.scatter(df_b[temp_data], df_b[base_energy_data], label="Measured Energy", s=50)
 
                     if model_choice == "3-parameter":
                         Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"],
@@ -378,7 +377,7 @@ elif st.session_state.mode == "upload":
             if temp_data == '':
                 st.error("Please add temperature column name.")
 
-            if energy_data == '':
+            if base_energy_data == '':
                 st.error("Please add energy column name.")
 
 
