@@ -269,13 +269,13 @@ elif st.session_state.mode == "upload":
                                                      five_res["model"])
 
                     if model_choice == "3-parameter" or model_choice == "5-parameter":
-                        st.write(f'##### Predicted Baseline Consumption: {pred_r.sum():.2f}')
+                        st.write(f'**Predicted Baseline Consumption:** {pred_r.sum():.2f}')
 
                     else:
-                        st.write(f'##### 3 Parameter Predicted Baseline Consumption: {pred_r_3p.sum():.2f}')
-                        st.write(f'##### 5 Parameter Predicted Baseline Consumption: {pred_r_5p.sum():.2f}')
+                        st.write(f'**3 Parameter Predicted Baseline Consumption:** {pred_r_3p.sum():.2f}')
+                        st.write(f'**5 Parameter Predicted Baseline Consumption:** {pred_r_5p.sum():.2f}')
 
-                    st.write(f'##### Reported Consumption: {df_r[rep_energy].sum():.2f}')
+                    st.write(f'**Reported Consumption:** {df_r[rep_energy].sum():.2f}')
 
                     if model_choice == "3-parameter" or model_choice == "5-parameter":
                         savings = pred_r.sum() - df_r[rep_energy].sum()
