@@ -537,9 +537,9 @@ elif st.session_state.mode == "manual":
             temp = final_df['Temperature'].values
             energy = final_df['Energy'].values
 
-            temp,mod1,mod2 = st.columns([0.25,0.25,0.25])
+            temp_sel,mod1,mod2 = st.columns([0.25,0.25,0.25])
 
-            with temp:
+            with temp_sel:
                 temperature_unit = st.selectbox('Select Temperature unit:',['celsius','fahrenheit'])
 
             with mod1:
