@@ -254,9 +254,18 @@ elif st.session_state.mode == "upload":
                     # --------------------------
                     y_r = df_r[rep_energy]
                     x_r = df_r[temp_data]
-                    st.write(three_res.predict(x_r))
+                    if model_choice == "3-parameter":
+                        pred_r = predict_3p_for_plot(x_r, three_res["Tb"], three_res["model"],
+                                                      mode=three_res["mode"])
 
-                    pred_r = model_choice.predict(x_r)
+                    elif model_choice == "5-parameter":
+                        pred_r = predict_5p_for_plot(x_r, five_res["Tb_low"], five_res["Tb_high"],
+                                                      five_res["model"])
+
+                    else:  # Both
+                        pred_r = predict_3p_for_plot(x_r, three_res["Tb"], three_res["model"],
+                                                      mode=three_res["mode"])
+
                     savings = pred_r.sum() - df_r[rep_energy].sum()
                     st.write(f'### Savings: {savings:.2f}')
 
