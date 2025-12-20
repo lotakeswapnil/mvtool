@@ -1,6 +1,5 @@
 # import necessary packages
 from datetime import date
-from tkinter.tix import X_REGION
 
 import pandas as pd
 import streamlit as st
