@@ -254,6 +254,8 @@ elif st.session_state.mode == "upload":
                     # --------------------------
                     y_r = df_r[rep_energy]
                     x_r = df_r[temp_data]
+                    st.write(three_res.predict(x_r))
+
                     pred_r = model_choice.predict(x_r)
                     savings = pred_r.sum() - df_r[rep_energy].sum()
                     st.write(f'### Savings: {savings:.2f}')
