@@ -144,98 +144,99 @@ elif st.session_state.mode == "upload":
 
             #energy_data = st.text_input('Energy column name')
 
-            if temp_data != '' and energy_data != '':
+            if st.button('Run Regression'):
+                if temp_data != '' and energy_data != '':
 
-                # -------------------------
-                # DEFAULT MODEL SETTINGS
-                # -------------------------
-                Tmin = float(np.floor(df[temp_data].min()))
-                Tmax = float(np.ceil(df[temp_data].max()))
-                step = 1.0
-                rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
+                    # -------------------------
+                    # DEFAULT MODEL SETTINGS
+                    # -------------------------
+                    Tmin = float(np.floor(df[temp_data].min()))
+                    Tmax = float(np.ceil(df[temp_data].max()))
+                    step = 1.0
+                    rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
 
-                # -------------------------
-                # RUN MODELS
-                # -------------------------
-                temp = df[temp_data].values
-                kwh = df[energy_data].values
+                    # -------------------------
+                    # RUN MODELS
+                    # -------------------------
+                    temp = df[temp_data].values
+                    kwh = df[energy_data].values
 
-                with st.spinner("Running change-point models..."):
-                    three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step)
-                    five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
+                    with st.spinner("Running change-point models..."):
+                        three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step)
+                        five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
 
-                mean_kwh = float(df[energy_data].mean())
-                preferred_label, preferred_result = select_model_by_rmse_r2(
-                    three_res, five_res, rel_tol_pct, mean_kwh
-                )
+                    mean_kwh = float(df[energy_data].mean())
+                    preferred_label, preferred_result = select_model_by_rmse_r2(
+                        three_res, five_res, rel_tol_pct, mean_kwh
+                    )
 
-                # -------------------------
-                # EQUATION DISPLAY
-                # -------------------------
-                st.write("## Model Equations")
+                    # -------------------------
+                    # EQUATION DISPLAY
+                    # -------------------------
+                    st.write("## Model Equations")
 
-                st.write('### 3-parameter:')
-                st.latex(fr"\text{{Energy}} = {three_res['model'].intercept_:.2f} + {three_res['model'].coef_[0]:.2f}\,\max(0,\,T - {three_res['Tb']:.2f})")
+                    st.write('### 3-parameter:')
+                    st.latex(fr"\text{{Energy}} = {three_res['model'].intercept_:.2f} + {three_res['model'].coef_[0]:.2f}\,\max(0,\,T - {three_res['Tb']:.2f})")
 
-                st.write('### 5-parameter:')
-                st.latex(fr"\text{{Energy}} = {five_res['model'].intercept_:.2f} + {five_res['model'].coef_[0]:.2f}\,\max(0,\,{five_res['Tb_low']:.2f} - T) + {five_res['model'].coef_[1]:.2f}\,\max(0,\,T - {five_res['Tb_high']:.2f})")
+                    st.write('### 5-parameter:')
+                    st.latex(fr"\text{{Energy}} = {five_res['model'].intercept_:.2f} + {five_res['model'].coef_[0]:.2f}\,\max(0,\,{five_res['Tb_low']:.2f} - T) + {five_res['model'].coef_[1]:.2f}\,\max(0,\,T - {five_res['Tb_high']:.2f})")
 
 
-                # -------------------------
-                # DISPLAY RESULTS
-                # -------------------------
-                st.write("## Model Results")
+                    # -------------------------
+                    # DISPLAY RESULTS
+                    # -------------------------
+                    st.write("## Model Results")
 
-                col1, col2 = st.columns(2)
+                    col1, col2 = st.columns(2)
 
-                with col1:
-                    st.subheader("3-Parameter Model")
-                    st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
-                    st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
-                    st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
-                    st.write(f"**RMSE:** {three_res['rmse']:.2f}")
-                    st.write(f"**R²:** {three_res['r2']:.2f}")
+                    with col1:
+                        st.subheader("3-Parameter Model")
+                        st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
+                        st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
+                        st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
+                        st.write(f"**RMSE:** {three_res['rmse']:.2f}")
+                        st.write(f"**R²:** {three_res['r2']:.2f}")
 
-                with col2:
-                    st.subheader("5-Parameter Model")
-                    st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °C")
-                    st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °C")
-                    st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
-                    st.write(f"**β_h:** {five_res['model'].coef_[0]:.2f}")
-                    st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
-                    st.write(f"**RMSE:** {five_res['rmse']:.2f}")
-                    st.write(f"**R²:** {five_res['r2']:.2f}")
+                    with col2:
+                        st.subheader("5-Parameter Model")
+                        st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °C")
+                        st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °C")
+                        st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
+                        st.write(f"**β_h:** {five_res['model'].coef_[0]:.2f}")
+                        st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
+                        st.write(f"**RMSE:** {five_res['rmse']:.2f}")
+                        st.write(f"**R²:** {five_res['r2']:.2f}")
 
-                st.success(f"### Preferred model → **{preferred_label}**")
+                    st.success(f"### Preferred model → **{preferred_label}**")
 
-                # -------------------------
-                # PLOT MODELS
-                # -------------------------
-                T_plot = np.linspace(df[temp_data].min(), df[temp_data].max(), 400)
+                    # -------------------------
+                    # PLOT MODELS
+                    # -------------------------
+                    T_plot = np.linspace(df[temp_data].min(), df[temp_data].max(), 400)
 
-                Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"])
-                Y5_plot = predict_5p_for_plot(T_plot, five_res["Tb_low"], five_res["Tb_high"], five_res["model"])
+                    Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"])
+                    Y5_plot = predict_5p_for_plot(T_plot, five_res["Tb_low"], five_res["Tb_high"], five_res["model"])
 
-                fig, ax = plt.subplots(figsize=(9, 5))
-                ax.scatter(df[temp_data], df[energy_data], label="Measured Energy", s=50)
+                    fig, ax = plt.subplots(figsize=(9, 5))
+                    ax.scatter(df[temp_data], df[energy_data], label="Measured Energy", s=50)
 
-                if preferred_label == "3-parameter":
-                    ax.plot(T_plot, Y3_plot, label="3-parameter (preferred)", linewidth=2.5)
-                    ax.plot(T_plot, Y5_plot, '--', label="5-parameter", alpha=0.8)
-                else:
-                    ax.plot(T_plot, Y3_plot, '--', label="3-parameter", alpha=0.8)
-                    ax.plot(T_plot, Y5_plot, label="5-parameter (preferred)", linewidth=2.5)
+                    if preferred_label == "3-parameter":
+                        ax.plot(T_plot, Y3_plot, label="3-parameter (preferred)", linewidth=2.5)
+                        ax.plot(T_plot, Y5_plot, '--', label="5-parameter", alpha=0.8)
+                    else:
+                        ax.plot(T_plot, Y3_plot, '--', label="3-parameter", alpha=0.8)
+                        ax.plot(T_plot, Y5_plot, label="5-parameter (preferred)", linewidth=2.5)
 
-                # Deadband shade
-                ax.axvspan(five_res["Tb_low"], five_res["Tb_high"], alpha=0.08, color="gray", label="Deadband")
+                    # Deadband shade
+                    ax.axvspan(five_res["Tb_low"], five_res["Tb_high"], alpha=0.08, color="gray", label="Deadband")
 
-                ax.set_xlabel("Temperature (°C)")
-                ax.set_ylabel("Energy")
-                ax.set_title("3-Parameter vs 5-Parameter Change-Point Models")
-                ax.legend()
-                ax.grid(True)
+                    ax.set_xlabel("Temperature (°C)")
+                    ax.set_ylabel("Energy")
+                    ax.set_title("3-Parameter vs 5-Parameter Change-Point Models")
+                    ax.legend()
+                    ax.grid(True)
 
-                st.pyplot(fig)
+                    st.pyplot(fig)
 
             if temp_data == '':
                 st.error("Please add temperature column name.")
