@@ -117,7 +117,8 @@ elif st.session_state.mode == "upload":
 
         with rep2:
             if rep_ind_var == 'Independent Variable':
-                st.write(globals()[f"ind_var_{i}"])
+                for i in range(1, base_num_var + 1):
+                    st.write(globals()[f"ind_var_{i}"])
 
             else:
                 energy_data = st.text_input('Energy column name')
