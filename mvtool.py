@@ -97,7 +97,8 @@ elif st.session_state.mode == "upload":
 
 
         if uploaded_r:
-            st.write(uploaded_r)
+            df_r = pd.read_csv(uploaded_r)
+            st.write('### Reported Data Preview:', df_r.head())
         else:
             None
 
