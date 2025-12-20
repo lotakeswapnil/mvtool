@@ -268,7 +268,13 @@ elif st.session_state.mode == "upload":
                         pred_r_5p = predict_5p_for_plot(x_r.to_numpy(), five_res["Tb_low"], five_res["Tb_high"],
                                                      five_res["model"])
 
-                    st.write(f'##### Predicted Baseline Consumption: {pred_r.sum():.2f}')
+                    if model_choice == "3-parameter" or model_choice == "5-parameter":
+                        st.write(f'##### Predicted Baseline Consumption: {pred_r.sum():.2f}')
+
+                    else:
+                        st.write(f'##### Predicted Baseline Consumption: {pred_r_3p.sum():.2f}')
+                        st.write(f'##### Predicted Baseline Consumption: {pred_r_5p.sum():.2f}')
+
                     st.write(f'##### Reported Consumption: {df_r[rep_energy].sum():.2f}')
 
                     if model_choice == "3-parameter" or model_choice == "5-parameter":
