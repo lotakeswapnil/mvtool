@@ -282,11 +282,9 @@ elif st.session_state.mode == "upload":
                         st.write(f'### Savings: {savings:.2f}')
                     else:
                         savings_3p = pred_r_3p.sum() - df_r[rep_energy].sum()
-                        st.markdown(f'### 3 Parameter Savings: ')
-                        st.write(f'{savings_3p: .2f}')
+                        st.write(f'**3 Parameter Savings:** {savings_3p:.2f}')
                         savings_5p = pred_r_5p.sum() - df_r[rep_energy].sum()
-                        st.markdown(f'### 5 Parameter Savings: ')
-                        st.write(f'{savings_5p:.2f}')
+                        st.write(f'**5 Parameter Savings:** {savings_5p:.2f}')
 
                     # -------------------------
                     # EQUATION DISPLAY
