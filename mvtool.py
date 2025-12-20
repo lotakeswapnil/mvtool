@@ -266,8 +266,8 @@ elif st.session_state.mode == "upload":
                         pred_r = predict_3p_for_plot(x_r.to_numpy(), three_res["Tb"], three_res["model"],
                                                       mode=three_res["mode"])
 
-                    st.write(f'Predicted Baseline Consumption: {pred_r.sum():.2f}')
-                    st.write(f'Reported Consumption: {df_r[rep_energy].sum():.2f}')
+                    st.write(f'##### Predicted Baseline Consumption: {pred_r.sum():.2f}')
+                    st.write(f'##### Reported Consumption: {df_r[rep_energy].sum():.2f}')
                     savings = pred_r.sum() - df_r[rep_energy].sum()
                     st.write(f'### Savings: {savings:.2f}')
 
