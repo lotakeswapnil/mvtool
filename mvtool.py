@@ -243,6 +243,7 @@ elif st.session_state.mode == "upload":
             if energy_data == '':
                 st.error("Please add energy column name.")
 
+        st.markdown("</div>", unsafe_allow_html=True)
 
 
 # -------------------------
