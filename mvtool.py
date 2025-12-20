@@ -892,8 +892,7 @@ elif st.session_state.mode == "manual":
                     end_str = end_date.isoformat()
                     with st.spinner("Fetching..."):
                         try:
-                            meta, df_weather = fetch_openmeteo_archive(client, lat, lon, start_str, end_str, which,
-                                                                       var)
+                            meta, df_weather = fetch_openmeteo_archive(client, lat, lon, start_str, end_str, which, var)
                         except Exception as e:
                             st.error(f"Weather fetch failed: {e}")
                         else:
@@ -907,19 +906,19 @@ elif st.session_state.mode == "manual":
 
                             elif weather_interval == "Monthly":
 
-                                df["month"] = df["date_local"].dt.month  # 1–12
+                                df['month'] = df['date_local'].dt.month  # 1–12
 
-                                df_weather_final = (df.groupby("month", as_index=False).mean(numeric_only=True))
+                                df_weather_final = (df.groupby('month', as_index=False).mean(numeric_only=True))
 
                             else:
 
-                                df["month"] = df["date_local"].dt.month
-                                df["day"] = df["date_local"].dt.day
+                                df['month'] = df['date_local'].dt.month
+                                df['day'] = df['date_local'].dt.day
 
                                 df_weather_final = (
-                                    df.groupby(["month", "day"], as_index=False).mean(numeric_only=True))
+                                    df.groupby(['month', 'day'], as_index=False).mean(numeric_only=True))
 
-                            st.subheader("Combined Dependent Variable and Weather Data")
+                            st.subheader('Combined Dependent Variable and Weather Data')
                             final_df = pd.concat([manual_df, df_weather_final], axis=1)
                             st.dataframe(final_df)
 
@@ -938,17 +937,17 @@ elif st.session_state.mode == "manual":
                             temp = final_df['temperature'].values
                             kwh = final_df['Energy'].values
 
-                            with st.spinner("Running change-point models..."):
+                            with st.spinner('Running change-point models...'):
                                 three_res = None
                                 five_res = None
 
-                                if model_choice == "3-parameter":
+                                if model_choice == '3-parameter':
                                     three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step, mode=mode)
 
-                                if model_choice == "5-parameter":
+                                if model_choice == '5-parameter':
                                     five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
 
-                                if model_choice == "Both":
+                                if model_choice == 'Both':
                                     three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step, mode=mode)
                                     five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
 
@@ -960,12 +959,12 @@ elif st.session_state.mode == "manual":
                             # -------------------------
                             st.write("## Model Equations")
 
-                            if model_choice in ["3-parameter", "Both"]:
+                            if model_choice in ['3-parameter', 'Both']:
                                 st.write('### 3-parameter:')
-                                Tb = three_res["Tb"]
-                                b0 = three_res["model"].intercept_
-                                b1 = three_res["model"].coef_[0]
-                                mode_used = three_res["mode"]  # "heating" or "cooling"
+                                Tb = three_res['Tb']
+                                b0 = three_res['model'].intercept_
+                                b1 = three_res['model'].coef_[0]
+                                mode_used = three_res['mode']  # "heating" or "cooling"
 
                                 if mode_used == "cooling":
                                     # Cooling: Energy = b0 + b1 * max(0, T - Tb)
