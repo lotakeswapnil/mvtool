@@ -58,7 +58,7 @@ elif st.session_state.mode == "upload":
         df = pd.read_csv(uploaded)
         st.write('### Preview:', df.head())
 
-        col1, col2, col3 = st.columns(3)
+        col1, col2 = st.columns(2)
 
         with col1:
             data_ind_var = st.selectbox('Select Independent Variable Type', {'Temperature', 'Independent Variable'})
@@ -67,7 +67,7 @@ elif st.session_state.mode == "upload":
             num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
 
 
-        with col3:
+        with col2:
             if data_ind_var == 'Independent Variable':
 
                 # Target (dependent) column
@@ -79,6 +79,8 @@ elif st.session_state.mode == "upload":
 
                 #model_dict = {'Linear Regression': LinearRegression, 'Ridge Regression': Ridge, 'Lasso Regression': Lasso}
                 #model_list = st.selectbox('Select models', model_dict)
+
+        col1, col2, col3 = st.columns(3)
 
         with col2:
 
@@ -128,7 +130,6 @@ elif st.session_state.mode == "upload":
 
                 else:
                     st.error('All variables not defined.')
-
 
         # -------------------------
         # Sample data (heating + deadband + cooling)
