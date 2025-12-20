@@ -50,8 +50,15 @@ elif st.session_state.mode == "upload":
         st.session_state.mode = None
         st.rerun()
 
-    st.write('## Upload Baseline Data (CSV or Excel)')
-    uploaded_b = st.file_uploader('', type=['csv', 'xlsx', 'xls'], label_visibility='collapsed')
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.write('Upload Baseline Data (CSV or Excel)')
+        uploaded_b = st.file_uploader('', type=['csv', 'xlsx', 'xls'], label_visibility='collapsed')
+
+    with col2:
+        st.write('Upload Reported Data (CSV or Excel)')
+        uploaded_r = st.file_uploader('', type=['csv', 'xlsx', 'xls'], label_visibility='collapsed')
 
     if uploaded_b:
 
