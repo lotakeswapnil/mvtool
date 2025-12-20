@@ -80,56 +80,60 @@ elif st.session_state.mode == "upload":
                 #model_dict = {'Linear Regression': LinearRegression, 'Ridge Regression': Ridge, 'Lasso Regression': Lasso}
                 #model_list = st.selectbox('Select models', model_dict)
 
-        col1, col2, col3 = st.columns(3)
+        st.markdown(
+            """
+            <div style="display: flex; justify-content: center;">
+            """,
+            unsafe_allow_html=True
+        )
 
-        with col2:
-
-            if st.button('Run Regression'):
-                if energy_cons is not None and globals()[f"ind_var_{i}"] != "":
-                    if globals()[f"ind_var_{i}"] not in df.columns:
-                        st.error(f"Variable '{globals()[f'ind_var_{i}']}' not found in the uploaded CSV.")
-                    else:
-                        # ---------- ADDED: build list of independent variables ----------
-                        independent = [
-                            globals()[f"ind_var_{j}"]
-                            for j in range(1, num_var + 1)
-                            if globals()[f"ind_var_{j}"] in df.columns
-                        ]
-                        # -----------------------------------------------------------------
-
-                        # ---------- MODIFIED MINIMALLY: use the list instead of single var ----------
-                        X = df[independent]  # <- works for 1 or many variables
-                        # ------------------------------------------------------------------------------
-
-                        y = df[energy_cons]
-
-                        model = LinearRegression()
-                        model.fit(X, y)
-                        preds = model.predict(X)
-                        regression = model.score(X, y)
-                        cvrmse = root_mean_squared_error(y, preds)/y.mean()
-
-                        # ---------- ADDED: Regression Equation Display ----------
-                        coef = model.coef_
-                        intercept = model.intercept_
-
-                        equation_latex = (
-                                "Energy = " +
-                                f"{intercept:.4f} + " +
-                                " + ".join([f"{coef[k]:.4f} \\times {independent[k]}" for k in range(len(independent))])
-                        )
-
-                        st.subheader("Regression Equation")
-                        st.latex(equation_latex)
-
-                        st.write(f'R2: {regression:.2%}')
-                        st.write(f'CV (RMSE): {cvrmse:.2%}')
-                        st.line_chart(pd.DataFrame({'Actual': y, 'Predicted': preds}).reset_index(drop=True))
-
-
-
+        if st.button('Run Regression'):
+            if energy_cons is not None and globals()[f"ind_var_{i}"] != "":
+                if globals()[f"ind_var_{i}"] not in df.columns:
+                    st.error(f"Variable '{globals()[f'ind_var_{i}']}' not found in the uploaded CSV.")
                 else:
-                    st.error('All variables not defined.')
+                    # ---------- ADDED: build list of independent variables ----------
+                    independent = [
+                        globals()[f"ind_var_{j}"]
+                        for j in range(1, num_var + 1)
+                        if globals()[f"ind_var_{j}"] in df.columns
+                    ]
+                    # -----------------------------------------------------------------
+
+                    # ---------- MODIFIED MINIMALLY: use the list instead of single var ----------
+                    X = df[independent]  # <- works for 1 or many variables
+                    # ------------------------------------------------------------------------------
+
+                    y = df[energy_cons]
+
+                    model = LinearRegression()
+                    model.fit(X, y)
+                    preds = model.predict(X)
+                    regression = model.score(X, y)
+                    cvrmse = root_mean_squared_error(y, preds)/y.mean()
+
+                    # ---------- ADDED: Regression Equation Display ----------
+                    coef = model.coef_
+                    intercept = model.intercept_
+
+                    equation_latex = (
+                            "Energy = " +
+                            f"{intercept:.4f} + " +
+                            " + ".join([f"{coef[k]:.4f} \\times {independent[k]}" for k in range(len(independent))])
+                    )
+
+                    st.subheader("Regression Equation")
+                    st.latex(equation_latex)
+
+                    st.write(f'R2: {regression:.2%}')
+                    st.write(f'CV (RMSE): {cvrmse:.2%}')
+                    st.line_chart(pd.DataFrame({'Actual': y, 'Predicted': preds}).reset_index(drop=True))
+
+
+
+            else:
+                st.error('All variables not defined.')
+
 
         # -------------------------
         # Sample data (heating + deadband + cooling)
