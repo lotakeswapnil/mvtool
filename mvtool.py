@@ -1023,7 +1023,7 @@ elif st.session_state.mode == "manual":
                             temp = final_df['temperature'].values
                             kwh = final_df['Energy'].values
 
-                            if range(temp) == range(kwh)
+                            if range(temp) == range(kwh):
 
                                 with st.spinner('Running change-point models...'):
                                     three_res = None
