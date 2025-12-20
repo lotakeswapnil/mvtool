@@ -63,8 +63,12 @@ elif st.session_state.mode == "upload":
         with col1:
             data_ind_var = st.selectbox('Select Independent Variable Type', {'Temperature', 'Independent Variable'})
 
-            # Number of independent vars
-            num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
+            if data_ind_var == 'Independent Variable':
+                # Number of independent vars
+                num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
+
+            else:
+                temp_data = st.text_input('Temperature column name')
 
 
         with col2:
@@ -75,9 +79,6 @@ elif st.session_state.mode == "upload":
 
                 for i in range(1,num_var+1):
                     globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
-
-            else:
-                temp_data = st.text_input('Temperature column name')
 
 
         if st.button('Run Regression'):
