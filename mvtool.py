@@ -242,7 +242,10 @@ elif st.session_state.mode == "upload":
 
                     if model_choice in ["3-parameter"]:
                         st.subheader("3-Parameter Model")
-                        st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
+                        if temperature_unit == 'celsius':
+                            st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
+                        else:
+                            st.write(f"**Tb:** {three_res['Tb']:.2f} °F")
                         st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
                         st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
                         st.write(f"**RMSE:** {three_res['rmse']:.2f}")
@@ -250,8 +253,14 @@ elif st.session_state.mode == "upload":
 
                     if model_choice in ["5-parameter"]:
                         st.subheader("5-Parameter Model")
-                        st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °C")
-                        st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °C")
+                        if temperature_unit == 'celsius':
+                            st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °C")
+                        else:
+                            st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °F")
+                        if temperature_unit == 'celsius':
+                            st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °C")
+                        else:
+                            st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °F")
                         st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
                         st.write(f"**β_h:** {five_res['model'].coef_[0]:.2f}")
                         st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
@@ -262,15 +271,24 @@ elif st.session_state.mode == "upload":
                         col1, col2 = st.columns(2)
                         with col1:
                             st.subheader("3-Parameter Model")
-                            st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
+                            if temperature_unit == 'celsius':
+                                st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
+                            else:
+                                st.write(f'**Tb:** {three_res['Tb']:.2f} °F')
                             st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
                             st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
                             st.write(f"**RMSE:** {three_res['rmse']:.2f}")
                             st.write(f"**R²:** {three_res['r2']:.2f}")
                         with col2:
                             st.subheader("5-Parameter Model")
-                            st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °C")
-                            st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °C")
+                            if temperature_unit == 'celsius':
+                                st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °C")
+                            else:
+                                st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °F")
+                            if temperature_unit == 'celsius':
+                                st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °C")
+                            else:
+                                st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °F")
                             st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
                             st.write(f"**β_h:** {five_res['model'].coef_[0]:.2f}")
                             st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
@@ -308,7 +326,10 @@ elif st.session_state.mode == "upload":
                     if model_choice in ["5-parameter", "Both"]:
                         ax.axvspan(five_res["Tb_low"], five_res["Tb_high"], alpha=0.08, color="gray", label="Deadband")
 
-                    ax.set_xlabel("Temperature (°C)")
+                    if temperature_unit == "celsius":
+                        ax.set_xlabel("Temperature (°C)")
+                    else:
+                        ax.set_xlabel("Temperature (°F)")
                     ax.set_ylabel("Energy")
                     ax.set_title("3-Parameter vs 5-Parameter Change-Point Models")
                     ax.legend()
@@ -516,7 +537,10 @@ elif st.session_state.mode == "manual":
             temp = final_df['Temperature'].values
             energy = final_df['Energy'].values
 
-            mod1,mod2 = st.columns([0.25,0.25])
+            temp,mod1,mod2 = st.columns([0.25,0.25,0.25])
+
+            with temp:
+                temperature_unit = st.selectbox('Select Temperature unit:',['celsius','fahrenheit'])
 
             with mod1:
                 model_choice = st.selectbox("Select Change-Point Model:",["3-parameter", "5-parameter", "Both"])
@@ -593,7 +617,10 @@ elif st.session_state.mode == "manual":
 
             if model_choice in ["3-parameter"]:
                 st.subheader("3-Parameter Model")
-                st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
+                if temperature_unit == 'celsius':
+                    st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
+                else:
+                    st.write(f"**Tb:** {three_res['Tb']:.2f} °F")
                 st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
                 st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
                 st.write(f"**RMSE:** {three_res['rmse']:.2f}")
@@ -601,8 +628,14 @@ elif st.session_state.mode == "manual":
 
             if model_choice in ["5-parameter"]:
                 st.subheader("5-Parameter Model")
-                st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °C")
-                st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °C")
+                if temperature_unit == 'celsius':
+                    st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °C")
+                else:
+                    st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °F")
+                if temperature_unit == 'celsius':
+                    st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °C")
+                else:
+                    st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °F")
                 st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
                 st.write(f"**β_h:** {five_res['model'].coef_[0]:.2f}")
                 st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
@@ -613,15 +646,24 @@ elif st.session_state.mode == "manual":
                 col1, col2 = st.columns(2)
                 with col1:
                     st.subheader("3-Parameter Model")
-                    st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
+                    if temperature_unit == 'celsius':
+                        st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
+                    else:
+                        st.write(f"**Tb:** {three_res['Tb']:.2f} °F")
                     st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
                     st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
                     st.write(f"**RMSE:** {three_res['rmse']:.2f}")
                     st.write(f"**R²:** {three_res['r2']:.2f}")
                 with col2:
                     st.subheader("5-Parameter Model")
-                    st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °C")
-                    st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °C")
+                    if temperature_unit == 'celsius':
+                        st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °C")
+                    else:
+                        st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °F")
+                    if temperature_unit == 'celsius':
+                        st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °C")
+                    else:
+                        st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °F")
                     st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
                     st.write(f"**β_h:** {five_res['model'].coef_[0]:.2f}")
                     st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
@@ -657,7 +699,10 @@ elif st.session_state.mode == "manual":
             if model_choice in ["5-parameter", "Both"]:
                 ax.axvspan(five_res["Tb_low"], five_res["Tb_high"], alpha=0.08, color="gray", label="Deadband")
 
-            ax.set_xlabel("Temperature (°C)")
+            if temperature_unit == "celsius":
+                ax.set_xlabel("Temperature (°C)")
+            else:
+                ax.set_xlabel('Temperature (°F)')
             ax.set_ylabel("Energy")
             ax.set_title("3-Parameter vs 5-Parameter Change-Point Models")
             ax.legend()
