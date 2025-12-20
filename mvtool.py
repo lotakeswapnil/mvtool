@@ -272,8 +272,8 @@ elif st.session_state.mode == "upload":
                         st.write(f'##### Predicted Baseline Consumption: {pred_r.sum():.2f}')
 
                     else:
-                        st.write(f'##### Predicted Baseline Consumption: {pred_r_3p.sum():.2f}')
-                        st.write(f'##### Predicted Baseline Consumption: {pred_r_5p.sum():.2f}')
+                        st.write(f'##### 3 Parameter Predicted Baseline Consumption: {pred_r_3p.sum():.2f}')
+                        st.write(f'##### 5 Parameter Predicted Baseline Consumption: {pred_r_5p.sum():.2f}')
 
                     st.write(f'##### Reported Consumption: {df_r[rep_energy].sum():.2f}')
 
@@ -282,9 +282,9 @@ elif st.session_state.mode == "upload":
                         st.write(f'### Savings: {savings:.2f}')
                     else:
                         savings_3p = pred_r_3p.sum() - df_r[rep_energy].sum()
-                        st.write(f'### 3 Parameter Savings: {savings:.2f}')
+                        st.write(f'### 3 Parameter Savings: {savings_3p:.2f}')
                         savings_5p = pred_r_5p.sum() - df_r[rep_energy].sum()
-                        st.write(f'### 5 Parameter Savings: {savings:.2f}')
+                        st.write(f'### 5 Parameter Savings: {savings_5p:.2f}')
 
                     # -------------------------
                     # EQUATION DISPLAY
