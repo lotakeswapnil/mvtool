@@ -63,15 +63,15 @@ elif st.session_state.mode == "upload":
         with col1:
             data_ind_var = st.selectbox('Select Independent Variable Type', {'Temperature', 'Independent Variable'})
 
+            # Number of independent vars
+            num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
+
 
         with col2:
             if data_ind_var == 'Independent Variable':
 
                 # Target (dependent) column
                 energy_cons = st.text_input('Energy Consumption column name')
-
-                # Number of independent vars
-                num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
 
                 for i in range(1,num_var+1):
                     globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
