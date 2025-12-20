@@ -77,6 +77,9 @@ elif st.session_state.mode == "upload":
                 df_r = pd.read_excel(uploaded_r)
                 st.write('### Reported Data Preview:', df_r.head())
 
+
+        st.subheader('Select Baseline Data details:')
+
         col1, col2 = st.columns(2)
 
         with col1:
@@ -102,7 +105,6 @@ elif st.session_state.mode == "upload":
             else:
                 energy_data = st.text_input('Energy column name')
                 temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
-
 
 
         if data_ind_var == 'Independent Variable':
@@ -153,8 +155,6 @@ elif st.session_state.mode == "upload":
                             st.line_chart(chart_df, x=independent[0], y=["Actual", "Predicted"])
                         else:
                             st.line_chart(pd.DataFrame({'Actual': y, 'Predicted': preds}).reset_index(drop=True))
-
-                        st.write(df_r[globals()[f"ind_var_{i}"]])
 
                 else:
                     st.error('All variables not defined.')
