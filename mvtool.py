@@ -51,11 +51,15 @@ elif st.session_state.mode == "upload":
         st.rerun()
 
     st.subheader('Upload Data (CSV)')
-    uploaded = st.file_uploader('', type='csv', label_visibility='collapsed')
+    uploaded = st.file_uploader('', type=['csv', 'xlsx', 'xls'], label_visibility='collapsed')
 
     if uploaded:
 
-        df = pd.read_csv(uploaded)
+        if uploaded.name.endswith(".csv"):
+            df = pd.read_csv(uploaded)
+        else:
+            df = pd.read_excel(uploaded)
+
         st.write('### Preview:', df.head())
 
         col1, col2 = st.columns(2)
