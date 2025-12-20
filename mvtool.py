@@ -132,7 +132,7 @@ elif st.session_state.mode == "upload":
 
         if base_ind_var == 'Independent Variable':
 
-            if st.button('Run Regression'):
+            if st.button('Calculate Savings'):
                 if base_energy is not None and globals()[f"ind_var_{i}"] != "":
                     if globals()[f"ind_var_{i}"] not in df_b.columns:
                         st.error(f"Variable '{globals()[f'ind_var_{i}']}' not found in the uploaded CSV.")
