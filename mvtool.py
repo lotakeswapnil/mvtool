@@ -272,8 +272,8 @@ elif st.session_state.mode == "upload":
                         st.write(f'##### Predicted Baseline Consumption: \n {pred_r.sum():.2f}')
 
                     else:
-                        st.write(f'##### Parameter Predicted Baseline Consumption: \n {pred_r_3p.sum():.2f}')
-                        st.write(f'##### Parameter Predicted Baseline Consumption: \n {pred_r_5p.sum():.2f}')
+                        st.write(f'##### 3 Parameter Predicted Baseline Consumption: \n {pred_r_3p.sum():.2f}')
+                        st.write(f'##### 5 Parameter Predicted Baseline Consumption: \n {pred_r_5p.sum():.2f}')
 
                     st.write(f'##### Reported Consumption: \n {df_r[rep_energy].sum():.2f}')
 
