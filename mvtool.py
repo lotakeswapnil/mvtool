@@ -263,13 +263,22 @@ elif st.session_state.mode == "upload":
                                                       five_res["model"])
 
                     else:  # Both
-                        pred_r = predict_3p_for_plot(x_r.to_numpy(), three_res["Tb"], three_res["model"],
+                        pred_r_3p = predict_3p_for_plot(x_r.to_numpy(), three_res["Tb"], three_res["model"],
                                                       mode=three_res["mode"])
+                        pred_r_5p = predict_5p_for_plot(x_r.to_numpy(), five_res["Tb_low"], five_res["Tb_high"],
+                                                     five_res["model"])
 
                     st.write(f'##### Predicted Baseline Consumption: {pred_r.sum():.2f}')
                     st.write(f'##### Reported Consumption: {df_r[rep_energy].sum():.2f}')
-                    savings = pred_r.sum() - df_r[rep_energy].sum()
-                    st.write(f'### Savings: {savings:.2f}')
+
+                    if model_choice == "3-parameter" or model_choice == "5-parameter":
+                        savings = pred_r.sum() - df_r[rep_energy].sum()
+                        st.write(f'### Savings: {savings:.2f}')
+                    else:
+                        savings_3p = pred_r_3p.sum() - df_r[rep_energy].sum()
+                        st.write(f'### 3 Parameter Savings: {savings:.2f}')
+                        savings_5p = pred_r_5p.sum() - df_r[rep_energy].sum()
+                        st.write(f'### 5 Parameter Savings: {savings:.2f}')
 
                     # -------------------------
                     # EQUATION DISPLAY
