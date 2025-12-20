@@ -118,8 +118,8 @@ elif st.session_state.mode == "upload":
                     st.subheader("Regression Equation")
                     st.latex(equation_latex)
 
-                    st.write(f'Regression: {regression:.2%}')
-                    st.write(f'CVRMSE: {cvrmse:.2%}')
+                    st.write(f'R2: {regression:.2%}')
+                    st.write(f'CV (RMSE): {cvrmse:.2%}')
                     st.line_chart(pd.DataFrame({'Actual': y, 'Predicted': preds}).reset_index(drop=True))
 
 
