@@ -70,8 +70,12 @@ elif st.session_state.mode == "upload":
             st.write('### Baseline Data Preview:', df_b.head())
 
         if uploaded_r:
-            df_r = pd.read_csv(uploaded_r)
-            st.write('### Reported Data Preview:', df_r.head())
+            if uploaded_r.name.endswith('.csv'):
+                df_r = pd.read_csv(uploaded_r)
+                st.write('### Reported Data Preview:', df_r.head())
+            else:
+                df_r = pd.read_excel(uploaded_r)
+                st.write('### Reported Data Preview:', df_r.head())
 
         col1, col2 = st.columns(2)
 
@@ -90,7 +94,7 @@ elif st.session_state.mode == "upload":
             if data_ind_var == 'Independent Variable':
 
                 # Target (dependent) column
-                energy_cons = st.text_input('Baseline Energy column name')
+                base_energy = st.text_input('Baseline Energy column name')
 
                 for i in range(1,num_var+1):
                     globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
@@ -104,7 +108,7 @@ elif st.session_state.mode == "upload":
         if data_ind_var == 'Independent Variable':
 
             if st.button('Run Regression'):
-                if energy_cons is not None and globals()[f"ind_var_{i}"] != "":
+                if base_energy is not None and globals()[f"ind_var_{i}"] != "":
                     if globals()[f"ind_var_{i}"] not in df_b.columns:
                         st.error(f"Variable '{globals()[f'ind_var_{i}']}' not found in the uploaded CSV.")
                     else:
@@ -120,7 +124,7 @@ elif st.session_state.mode == "upload":
                         X = df_b[independent]  # <- works for 1 or many variables
                         # ------------------------------------------------------------------------------
 
-                        y = df_b[energy_cons]
+                        y = df_b[base_energy]
 
                         model = LinearRegression()
                         model.fit(X, y)
@@ -150,6 +154,8 @@ elif st.session_state.mode == "upload":
                         else:
                             st.line_chart(pd.DataFrame({'Actual': y, 'Predicted': preds}).reset_index(drop=True))
 
+                        if uploaded_r:
+                            st.write(uploaded_r)
 
                 else:
                     st.error('All variables not defined.')
