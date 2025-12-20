@@ -279,7 +279,7 @@ elif st.session_state.mode == "upload":
 
                     if model_choice == "3-parameter" or model_choice == "5-parameter":
                         savings = pred_r.sum() - df_r[rep_energy].sum()
-                        st.write(f'### Savings: {savings:.2f}')
+                        st.write(f'**Savings:** {savings:.2f}')
                     else:
                         savings_3p = pred_r_3p.sum() - df_r[rep_energy].sum()
                         st.write(f'**3 Parameter Savings:** {savings_3p:.2f}')
