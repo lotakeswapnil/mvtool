@@ -164,6 +164,8 @@ elif st.session_state.mode == "upload":
                 else:
                     mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"], index=0)
 
+                temperature_unit = st.selectbox('Select Temperature Unit:',['celsius','fahrenheit'])
+
 
             if st.button('Run Regression'):
                 if temp_data != '' and energy_data != '':
