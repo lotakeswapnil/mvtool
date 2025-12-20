@@ -85,10 +85,9 @@ elif st.session_state.mode == "upload":
                 for i in range(1,num_var+1):
                     globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
 
-                temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
-
             else:
                 energy_data = st.text_input('Energy column name')
+                temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
 
 
 
