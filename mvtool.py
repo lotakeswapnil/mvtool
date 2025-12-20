@@ -69,6 +69,10 @@ elif st.session_state.mode == "upload":
             df_b = pd.read_excel(uploaded_b)
             st.write('### Baseline Data Preview:', df_b.head())
 
+        if uploaded_r:
+            df_r = pd.read_csv(uploaded_r)
+            st.write('### Reported Data Preview:', df_r.head())
+
         col1, col2 = st.columns(2)
 
         with col1:
@@ -350,9 +354,7 @@ elif st.session_state.mode == "upload":
             if energy_data == '':
                 st.error("Please add energy column name.")
 
-        if uploaded_r:
-            df_r = pd.read_csv(uploaded_r)
-            st.write('### Reported Data Preview:', df_r.head())
+
 
 
 # -------------------------
