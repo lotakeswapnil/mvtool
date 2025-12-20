@@ -953,9 +953,10 @@ elif st.session_state.mode == "manual":
 
             with weather_i:
                 weather_interval = st.selectbox('Select Interval', {'Hourly', 'Daily', 'Monthly'})
+                model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
 
             with model_c:
-                model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
+                temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
 
             with model_m:
                 if model_choice == "3-parameter":
@@ -979,7 +980,7 @@ elif st.session_state.mode == "manual":
                     end_str = end_date.isoformat()
                     with st.spinner("Fetching..."):
                         try:
-                            meta, df_weather = fetch_openmeteo_archive(client, lat, lon, start_str, end_str, which, 'temperature')
+                            meta, df_weather = fetch_openmeteo_archive(client, lat, lon, start_str, end_str, temperature_unit, which, var)
                         except Exception as e:
                             st.error(f"Weather fetch failed: {e}")
                         else:
