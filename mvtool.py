@@ -274,7 +274,7 @@ elif st.session_state.mode == "upload":
                             if temperature_unit == 'celsius':
                                 st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
                             else:
-                                st.write(f'**Tb:** {three_res['Tb']:.2f} °F')
+                                st.write(f"**Tb:** {three_res['Tb']:.2f} °F")
                             st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
                             st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
                             st.write(f"**RMSE:** {three_res['rmse']:.2f}")
