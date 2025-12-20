@@ -157,6 +157,11 @@ elif st.session_state.mode == "upload":
                         regression = model.score(X, y)
                         cvrmse = root_mean_squared_error(y, preds)/y.mean()
 
+                        #--------------------------------------------------
+
+                        y_r = df_r[rep_energy]
+                        st.write(y_r)
+
                         # ---------- ADDED: Regression Equation Display ----------
                         coef = model.coef_
                         intercept = model.intercept_
