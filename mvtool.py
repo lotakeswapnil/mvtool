@@ -215,7 +215,6 @@ elif st.session_state.mode == "upload":
                     mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"], index=0)
 
 
-
             if st.button('Run Regression'):
                 if temp_data != '' and base_energy != '':
 
@@ -226,6 +225,13 @@ elif st.session_state.mode == "upload":
                     Tmax = float(np.ceil(df_b[temp_data].max()))
                     step = 1.0
                     rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
+
+                    #--------------------------
+                    y_r = df_r[rep_energy]
+                    x_r = df_r[independent]
+                    pred_r = model.predict(x_r)
+                    savings = pred_r.sum() - df_r[rep_energy].sum()
+                    st.write(f'### Savings: {savings:.2f}')
 
                     # -------------------------
                     # RUN MODELS
