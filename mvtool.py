@@ -111,8 +111,8 @@ elif st.session_state.mode == "upload":
         rep1, rep2 = st.columns(2)
 
         with rep1:
-            rep_ind_var = base_ind_var
-            st.write(f'##### Reported Data Independent Variable Type: \n {rep_ind_var}')
+            rep_ind_var = base_ind_var = st.selectbox('Select Independent Variable Type', base_ind_var)
+
 
 
         with rep2:
