@@ -80,12 +80,7 @@ elif st.session_state.mode == "upload":
                 #model_dict = {'Linear Regression': LinearRegression, 'Ridge Regression': Ridge, 'Lasso Regression': Lasso}
                 #model_list = st.selectbox('Select models', model_dict)
 
-        st.markdown(
-            """
-            <div style="display: flex; justify-content: center;">
-            """,
-            unsafe_allow_html=True
-        )
+
 
         if st.button('Run Regression'):
             if energy_cons is not None and globals()[f"ind_var_{i}"] != "":
@@ -127,7 +122,7 @@ elif st.session_state.mode == "upload":
 
                     st.write(f'R2: {regression:.2%}')
                     st.write(f'CV (RMSE): {cvrmse:.2%}')
-                    st.line_chart(pd.DataFrame({'Actual': y, 'Predicted': preds}).reset_index(drop=True))
+                    st.line_chart(pd.DataFrame({independent[0]: X.iloc[:, 0],'Actual': y, 'Predicted': preds}).reset_index(drop=True))
 
 
 
@@ -243,7 +238,7 @@ elif st.session_state.mode == "upload":
             if energy_data == '':
                 st.error("Please add energy column name.")
 
-        st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 # -------------------------
