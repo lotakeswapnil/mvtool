@@ -272,11 +272,10 @@ elif st.session_state.mode == "upload":
                     # PLOT MODELS
                     # -------------------------
 
-                    st.write(type(temp_data))
-                    T_plot = np.linspace(temp_data['Temperature'].min(), temp_data['Temperature'].max(), 400)
+                    T_plot = np.linspace(df[temp_data].min(), df[temp_data].max(), 400)
 
                     fig, ax = plt.subplots(figsize=(9, 5))
-                    ax.scatter(temp_data['Temperature'], energy_data['Energy'], label="Measured Energy", s=50)
+                    ax.scatter(df[temp_data], df[energy_data], label="Measured Energy", s=50)
 
                     if model_choice == "3-parameter":
                         Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"],
