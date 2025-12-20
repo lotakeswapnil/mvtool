@@ -751,7 +751,7 @@ elif st.session_state.mode == "manual":
                 st.error("Please enter at least 2 rows.")
 
 
-            if st.button("Fetch Weather Data"):
+            if st.button("Fetch Weather Data & Run Regression"):
 
                 for i in range(len(final_df)):
                     start_date = final_df['Start Date (yyyy-mm-dd)'][i].date().isoformat()
