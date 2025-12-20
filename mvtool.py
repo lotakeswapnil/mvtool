@@ -272,7 +272,7 @@ elif st.session_state.mode == "upload":
                     # PLOT MODELS
                     # -------------------------
 
-                    st.write(type(temp_data))
+                    st.write(type(temp_data['Temperature']))
                     T_plot = np.linspace(temp_data['Temperature'].min(), temp_data['Temperature'].max(), 400)
 
                     fig, ax = plt.subplots(figsize=(9, 5))
