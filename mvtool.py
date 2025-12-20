@@ -96,12 +96,6 @@ elif st.session_state.mode == "upload":
                 temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
 
 
-        if uploaded_r:
-            df_r = pd.read_csv(uploaded_r)
-            st.write('### Reported Data Preview:', df_r.head())
-        else:
-            None
-
 
         if data_ind_var == 'Independent Variable':
 
@@ -356,6 +350,9 @@ elif st.session_state.mode == "upload":
             if energy_data == '':
                 st.error("Please add energy column name.")
 
+        if uploaded_r:
+            df_r = pd.read_csv(uploaded_r)
+            st.write('### Reported Data Preview:', df_r.head())
 
 
 # -------------------------
