@@ -161,7 +161,8 @@ elif st.session_state.mode == "upload":
 
                         y_r = df_r[rep_energy]
                         x_r = df_r[globals()[f"ind_var_{i}"]]
-                        st.write(x_r)
+                        pred_r = model.predict(x_r)
+                        st.write(pred_r)
 
                         # ---------- ADDED: Regression Equation Display ----------
                         coef = model.coef_
