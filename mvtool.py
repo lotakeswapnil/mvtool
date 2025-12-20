@@ -1023,9 +1023,6 @@ elif st.session_state.mode == "manual":
                             temp = final_df['temperature'].dropna().values
                             energy = final_df['Energy'].dropna().values
 
-                            st.write(len(temp))
-                            st.write(len(energy))
-
                             if len(temp) == len(energy):
 
                                 with st.spinner('Running change-point models...'):
@@ -1159,4 +1156,4 @@ elif st.session_state.mode == "manual":
                                 st.pyplot(fig)
 
                             else:
-                                st.error('Number of values of energy consumption are not equal to temperature values')
+                                st.error('Please select correct interval as per your data.')
