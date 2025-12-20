@@ -1023,6 +1023,8 @@ elif st.session_state.mode == "manual":
                             temp = final_df['temperature'].values
                             kwh = final_df['Energy'].values
 
+                            st.write(temp)
+
                             with st.spinner('Running change-point models...'):
                                 three_res = None
                                 five_res = None
