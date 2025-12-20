@@ -111,8 +111,8 @@ elif st.session_state.mode == "upload":
         rep1, rep2, rep3 = st.columns(3)
 
         with rep1:
-            rep_ind_var = st.selectbox('Select Independent Variable Type', base_ind_var)
-
+            rep_ind_var = st.write(f'###### Reported Variable Name: \n {base_ind_var}')
+            rep_ind_var
 
         with rep2:
             st.write(f'###### Reported Energy column name: \n {base_energy}')
