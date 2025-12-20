@@ -106,7 +106,7 @@ elif st.session_state.mode == "upload":
                 energy_data = st.text_input('Energy column name')
                 temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
 
-        st.subheader('Select Reported Data details:')
+        st.subheader('Reported Data details:')
 
         rep1, rep2 = st.columns(2)
 
@@ -114,12 +114,7 @@ elif st.session_state.mode == "upload":
             rep_ind_var = base_ind_var
             st.write(f'##### Reported Data Independent Variable Type: \n {rep_ind_var}')
 
-            if rep_ind_var == 'Independent Variable':
-                # Number of independent vars
-                rep_num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
-
-            else:
-                temp_data = st.text_input('Temperature column name')
+            st.write(globals()[f"ind_var_{i}"])
 
         with rep2:
             if rep_ind_var == 'Independent Variable':
