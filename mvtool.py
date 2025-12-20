@@ -68,7 +68,7 @@ elif st.session_state.mode == "upload":
                 num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
 
             else:
-                temp_data = st.text_input('Energy Consumption column name')
+                temp_data = st.text_input('Energy Temperature column name')
 
 
         with col2:
@@ -80,7 +80,7 @@ elif st.session_state.mode == "upload":
                 for i in range(1,num_var+1):
                     globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
             else:
-                temp_data = st.text_input('Temperature column name')
+                energy_data = st.text_input('Energy column name')
 
         if st.button('Run Regression'):
             if energy_cons is not None and globals()[f"ind_var_{i}"] != "":
