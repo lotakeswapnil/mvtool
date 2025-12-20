@@ -937,6 +937,9 @@ elif st.session_state.mode == "manual":
                 lon = st.number_input("Longitude", format="%.4f")
                 end_date = st.date_input("End date", value=date.today().replace(day=date.today().day - 2))
 
+            var = "temperature"  # or let user pick
+            which = "hourly"
+
 
             # create client once (you can cache it)
             @st.cache_resource
@@ -976,8 +979,7 @@ elif st.session_state.mode == "manual":
                     end_str = end_date.isoformat()
                     with st.spinner("Fetching..."):
                         try:
-                            var = "temperature"  # or let user pick
-                            which = "hourly"
+                            st.write(var)
                             meta, df_weather = fetch_openmeteo_archive(client, lat, lon, start_str, end_str, which, var)
                         except Exception as e:
                             st.error(f"Weather fetch failed: {e}")
