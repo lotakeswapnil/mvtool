@@ -1020,8 +1020,8 @@ elif st.session_state.mode == "manual":
                             # -------------------------
                             # RUN MODELS
                             # -------------------------
-                            temp = final_df['temperature'].values
-                            energy = final_df['Energy'].values
+                            temp = final_df['temperature'].dropna().values
+                            energy = final_df['Energy'].dropna().values
 
                             st.write(len(temp))
                             st.write(len(energy))
