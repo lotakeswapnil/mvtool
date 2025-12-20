@@ -979,7 +979,6 @@ elif st.session_state.mode == "manual":
                     end_str = end_date.isoformat()
                     with st.spinner("Fetching..."):
                         try:
-                            st.write(var)
                             meta, df_weather = fetch_openmeteo_archive(client, lat, lon, start_str, end_str, which, var)
                         except Exception as e:
                             st.error(f"Weather fetch failed: {e}")
