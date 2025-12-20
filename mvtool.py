@@ -122,13 +122,12 @@ elif st.session_state.mode == "upload":
 
         with rep3:
             if rep_ind_var == 'Independent Variable':
-                st.write(f'###### Reported Data Independent Variable Names:')
+                st.write(f'###### Reported Independent Variable Names:')
                 for i in range(1, base_num_var + 1):
                     st.write(globals()[f"ind_var_{i}"])
 
-            #else:
-                #base_energy_data = st.text_input('Energy column name')
-                #temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
+            else:
+                st.write(f'###### Reported Independent Variable Name: \n {temp_data}')
 
 
         if base_ind_var == 'Independent Variable':
