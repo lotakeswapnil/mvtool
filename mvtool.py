@@ -163,7 +163,7 @@ elif st.session_state.mode == "upload":
                         x_r = df_r[independent]
                         pred_r = model.predict(x_r)
                         savings = pred_r.sum() - df_r[rep_energy].sum()
-                        st.write(f'### Savings: {savings}{rep_energy}')
+                        st.write(f'### Savings: {savings:.2f}')
 
                         # ---------- ADDED: Regression Equation Display ----------
                         coef = model.coef_
