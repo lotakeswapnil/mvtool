@@ -108,14 +108,17 @@ elif st.session_state.mode == "upload":
 
         st.subheader('Reported Data details:')
 
-        rep1, rep2 = st.columns(2)
+        rep1, rep2, rep3 = st.columns(3)
 
         with rep1:
-            rep_ind_var = base_ind_var = st.selectbox('Select Independent Variable Type', base_ind_var)
-
+            rep_ind_var = st.selectbox('Select Independent Variable Type', base_ind_var)
 
 
         with rep2:
+            st.write(f'##### Reported Energy column name:')
+
+
+        with rep3:
             if rep_ind_var == 'Independent Variable':
                 st.write(f'##### Reported Data Independent Variable Names:')
                 for i in range(1, base_num_var + 1):
