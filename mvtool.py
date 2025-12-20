@@ -112,7 +112,7 @@ elif st.session_state.mode == "upload":
 
         with rep1:
             rep_ind_var = base_ind_var
-            st.write(f'Reported Data Independent Variable Type: ## {rep_ind_var}')
+            st.write(f'Reported Data Independent Variable Type: \n {rep_ind_var}')
 
             if rep_ind_var == 'Independent Variable':
                 # Number of independent vars
