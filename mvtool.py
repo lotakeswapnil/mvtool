@@ -180,23 +180,23 @@ elif st.session_state.mode == "upload":
                     # RUN MODELS
                     # -------------------------
                     temp = df[temp_data].values
-                    kwh = df[energy_data].values
+                    energy = df[energy_data].values
 
                     with st.spinner("Running change-point models..."):
                         three_res = None
                         five_res = None
 
                         if model_choice == "3-parameter":
-                            three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step, mode=mode)
+                            three_res = fit_three_param_cp(temp, energy, Tmin, Tmax, step, mode=mode)
 
                         if model_choice == "5-parameter":
-                            five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
+                            five_res = fit_five_param_deadband(temp, energy, Tmin, Tmax, step)
 
                         if model_choice == "Both":
-                            three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step, mode=mode)
-                            five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
+                            three_res = fit_three_param_cp(temp, energy, Tmin, Tmax, step, mode=mode)
+                            five_res = fit_five_param_deadband(temp, energy, Tmin, Tmax, step)
 
-                    mean_kwh = float(df[energy_data].mean())
+                    mean_energy = float(df[energy_data].mean())
                     #preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct, mean_kwh)
 
                     # -------------------------
@@ -510,7 +510,7 @@ elif st.session_state.mode == "manual":
             # RUN MODELS
             # -------------------------
             temp = final_df['Temperature'].values
-            kwh = final_df['Energy'].values
+            energy = final_df['Energy'].values
 
             mod1,mod2 = st.columns([0.25,0.25])
 
@@ -535,18 +535,18 @@ elif st.session_state.mode == "manual":
                 five_res = None
 
                 if model_choice == "3-parameter":
-                    three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step, mode = mode)
+                    three_res = fit_three_param_cp(temp, energy, Tmin, Tmax, step, mode = mode)
 
                 if model_choice == "5-parameter":
-                    five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
+                    five_res = fit_five_param_deadband(temp, energy, Tmin, Tmax, step)
 
                 if model_choice == "Both":
-                    three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step, mode = mode)
-                    five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
+                    three_res = fit_three_param_cp(temp, energy, Tmin, Tmax, step, mode = mode)
+                    five_res = fit_five_param_deadband(temp, energy, Tmin, Tmax, step)
 
 
 
-            mean_kwh = float(final_df['Energy'].mean())
+            mean_energy = float(final_df['Energy'].mean())
             #preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct, mean_kwh)
 
             # -------------------------
@@ -773,24 +773,24 @@ elif st.session_state.mode == "manual":
                 # RUN MODELS
                 # -------------------------
                 temp = final_df['temperature'].values
-                kwh = final_df['Energy'].values
+                energy = final_df['Energy'].values
 
                 with st.spinner("Running change-point models..."):
                     three_res = None
                     five_res = None
 
                     if model_choice == "3-parameter":
-                        three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step, mode=mode)
+                        three_res = fit_three_param_cp(temp, energy, Tmin, Tmax, step, mode=mode)
 
                     if model_choice == "5-parameter":
-                        five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
+                        five_res = fit_five_param_deadband(temp, energy, Tmin, Tmax, step)
 
                     if model_choice == "Both":
-                        three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step, mode=mode)
-                        five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
+                        three_res = fit_three_param_cp(temp, energy, Tmin, Tmax, step, mode=mode)
+                        five_res = fit_five_param_deadband(temp, energy, Tmin, Tmax, step)
 
-                mean_kwh = float(final_df['Energy'].mean())
-                # preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct,mean_kwh)
+                mean_energy = float(final_df['Energy'].mean())
+                # preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct,mean_energy)
 
                 # -------------------------
                 # EQUATION DISPLAY
@@ -1021,25 +1021,28 @@ elif st.session_state.mode == "manual":
                             # RUN MODELS
                             # -------------------------
                             temp = final_df['temperature'].values
-                            kwh = final_df['Energy'].values
+                            energy = final_df['Energy'].values
 
-                            if len(temp) == len(kwh):
+                            st.write(len(temp))
+                            st.write(len(energy))
+
+                            if len(temp) == len(energy):
 
                                 with st.spinner('Running change-point models...'):
                                     three_res = None
                                     five_res = None
 
                                     if model_choice == '3-parameter':
-                                        three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step, mode=mode)
+                                        three_res = fit_three_param_cp(temp, energy, Tmin, Tmax, step, mode=mode)
 
                                     if model_choice == '5-parameter':
-                                        five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
+                                        five_res = fit_five_param_deadband(temp, energy, Tmin, Tmax, step)
 
                                     if model_choice == 'Both':
-                                        three_res = fit_three_param_cp(temp, kwh, Tmin, Tmax, step, mode=mode)
-                                        five_res = fit_five_param_deadband(temp, kwh, Tmin, Tmax, step)
+                                        three_res = fit_three_param_cp(temp, energy, Tmin, Tmax, step, mode=mode)
+                                        five_res = fit_five_param_deadband(temp, energy, Tmin, Tmax, step)
 
-                                mean_kwh = float(final_df['Energy'].mean())
+                                mean_energy = float(final_df['Energy'].mean())
                                 # preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct,mean_kwh)
 
                                 # -------------------------
