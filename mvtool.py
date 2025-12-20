@@ -154,7 +154,7 @@ elif st.session_state.mode == "upload":
                         else:
                             st.line_chart(pd.DataFrame({'Actual': y, 'Predicted': preds}).reset_index(drop=True))
 
-                        st.write(df_r)
+                        st.write(df_r[globals()[f"ind_var_{i}"]])
 
                 else:
                     st.error('All variables not defined.')
