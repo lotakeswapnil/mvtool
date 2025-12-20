@@ -122,7 +122,19 @@ elif st.session_state.mode == "upload":
 
                     st.write(f'R2: {regression:.2%}')
                     st.write(f'CV (RMSE): {cvrmse:.2%}')
-                    st.line_chart(pd.DataFrame({independent[0]: X.iloc[:, 0],'Actual': y, 'Predicted': preds}).reset_index(drop=True))
+
+                    chart_df = pd.DataFrame({
+                        independent[0]: X.iloc[:, 0],
+                        "Actual": y,
+                        "Predicted": preds
+                    })
+
+                    st.line_chart(
+                        chart_df,
+                        x=independent[0],
+                        y=["Actual", "Predicted"]
+                    )
+
 
 
 
