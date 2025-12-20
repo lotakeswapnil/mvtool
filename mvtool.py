@@ -51,11 +51,11 @@ elif st.session_state.mode == "upload":
         st.rerun()
 
     st.subheader('Upload Data (CSV)')
-    uploaded = st.file_uploader('', type="csv", label_visibility='collapsed')
+    uploaded = st.file_uploader('', type='csv', label_visibility='collapsed')
 
     if uploaded:
 
-        df = pd.read_csv(uploaded)
+        df = pd.read_csv(uploaded, encoding="latin1")
         st.write('### Preview:', df.head())
 
         data_ind_var = st.selectbox('Select Independent Variable Type', {'Temperature', 'Independent Variable'})
