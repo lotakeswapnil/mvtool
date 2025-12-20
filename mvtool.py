@@ -50,17 +50,17 @@ elif st.session_state.mode == "upload":
         st.session_state.mode = None
         st.rerun()
 
-    st.subheader('Upload Data (CSV or Excel)')
-    uploaded = st.file_uploader('', type=['csv', 'xlsx', 'xls'], label_visibility='collapsed')
+    st.write('## Upload Baseline Data (CSV or Excel)')
+    uploaded_b = st.file_uploader('', type=['csv', 'xlsx', 'xls'], label_visibility='collapsed')
 
-    if uploaded:
+    if uploaded_b:
 
-        if uploaded.name.endswith('.csv'):
-            df = pd.read_csv(uploaded)
-            st.write('### Preview:', df.head())
+        if uploaded_b.name.endswith('.csv'):
+            df_b = pd.read_csv(uploaded_b)
+            st.write('### Preview:', df_b.head())
         else:
-            df = pd.read_excel(uploaded)
-            st.write('### Preview:', df.head())
+            df_b = pd.read_excel(uploaded_b)
+            st.write('### Preview:', df_b.head())
 
 
         col1, col2 = st.columns(2)
@@ -95,22 +95,22 @@ elif st.session_state.mode == "upload":
 
             if st.button('Run Regression'):
                 if energy_cons is not None and globals()[f"ind_var_{i}"] != "":
-                    if globals()[f"ind_var_{i}"] not in df.columns:
+                    if globals()[f"ind_var_{i}"] not in df_b.columns:
                         st.error(f"Variable '{globals()[f'ind_var_{i}']}' not found in the uploaded CSV.")
                     else:
                         # ---------- ADDED: build list of independent variables ----------
                         independent = [
                             globals()[f"ind_var_{j}"]
                             for j in range(1, num_var + 1)
-                            if globals()[f"ind_var_{j}"] in df.columns
+                            if globals()[f"ind_var_{j}"] in df_b.columns
                         ]
                         # -----------------------------------------------------------------
 
                         # ---------- MODIFIED MINIMALLY: use the list instead of single var ----------
-                        X = df[independent]  # <- works for 1 or many variables
+                        X = df_b[independent]  # <- works for 1 or many variables
                         # ------------------------------------------------------------------------------
 
-                        y = df[energy_cons]
+                        y = df_b[energy_cons]
 
                         model = LinearRegression()
                         model.fit(X, y)
@@ -175,16 +175,16 @@ elif st.session_state.mode == "upload":
                     # -------------------------
                     # DEFAULT MODEL SETTINGS
                     # -------------------------
-                    Tmin = float(np.floor(df[temp_data].min()))
-                    Tmax = float(np.ceil(df[temp_data].max()))
+                    Tmin = float(np.floor(df_b[temp_data].min()))
+                    Tmax = float(np.ceil(df_b[temp_data].max()))
                     step = 1.0
                     rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
 
                     # -------------------------
                     # RUN MODELS
                     # -------------------------
-                    temp = df[temp_data].values
-                    energy = df[energy_data].values
+                    temp = df_b[temp_data].values
+                    energy = df_b[energy_data].values
 
                     with st.spinner("Running change-point models..."):
                         three_res = None
@@ -200,7 +200,7 @@ elif st.session_state.mode == "upload":
                             three_res = fit_three_param_cp(temp, energy, Tmin, Tmax, step, mode=mode)
                             five_res = fit_five_param_deadband(temp, energy, Tmin, Tmax, step)
 
-                    mean_energy = float(df[energy_data].mean())
+                    mean_energy = float(df_b[energy_data].mean())
                     #preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct, mean_kwh)
 
                     # -------------------------
@@ -299,10 +299,10 @@ elif st.session_state.mode == "upload":
                     # PLOT MODELS
                     # -------------------------
 
-                    T_plot = np.linspace(df[temp_data].min(), df[temp_data].max(), 400)
+                    T_plot = np.linspace(df_b[temp_data].min(), df_b[temp_data].max(), 400)
 
                     fig, ax = plt.subplots(figsize=(9, 5))
-                    ax.scatter(df[temp_data], df[energy_data], label="Measured Energy", s=50)
+                    ax.scatter(df_b[temp_data], df_b[energy_data], label="Measured Energy", s=50)
 
                     if model_choice == "3-parameter":
                         Y3_plot = predict_3p_for_plot(T_plot, three_res["Tb"], three_res["model"],
@@ -1054,25 +1054,25 @@ elif st.session_state.mode == "manual":
                         else:
                             st.success("Fetched weather data")
 
-                            df = df_weather.copy()
+                            df_temp = df_weather.copy()
 
                             if weather_interval == "Hourly":
 
-                                df_weather_final = df
+                                df_weather_final = df_temp
 
                             elif weather_interval == "Monthly":
 
-                                df['month'] = df['date_local'].dt.month  # 1–12
+                                df_temp['month'] = df_temp['date_local'].dt.month  # 1–12
 
-                                df_weather_final = (df.groupby('month', as_index=False).mean(numeric_only=True))
+                                df_weather_final = (df_temp.groupby('month', as_index=False).mean(numeric_only=True))
 
                             else:
 
-                                df['month'] = df['date_local'].dt.month
-                                df['day'] = df['date_local'].dt.day
+                                df_temp['month'] = df_temp['date_local'].dt.month
+                                df_temp['day'] = df_temp['date_local'].dt.day
 
                                 df_weather_final = (
-                                    df.groupby(['month', 'day'], as_index=False).mean(numeric_only=True))
+                                    df_temp.groupby(['month', 'day'], as_index=False).mean(numeric_only=True))
 
 
                             final_df = pd.concat([manual_df, df_weather_final], axis=1)
