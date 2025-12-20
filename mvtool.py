@@ -83,7 +83,7 @@ elif st.session_state.mode == "upload":
         base1, base2 = st.columns(2)
 
         with base1:
-            base_ind_var = st.selectbox('Select Independent Variable Type', {'Temperature', 'Independent Variable'}, key='base_ind_var')
+            base_ind_var = st.selectbox('Select Independent Variable Type', {'Temperature', 'Independent Variable'})
 
             if base_ind_var == 'Independent Variable':
                 # Number of independent vars
@@ -111,7 +111,8 @@ elif st.session_state.mode == "upload":
         rep1, rep2 = st.columns(2)
 
         with rep1:
-            rep_ind_var = st.selectbox('Select Independent Variable Type', {'Temperature', 'Independent Variable'}, key='rep_ind_var')
+            rep_ind_var = base_ind_var
+            st.write(f'Reported Independent Variable: {rep_ind_var}')
 
             if rep_ind_var == 'Independent Variable':
                 # Number of independent vars
