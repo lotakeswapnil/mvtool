@@ -77,8 +77,8 @@ elif st.session_state.mode == "upload":
                     globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
 
 
-                model_dict = {'Linear Regression': LinearRegression, 'Ridge Regression': Ridge, 'Lasso Regression': Lasso}
-                model_list = st.selectbox('Select models', model_dict)
+                #model_dict = {'Linear Regression': LinearRegression, 'Ridge Regression': Ridge, 'Lasso Regression': Lasso}
+                #model_list = st.selectbox('Select models', model_dict)
 
             if st.button('Run Regression'):
                 if energy_cons is not None and globals()[f"ind_var_{i}"] != "":
@@ -99,7 +99,7 @@ elif st.session_state.mode == "upload":
 
                         y = df[energy_cons]
 
-                        model = model_dict[model_list]()
+                        model = LinearRegression[model_list]()
                         model.fit(X, y)
                         preds = model.predict(X)
                         regression = model.score(X, y)
