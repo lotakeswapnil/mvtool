@@ -55,7 +55,7 @@ elif st.session_state.mode == "upload":
 
     if uploaded:
 
-        if uploaded.name.endswith(".csv"):
+        if uploaded.name.endswith('.csv'):
             df = pd.read_csv(uploaded)
             st.write('### Preview:', df.head())
         else:
