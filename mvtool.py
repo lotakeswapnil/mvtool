@@ -99,6 +99,8 @@ elif st.session_state.mode == "upload":
 
         if uploaded_r:
             st.write(uploaded_r)
+        else:
+            None
 
 
         if data_ind_var == 'Independent Variable':
