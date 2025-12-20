@@ -949,16 +949,11 @@ elif st.session_state.mode == "manual":
 
             client = get_client()
 
-            weather_i, model_c, model_m = st.columns(3)
+            weather_i, model_c = st.columns(3)
 
             with weather_i:
                 weather_interval = st.selectbox('Select Interval', {'Hourly', 'Daily', 'Monthly'})
                 model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
-
-            with model_c:
-                temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
-
-            with model_m:
                 if model_choice == "3-parameter":
                     mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
                                         index=0)
@@ -971,6 +966,9 @@ elif st.session_state.mode == "manual":
                 else:
                     mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
                                         index=0)
+
+            with model_c:
+                temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
 
             if st.button("Fetch Weather Data & Run Regression"):
                 if start_date > end_date:
