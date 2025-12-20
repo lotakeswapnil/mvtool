@@ -971,7 +971,7 @@ elif st.session_state.mode == "manual":
                     mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
                                         index=0)
 
-            if st.button("Fetch Weather Data"):
+            if st.button("Fetch Weather Data & Run Regression"):
                 if start_date > end_date:
                     st.error("Start must be <= end")
                 else:
