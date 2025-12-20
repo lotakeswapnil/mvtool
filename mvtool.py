@@ -126,9 +126,9 @@ elif st.session_state.mode == "upload":
                 for i in range(1, base_num_var + 1):
                     st.write(globals()[f"ind_var_{i}"])
 
-            else:
-                base_energy_data = st.text_input('Energy column name')
-                temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
+            #else:
+                #base_energy_data = st.text_input('Energy column name')
+                #temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
 
 
         if base_ind_var == 'Independent Variable':
