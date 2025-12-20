@@ -90,7 +90,7 @@ elif st.session_state.mode == "upload":
             if data_ind_var == 'Independent Variable':
 
                 # Target (dependent) column
-                energy_cons = st.text_input('Energy Consumption column name')
+                energy_cons = st.text_input('Baseline Energy column name')
 
                 for i in range(1,num_var+1):
                     globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
