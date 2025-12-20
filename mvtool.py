@@ -137,7 +137,6 @@ elif st.session_state.mode == "upload":
 
         if data_ind_var == 'Temperature':
 
-            temp_data = st.text_input('Temperature column name')
             energy_data = st.text_input('Energy column name')
 
             if temp_data != '' and energy_data != '':
