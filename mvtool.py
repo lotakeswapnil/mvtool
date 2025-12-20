@@ -115,7 +115,7 @@ elif st.session_state.mode == "upload":
 
 
         with rep2:
-            st.write(f'##### Reported Energy column name:')
+            st.write(f'##### Reported Energy column name: \n {base_energy}')
 
 
         with rep3:
