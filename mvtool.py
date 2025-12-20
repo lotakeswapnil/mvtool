@@ -255,7 +255,7 @@ elif st.session_state.mode == "upload":
                     y_r = df_r[rep_energy]
                     x_r = df_r[temp_data]
                     if model_choice == "3-parameter":
-                        pred_r = predict_3p_for_plot(x_r, three_res["Tb"], three_res["model"],
+                        pred_r = predict_3p_for_plot(x_r.to_numpy(), three_res["Tb"], three_res["model"],
                                                       mode=three_res["mode"])
 
                     elif model_choice == "5-parameter":
