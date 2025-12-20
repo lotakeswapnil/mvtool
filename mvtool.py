@@ -1080,7 +1080,10 @@ elif st.session_state.mode == "manual":
 
                                 if model_choice in ["3-parameter"]:
                                     st.subheader("3-Parameter Model")
-                                    st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
+                                    if temperature_unit == 'celsius':
+                                        st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
+                                    else:
+                                        st.write(f"**Tb:** {three_res['Tb']:.2f} °F")
                                     st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
                                     st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
                                     st.write(f"**RMSE:** {three_res['rmse']:.2f}")
@@ -1146,7 +1149,10 @@ elif st.session_state.mode == "manual":
                                     ax.axvspan(five_res["Tb_low"], five_res["Tb_high"], alpha=0.08, color="gray",
                                                label="Deadband")
 
-                                ax.set_xlabel("Temperature (°C)")
+                                if temperature_unit == 'celsius':
+                                    ax.set_xlabel("Temperature (°C)")
+                                else:
+                                    ax.set_xlabel("Temperature (°F)")
                                 ax.set_ylabel("Energy")
                                 ax.set_title("3-Parameter vs 5-Parameter Change-Point Models")
                                 ax.legend()
