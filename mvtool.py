@@ -99,7 +99,7 @@ elif st.session_state.mode == "upload":
 
                         y = df[energy_cons]
 
-                        model = LinearRegression
+                        model = LinearRegression()
                         model.fit(X, y)
                         preds = model.predict(X)
                         regression = model.score(X, y)
