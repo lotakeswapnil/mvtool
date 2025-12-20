@@ -80,34 +80,61 @@ elif st.session_state.mode == "upload":
 
         st.subheader('Select Baseline Data details:')
 
-        col1, col2 = st.columns(2)
+        base1, base2 = st.columns(2)
 
-        with col1:
-            data_ind_var = st.selectbox('Select Independent Variable Type', {'Temperature', 'Independent Variable'})
+        with base1:
+            base_ind_var = st.selectbox('Select Independent Variable Type', {'Temperature', 'Independent Variable'})
 
-            if data_ind_var == 'Independent Variable':
+            if base_ind_var == 'Independent Variable':
                 # Number of independent vars
-                num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
+                base_num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
 
             else:
                 temp_data = st.text_input('Temperature column name')
 
 
-        with col2:
-            if data_ind_var == 'Independent Variable':
+        with base2:
+            if base_ind_var == 'Independent Variable':
 
                 # Target (dependent) column
                 base_energy = st.text_input('Baseline Energy column name')
 
-                for i in range(1,num_var+1):
+                for i in range(1, base_num_var + 1):
                     globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
 
             else:
                 energy_data = st.text_input('Energy column name')
                 temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
 
+        st.subheader('Select Reported Data details:')
 
-        if data_ind_var == 'Independent Variable':
+        rep1, rep2 = st.columns(2)
+
+        with rep1:
+            rep_ind_var = st.selectbox('Select Independent Variable Type', {'Temperature', 'Independent Variable'})
+
+            if rep_ind_var == 'Independent Variable':
+                # Number of independent vars
+                rep_num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
+
+            else:
+                temp_data = st.text_input('Temperature column name')
+
+        with rep2:
+            if rep_ind_var == 'Independent Variable':
+
+                # Target (dependent) column
+                base_energy = st.text_input('Baseline Energy column name')
+
+                for i in range(1, rep_num_var + 1):
+                    globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}", key=f"var_{i}")
+
+            else:
+                energy_data = st.text_input('Energy column name')
+                temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
+
+
+        if base_ind_var == 'Independent Variable':
 
             if st.button('Run Regression'):
                 if base_energy is not None and globals()[f"ind_var_{i}"] != "":
@@ -117,7 +144,7 @@ elif st.session_state.mode == "upload":
                         # ---------- ADDED: build list of independent variables ----------
                         independent = [
                             globals()[f"ind_var_{j}"]
-                            for j in range(1, num_var + 1)
+                            for j in range(1, base_num_var + 1)
                             if globals()[f"ind_var_{j}"] in df_b.columns
                         ]
                         # -----------------------------------------------------------------
@@ -150,7 +177,7 @@ elif st.session_state.mode == "upload":
                         st.write(f'R2: {regression:.2%}')
                         st.write(f'CV (RMSE): {cvrmse:.2%}')
 
-                        if num_var == 1:
+                        if base_num_var == 1:
                             chart_df = pd.DataFrame({independent[0]: X.iloc[:, 0], "Actual": y, "Predicted": preds})
                             st.line_chart(chart_df, x=independent[0], y=["Actual", "Predicted"])
                         else:
@@ -164,7 +191,7 @@ elif st.session_state.mode == "upload":
         # Sample data (heating + deadband + cooling)
         # -------------------------
 
-        if data_ind_var == 'Temperature':
+        if base_ind_var == 'Temperature':
 
             mod1, mod2 = st.columns([0.25, 0.25])
 
