@@ -58,23 +58,27 @@ elif st.session_state.mode == "upload":
         df = pd.read_csv(uploaded)
         st.write('### Preview:', df.head())
 
-        data_ind_var = st.selectbox('Select Independent Variable Type', {'Temperature', 'Independent Variable'})
+        col1, col2 = st.columns(2)
+
+        with col1:
+            data_ind_var = st.selectbox('Select Independent Variable Type', {'Temperature', 'Independent Variable'})
 
 
-        if data_ind_var == 'Independent Variable':
+        with col2:
+            if data_ind_var == 'Independent Variable':
 
-            # Target (dependent) column
-            energy_cons = st.text_input('Energy Consumption column name')
+                # Target (dependent) column
+                energy_cons = st.text_input('Energy Consumption column name')
 
-            # Number of independent vars
-            num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
+                # Number of independent vars
+                num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
 
-            for i in range(1,num_var+1):
-                globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
+                for i in range(1,num_var+1):
+                    globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
 
 
-            model_dict = {'Linear Regression': LinearRegression, 'Ridge Regression': Ridge, 'Lasso Regression': Lasso}
-            model_list = st.selectbox('Select models', model_dict)
+                model_dict = {'Linear Regression': LinearRegression, 'Ridge Regression': Ridge, 'Lasso Regression': Lasso}
+                model_list = st.selectbox('Select models', model_dict)
 
             if st.button('Run Regression'):
                 if energy_cons is not None and globals()[f"ind_var_{i}"] != "":
