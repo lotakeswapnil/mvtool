@@ -114,17 +114,10 @@ elif st.session_state.mode == "upload":
             rep_ind_var = base_ind_var
             st.write(f'##### Reported Data Independent Variable Type: \n {rep_ind_var}')
 
-            for i in range(1, base_num_var + 1):
-                st.write(globals()[f"ind_var_{i}"])
 
         with rep2:
             if rep_ind_var == 'Independent Variable':
-
-                # Target (dependent) column
-                base_energy = st.text_input('Baseline Energy column name')
-
-                for i in range(1, rep_num_var + 1):
-                    globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}", key=f"var_{i}")
+                st.write(globals()[f"ind_var_{i}"])
 
             else:
                 energy_data = st.text_input('Energy column name')
