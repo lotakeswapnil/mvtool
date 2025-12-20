@@ -1,5 +1,6 @@
 # import necessary packages
 from datetime import date
+from tkinter.tix import X_REGION
 
 import pandas as pd
 import streamlit as st
@@ -96,6 +97,9 @@ elif st.session_state.mode == "upload":
                 temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
 
 
+        if uploaded_r:
+            st.write(uploaded_r)
+
 
         if data_ind_var == 'Independent Variable':
 
@@ -145,6 +149,7 @@ elif st.session_state.mode == "upload":
                             st.line_chart(chart_df, x=independent[0], y=["Actual", "Predicted"])
                         else:
                             st.line_chart(pd.DataFrame({'Actual': y, 'Predicted': preds}).reset_index(drop=True))
+
 
                 else:
                     st.error('All variables not defined.')
