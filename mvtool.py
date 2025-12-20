@@ -159,7 +159,7 @@ elif st.session_state.mode == "upload":
 
                         #--------------------------------------------------
 
-                        y_r = df_r[rep_energy]
+                        y_r = df_r[rep_energy].sum()
                         st.write(y_r)
                         x_r = df_r[independent]
                         pred_r = model.predict(x_r)
