@@ -73,7 +73,7 @@ elif st.session_state.mode == "upload":
                 num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
 
             else:
-                temp_data = st.text_input('Energy Temperature column name')
+                temp_data = st.text_input('Temperature column name')
 
 
         with col2:
@@ -87,6 +87,7 @@ elif st.session_state.mode == "upload":
             else:
                 energy_data = st.text_input('Energy column name')
 
+            temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
 
         if data_ind_var == 'Independent Variable':
 
@@ -164,7 +165,6 @@ elif st.session_state.mode == "upload":
                 else:
                     mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"], index=0)
 
-                temperature_unit = st.selectbox('Select Temperature Unit:',['celsius','fahrenheit'])
 
 
             if st.button('Run Regression'):
