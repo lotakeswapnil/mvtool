@@ -35,7 +35,7 @@ if st.session_state.mode is None:
             st.rerun()
 
     with up:
-        if st.button("Upload Data (CSV)"):
+        if st.button("Upload Data (CSV or Excel)"):
             st.session_state.mode = "upload"
             st.rerun()
 
@@ -50,7 +50,7 @@ elif st.session_state.mode == "upload":
         st.session_state.mode = None
         st.rerun()
 
-    st.subheader('Upload Data (CSV)')
+    st.subheader('Upload Data (CSV or Excel)')
     uploaded = st.file_uploader('', type=['csv', 'xlsx', 'xls'], label_visibility='collapsed')
 
     if uploaded:
