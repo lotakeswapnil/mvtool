@@ -64,11 +64,10 @@ elif st.session_state.mode == "upload":
 
         if uploaded_b.name.endswith('.csv'):
             df_b = pd.read_csv(uploaded_b)
-            st.write('### Preview:', df_b.head())
+            st.write('### Baseline Data Preview:', df_b.head())
         else:
             df_b = pd.read_excel(uploaded_b)
-            st.write('### Preview:', df_b.head())
-
+            st.write('### Baseline Data Preview:', df_b.head())
 
         col1, col2 = st.columns(2)
 
