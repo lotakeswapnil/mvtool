@@ -67,6 +67,8 @@ elif st.session_state.mode == "upload":
                 # Number of independent vars
                 num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
 
+            else:
+                temp_data = st.text_input('Energy Consumption column name')
 
 
         with col2:
