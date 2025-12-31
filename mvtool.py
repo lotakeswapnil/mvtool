@@ -389,7 +389,6 @@ elif st.session_state.mode == "upload":
 
                     # --------------------------
 
-
                     y_r = df_r[rep_energy]
                     x_r = df_r[temp_data]
                     if model_choice == "3-parameter":
