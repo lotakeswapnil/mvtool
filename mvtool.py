@@ -906,7 +906,7 @@ elif st.session_state.mode == "manual":
 
                 Tmin = float(np.floor(final_df['temperature'].min()))
                 Tmax = float(np.ceil(final_df['temperature'].max()))
-                #step = 1.0
+                step = 1.0
                 rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
 
                 # -------------------------
