@@ -394,7 +394,6 @@ elif st.session_state.mode == "upload":
                     st.session_state.regression_done = True
 
                     # --------------------------
-
                     if st.session_state.regression_done:
 
                         if st.button("Calculate Savings"):
