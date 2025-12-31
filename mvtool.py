@@ -305,7 +305,6 @@ elif st.session_state.mode == "upload":
                     # -------------------------
                     # DISPLAY RESULTS
                     # -------------------------
-
                     st.subheader("Model Results")
 
                     if model_choice in ["3-parameter"]:
