@@ -274,7 +274,8 @@ elif st.session_state.mode == "upload":
                     else:
                         mod1, mod2 = st.columns()
                         with mod1:
-                            st.write(f'##### 3 Parameter Predicted Baseline Consumption: \n {pred_r_3p.sum():.2f}')
+                            #st.write(f'##### 3 Parameter Predicted Baseline Consumption: \n {pred_r_3p.sum():.2f}')
+                            st.write('1')
                         with mod2:
                             st.write(f'##### 5 Parameter Predicted Baseline Consumption: \n {pred_r_5p.sum():.2f}')
 
