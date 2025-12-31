@@ -13,7 +13,7 @@ def fit_three_param_cp(
         kwh: np.ndarray,
         Tmin: float,
         Tmax: float,
-        step: float = 1.0,
+        step: float = .5,
         mode: str = "auto",  # NEW: "heating", "cooling", or "auto"
 ) -> Dict[str, Any]:
     """
@@ -83,7 +83,7 @@ def fit_five_param_deadband(
     kwh: np.ndarray,
     Tmin: float,
     Tmax: float,
-    step: float = 1.0
+    step: float = .5
 ) -> Dict[str, Any]:
     """
     Fit 5-parameter deadband model:
