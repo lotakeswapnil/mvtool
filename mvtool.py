@@ -390,7 +390,6 @@ elif st.session_state.mode == "upload":
                     st.pyplot(fig)
 
                     st.session_state.regression_done = True
-
                     # --------------------------
                     if st.session_state.regression_done:
 
