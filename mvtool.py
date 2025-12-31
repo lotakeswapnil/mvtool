@@ -106,30 +106,29 @@ elif st.session_state.mode == "upload":
                 base_energy = st.text_input('Energy column name')
                 temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
 
-        st.subheader('Reported Data details:')
-
-
-        rep1, rep2, rep3 = st.columns(3)
-
-        with rep1:
-            rep_ind_var = base_ind_var
-            st.write(f'###### Reported Variable Name: \n {rep_ind_var}')
-
-        with rep2:
-            rep_energy = base_energy
-            st.write(f'###### Reported Energy column name: \n {rep_energy}')
-
-        with rep3:
-            if rep_ind_var == 'Independent Variable':
-                st.write(f'###### Reported Independent Variable Names:')
-                for i in range(1, base_num_var + 1):
-                    st.write(globals()[f"ind_var_{i}"])
-
-            else:
-                st.write(f'###### Reported Independent Variable Name: \n {temp_data}')
-
 
         if base_ind_var == 'Independent Variable':
+
+            st.subheader('Reported Data details:')
+
+            rep1, rep2, rep3 = st.columns(3)
+
+            with rep1:
+                rep_ind_var = base_ind_var
+                st.write(f'###### Reported Variable Name: \n {rep_ind_var}')
+
+            with rep2:
+                rep_energy = base_energy
+                st.write(f'###### Reported Energy column name: \n {rep_energy}')
+
+            with rep3:
+                if rep_ind_var == 'Independent Variable':
+                    st.write(f'###### Reported Independent Variable Names:')
+                    for i in range(1, base_num_var + 1):
+                        st.write(globals()[f"ind_var_{i}"])
+
+                else:
+                    st.write(f'###### Reported Independent Variable Name: \n {temp_data}')
 
             if st.button('Calculate Savings'):
                 if base_energy is not None and globals()[f"ind_var_{i}"] != "":
@@ -211,6 +210,27 @@ elif st.session_state.mode == "upload":
                                         index=0, disabled=mode_disabled)
                 else:
                     mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"], index=0)
+
+            st.subheader('Reported Data details:')
+
+            rep1, rep2, rep3 = st.columns(3)
+
+            with rep1:
+                rep_ind_var = base_ind_var
+                st.write(f'###### Reported Variable Name: \n {rep_ind_var}')
+
+            with rep2:
+                rep_energy = base_energy
+                st.write(f'###### Reported Energy column name: \n {rep_energy}')
+
+            with rep3:
+                if rep_ind_var == 'Independent Variable':
+                    st.write(f'###### Reported Independent Variable Names:')
+                    for i in range(1, base_num_var + 1):
+                        st.write(globals()[f"ind_var_{i}"])
+
+                else:
+                    st.write(f'###### Reported Independent Variable Name: \n {temp_data}')
 
 
             if st.button('Run Regression'):
