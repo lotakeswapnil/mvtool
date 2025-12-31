@@ -890,7 +890,6 @@ elif st.session_state.mode == "manual":
             if len(final_df) < 2:
                 st.error("Please enter at least 2 rows.")
 
-
             if st.button("Fetch Weather Data & Run Regression"):
 
                 for i in range(len(final_df)):
