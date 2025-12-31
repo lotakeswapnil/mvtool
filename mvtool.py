@@ -214,10 +214,8 @@ elif st.session_state.mode == "upload":
                 else:
                     mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"], index=0)
 
-
             if 'regression_done' not in st.session_state:
                 st.session_state.regression_done = False
-
 
             if st.button('Run Regression'):
                 if temp_data != '' and base_energy != '':
@@ -394,7 +392,6 @@ elif st.session_state.mode == "upload":
                     st.session_state.regression_done = True
 
                     # --------------------------
-
                     if st.session_state.regression_done:
 
                         if st.button("Calculate Savings"):
