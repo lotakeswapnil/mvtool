@@ -904,6 +904,8 @@ elif st.session_state.mode == "manual":
             st.write('#### Enter Baseline Energy Data Below:')
 
             final_df = st.data_editor(empty_df, num_rows="dynamic")
+
+            st.write('#### Enter Reported Energy Data Below:')
             reported_df = st.data_editor(empty_df, num_rows="dynamic")
 
             if len(final_df) < 2:
