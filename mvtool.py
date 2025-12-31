@@ -156,6 +156,7 @@ elif st.session_state.mode == "upload":
                         cvrmse = root_mean_squared_error(y, preds)/y.mean()
 
                         #--------------------------------------------------
+
                         y_r = df_r[rep_energy]
                         x_r = df_r[independent]
                         pred_r = model.predict(x_r)
