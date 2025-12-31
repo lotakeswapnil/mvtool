@@ -20,7 +20,6 @@ st.sidebar.header("Menu")
 if "mode" not in st.session_state:
     st.session_state.mode = None
 
-
 # --- Display Start Buttons ---
 
 if st.session_state.mode is None:
