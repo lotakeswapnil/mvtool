@@ -309,7 +309,7 @@ elif st.session_state.mode == "upload":
                     st.subheader("Model Results")
 
                     if model_choice in ["3-parameter"]:
-                        st.write("#### 3-Parameter Model")
+                        st.write("### 3-Parameter Model")
                         if temperature_unit == 'celsius':
                             st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
                         else:
@@ -320,7 +320,7 @@ elif st.session_state.mode == "upload":
                         st.write(f"**R²:** {three_res['r2']:.2f}")
 
                     if model_choice in ["5-parameter"]:
-                        st.subheader("5-Parameter Model")
+                        st.write("### 5-Parameter Model")
                         if temperature_unit == 'celsius':
                             st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °C")
                         else:
@@ -338,7 +338,7 @@ elif st.session_state.mode == "upload":
                     if model_choice in ["Both"]:
                         col1, col2 = st.columns(2)
                         with col1:
-                            st.subheader("3-Parameter Model")
+                            st.write("### 3-Parameter Model")
                             if temperature_unit == 'celsius':
                                 st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
                             else:
@@ -348,7 +348,7 @@ elif st.session_state.mode == "upload":
                             st.write(f"**RMSE:** {three_res['rmse']:.2f}")
                             st.write(f"**R²:** {three_res['r2']:.2f}")
                         with col2:
-                            st.subheader("5-Parameter Model")
+                            st.write("### 5-Parameter Model")
                             if temperature_unit == 'celsius':
                                 st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °C")
                             else:
