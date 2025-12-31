@@ -547,8 +547,10 @@ elif st.session_state.mode == "manual":
             if input_valid:
                 df_empty = pd.DataFrame({"Energy": pd.Series([0], dtype=float),**{col: pd.Series([0.0], dtype=float) for col in col_names}})
 
-                st.subheader('Enter Data Below:')
-                final_df = st.data_editor(df_empty, num_rows="dynamic")
+                st.subheader('Enter Baseline Data Below:')
+                final_df = st.data_editor(df_empty, num_rows="dynamic", key='baseline_e')
+
+                reported_df = st.data_editor(df_empty, num_rows="dynamic", key='reported_e')
 
                 model_dict = {'Linear Regression': LinearRegression, 'Ridge Regression': Ridge,
                               'Lasso Regression': Lasso}
