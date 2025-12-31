@@ -1124,7 +1124,7 @@ elif st.session_state.mode == "manual":
 
 
             # create client once (you can cache it)
-            @st.cache_data
+            #@st.cache_data
             def get_client():
                 return make_openmeteo_client()
 
