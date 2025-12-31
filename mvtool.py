@@ -69,13 +69,7 @@ elif st.session_state.mode == "upload":
             df_b = pd.read_excel(uploaded_b)
             st.write('### Baseline Data Preview:', df_b.head())
 
-        if uploaded_r:
-            if uploaded_r.name.endswith('.csv'):
-                df_r = pd.read_csv(uploaded_r)
-                st.write('### Reported Data Preview:', df_r.head())
-            else:
-                df_r = pd.read_excel(uploaded_r)
-                st.write('### Reported Data Preview:', df_r.head())
+
 
 
         st.subheader('Select Baseline Data details:')
@@ -108,27 +102,6 @@ elif st.session_state.mode == "upload":
 
 
         if base_ind_var == 'Independent Variable':
-
-            st.subheader('Reported Data details:')
-
-            rep1, rep2, rep3 = st.columns(3)
-
-            with rep1:
-                rep_ind_var = base_ind_var
-                st.write(f'###### Reported Variable Name: \n {rep_ind_var}')
-
-            with rep2:
-                rep_energy = base_energy
-                st.write(f'###### Reported Energy column name: \n {rep_energy}')
-
-            with rep3:
-                if rep_ind_var == 'Independent Variable':
-                    st.write(f'###### Reported Independent Variable Names:')
-                    for i in range(1, base_num_var + 1):
-                        st.write(globals()[f"ind_var_{i}"])
-
-                else:
-                    st.write(f'###### Reported Independent Variable Name: \n {temp_data}')
 
             if st.button('Calculate Savings'):
                 if base_energy is not None and globals()[f"ind_var_{i}"] != "":
@@ -210,27 +183,6 @@ elif st.session_state.mode == "upload":
                                         index=0, disabled=mode_disabled)
                 else:
                     mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"], index=0)
-
-            st.subheader('Reported Data details:')
-
-            rep1, rep2, rep3 = st.columns(3)
-
-            with rep1:
-                rep_ind_var = base_ind_var
-                st.write(f'###### Reported Variable Name: \n {rep_ind_var}')
-
-            with rep2:
-                rep_energy = base_energy
-                st.write(f'###### Reported Energy column name: \n {rep_energy}')
-
-            with rep3:
-                if rep_ind_var == 'Independent Variable':
-                    st.write(f'###### Reported Independent Variable Names:')
-                    for i in range(1, base_num_var + 1):
-                        st.write(globals()[f"ind_var_{i}"])
-
-                else:
-                    st.write(f'###### Reported Independent Variable Name: \n {temp_data}')
 
 
             if st.button('Calculate Savings'):
@@ -454,6 +406,31 @@ elif st.session_state.mode == "upload":
             if base_energy == '':
                 st.error("Please add energy column name.")
 
+            if uploaded_r:
+                if uploaded_r.name.endswith('.csv'):
+                    df_r = pd.read_csv(uploaded_r)
+                    st.write('### Reported Data Preview:', df_r.head())
+                else:
+                    df_r = pd.read_excel(uploaded_r)
+                    st.write('### Reported Data Preview:', df_r.head())
+
+                st.subheader('Reported Data details:')
+
+                rep1, rep2, rep3 = st.columns(3)
+
+                with rep1:
+                    rep_ind_var = base_ind_var
+                    st.write(f'###### Reported Variable Name: \n {rep_ind_var}')
+
+                with rep2:
+                    rep_energy = base_energy
+                    st.write(f'###### Reported Energy column name: \n {rep_energy}')
+
+                with rep3:
+                    if rep_ind_var == 'Independent Variable':
+                        st.write(f'###### Reported Independent Variable Names:')
+                        for i in range(1, base_num_var + 1):
+                            st.write(globals()[f"ind_var_{i}"])
 
 
 
