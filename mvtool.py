@@ -156,7 +156,6 @@ elif st.session_state.mode == "upload":
                         cvrmse = root_mean_squared_error(y, preds)/y.mean()
 
                         #--------------------------------------------------
-
                         y_r = df_r[rep_energy]
                         x_r = df_r[independent]
                         pred_r = model.predict(x_r)
@@ -907,7 +906,7 @@ elif st.session_state.mode == "manual":
 
                 Tmin = float(np.floor(final_df['temperature'].min()))
                 Tmax = float(np.ceil(final_df['temperature'].max()))
-                step = 1.0
+                #step = 1.0
                 rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
 
                 # -------------------------
