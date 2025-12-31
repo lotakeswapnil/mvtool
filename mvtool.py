@@ -233,7 +233,7 @@ elif st.session_state.mode == "upload":
                     st.write(f'###### Reported Independent Variable Name: \n {temp_data}')
 
 
-            if st.button('## Calculate Savings'):
+            if st.button('Calculate Savings'):
                 if temp_data != '' and base_energy != '':
 
                     # -------------------------
