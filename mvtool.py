@@ -901,7 +901,7 @@ elif st.session_state.mode == "manual":
                                      'End Date (yyyy-mm-dd)': pd.Series(['2025-02-01'], dtype='datetime64[ns]'),
                                      'Energy': pd.Series([0], dtype=float)})
 
-            st.write('#### Enter Energy Data Below:')
+            st.write('#### Enter Baseline Energy Data Below:')
 
             final_df = st.data_editor(empty_df, num_rows="dynamic")
 
