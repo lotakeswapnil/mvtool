@@ -867,12 +867,8 @@ elif st.session_state.mode == "manual":
 
 
             # create client once (you can cache it)
-            @st.cache_data
-            def get_client():
-                return make_openmeteo_client()
 
-
-            client = get_client()
+            client = make_openmeteo_client()
 
             temp, model_c, model_m = st.columns(3)
 
@@ -1124,12 +1120,8 @@ elif st.session_state.mode == "manual":
 
 
             # create client once (you can cache it)
-            @st.cache_data
-            def get_client():
-                return make_openmeteo_client()
 
-
-            client = get_client()
+            client = make_openmeteo_client()
 
             weather_i, model_c = st.columns(2)
 
