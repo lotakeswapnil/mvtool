@@ -904,6 +904,7 @@ elif st.session_state.mode == "manual":
             st.write('#### Enter Baseline Energy Data Below:')
 
             final_df = st.data_editor(empty_df, num_rows="dynamic")
+            reported_df = st.data_editor(empty_df, num_rows="dynamic")
 
             if len(final_df) < 2:
                 st.error("Please enter at least 2 rows.")
