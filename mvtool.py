@@ -1,17 +1,15 @@
 # import necessary packages
 from datetime import date
 
-import pandas as pd
-import streamlit as st
-from requests_cache.serializers.preconf import base_stage
-
-from supplementary.change_point import (fit_three_param_cp, fit_five_param_deadband, select_model_by_rmse_r2,
-                                        predict_3p_for_plot, predict_5p_for_plot)
-from sklearn.linear_model import LinearRegression, Lasso, Ridge
-from sklearn.metrics import root_mean_squared_error
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import streamlit as st
+from sklearn.linear_model import LinearRegression, Lasso, Ridge
+from sklearn.metrics import root_mean_squared_error
 
+from supplementary.change_point import (fit_three_param_cp, fit_five_param_deadband, predict_3p_for_plot,
+                                        predict_5p_for_plot)
 from supplementary.weather import make_openmeteo_client, fetch_openmeteo_archive
 
 st.title('Energy M&V Tool')
@@ -852,7 +850,6 @@ elif st.session_state.mode == "manual":
 
 
             # create client once (you can cache it)
-            #@st.cache_resource
             def get_client():
                 return make_openmeteo_client()
 
@@ -1107,7 +1104,6 @@ elif st.session_state.mode == "manual":
 
 
             # create client once (you can cache it)
-            #@st.cache_resource
             def get_client():
                 return make_openmeteo_client()
 
