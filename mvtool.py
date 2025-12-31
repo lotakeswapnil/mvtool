@@ -250,7 +250,6 @@ elif st.session_state.mode == "upload":
                     #preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct, mean_kwh)
 
 
-
                     # -------------------------
                     # EQUATION DISPLAY
                     # -------------------------
