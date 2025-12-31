@@ -108,6 +108,7 @@ elif st.session_state.mode == "upload":
 
         st.subheader('Reported Data details:')
 
+
         rep1, rep2, rep3 = st.columns(3)
 
         with rep1:
