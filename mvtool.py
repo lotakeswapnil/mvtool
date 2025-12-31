@@ -1084,6 +1084,8 @@ elif st.session_state.mode == "manual":
                 st.pyplot(fig)
 
 
+
+
         if st.session_state.interval == 'no':
 
             if st.sidebar.button("Back to Weather Data Interval selection"):
