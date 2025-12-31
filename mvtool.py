@@ -251,47 +251,7 @@ elif st.session_state.mode == "upload":
                     mean_energy = float(df_b[base_energy].mean())
                     #preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct, mean_kwh)
 
-                    # --------------------------
-                    y_r = df_r[rep_energy]
-                    x_r = df_r[temp_data]
-                    if model_choice == "3-parameter":
-                        pred_r = predict_3p_for_plot(x_r.to_numpy(), three_res["Tb"], three_res["model"],
-                                                      mode=three_res["mode"])
 
-                    elif model_choice == "5-parameter":
-                        pred_r = predict_5p_for_plot(x_r.to_numpy(), five_res["Tb_low"], five_res["Tb_high"],
-                                                      five_res["model"])
-
-                    else:  # Both
-                        pred_r_3p = predict_3p_for_plot(x_r.to_numpy(), three_res["Tb"], three_res["model"],
-                                                      mode=three_res["mode"])
-                        pred_r_5p = predict_5p_for_plot(x_r.to_numpy(), five_res["Tb_low"], five_res["Tb_high"],
-                                                     five_res["model"])
-
-                    if model_choice == "3-parameter" or model_choice == "5-parameter":
-                        st.write(f'##### Predicted Baseline Consumption: \n {pred_r.sum():.2f}')
-
-                    else:
-                        mod1, mod2 = st.columns(2)
-                        with mod1:
-                            st.write(f'##### 3 Parameter Predicted Baseline Consumption: \n {pred_r_3p.sum():.2f}')
-                        with mod2:
-                            st.write(f'##### 5 Parameter Predicted Baseline Consumption: \n {pred_r_5p.sum():.2f}')
-
-                    st.write(f'##### Reported Consumption: \n {df_r[rep_energy].sum():.2f}')
-
-                    if model_choice == "3-parameter" or model_choice == "5-parameter":
-                        savings = pred_r.sum() - df_r[rep_energy].sum()
-                        st.write(f'##### Savings: \n {savings:.2f}')
-                    else:
-                        mod1, mod2 = st.columns(2)
-
-                        with mod1:
-                            savings_3p = pred_r_3p.sum() - df_r[rep_energy].sum()
-                            st.write(f'##### 3 Parameter Savings: \n {savings_3p:.2f}')
-                        with mod2:
-                            savings_5p = pred_r_5p.sum() - df_r[rep_energy].sum()
-                            st.write(f'##### 5 Parameter Savings: \n {savings_5p:.2f}')
 
                     # -------------------------
                     # EQUATION DISPLAY
@@ -426,6 +386,50 @@ elif st.session_state.mode == "upload":
                     ax.grid(True)
 
                     st.pyplot(fig)
+
+                    # --------------------------
+                    if st.button("Calculate Savings"):
+
+                        y_r = df_r[rep_energy]
+                        x_r = df_r[temp_data]
+                        if model_choice == "3-parameter":
+                            pred_r = predict_3p_for_plot(x_r.to_numpy(), three_res["Tb"], three_res["model"],
+                                                         mode=three_res["mode"])
+
+                        elif model_choice == "5-parameter":
+                            pred_r = predict_5p_for_plot(x_r.to_numpy(), five_res["Tb_low"], five_res["Tb_high"],
+                                                         five_res["model"])
+
+                        else:  # Both
+                            pred_r_3p = predict_3p_for_plot(x_r.to_numpy(), three_res["Tb"], three_res["model"],
+                                                            mode=three_res["mode"])
+                            pred_r_5p = predict_5p_for_plot(x_r.to_numpy(), five_res["Tb_low"], five_res["Tb_high"],
+                                                            five_res["model"])
+
+                        if model_choice == "3-parameter" or model_choice == "5-parameter":
+                            st.write(f'##### Predicted Baseline Consumption: \n {pred_r.sum():.2f}')
+
+                        else:
+                            mod1, mod2 = st.columns(2)
+                            with mod1:
+                                st.write(f'##### 3 Parameter Predicted Baseline Consumption: \n {pred_r_3p.sum():.2f}')
+                            with mod2:
+                                st.write(f'##### 5 Parameter Predicted Baseline Consumption: \n {pred_r_5p.sum():.2f}')
+
+                        st.write(f'##### Reported Consumption: \n {df_r[rep_energy].sum():.2f}')
+
+                        if model_choice == "3-parameter" or model_choice == "5-parameter":
+                            savings = pred_r.sum() - df_r[rep_energy].sum()
+                            st.write(f'##### Savings: \n {savings:.2f}')
+                        else:
+                            mod1, mod2 = st.columns(2)
+
+                            with mod1:
+                                savings_3p = pred_r_3p.sum() - df_r[rep_energy].sum()
+                                st.write(f'##### 3 Parameter Savings: \n {savings_3p:.2f}')
+                            with mod2:
+                                savings_5p = pred_r_5p.sum() - df_r[rep_energy].sum()
+                                st.write(f'##### 5 Parameter Savings: \n {savings_5p:.2f}')
 
             if temp_data == '':
                 st.error("Please add temperature column name.")
