@@ -223,7 +223,7 @@ elif st.session_state.mode == "upload":
                     # -------------------------
                     Tmin = float(np.floor(df_b[temp_data].min()))
                     Tmax = float(np.ceil(df_b[temp_data].max()))
-                    step = 0.01
+                    step = 0.1
                     rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
 
 
