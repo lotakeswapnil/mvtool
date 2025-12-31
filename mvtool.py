@@ -454,7 +454,6 @@ elif st.session_state.mode == "upload":
 
 
 
-
 # -------------------------
 # MANUAL DATA MODE
 # -------------------------
