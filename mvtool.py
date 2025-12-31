@@ -295,7 +295,7 @@ elif st.session_state.mode == "upload":
                             )
 
                     if model_choice in ["5-parameter", "Both"]:
-                        st.write('#### 5-parameter:')
+                        st.write('### 5-parameter:')
                         st.latex(
                             fr"\text{{Energy}} = {five_res['model'].intercept_:.2f} + "
                             fr"{five_res['model'].coef_[0]:.2f}\,\max(0,\,{five_res['Tb_low']:.2f} - T) + "
