@@ -550,6 +550,8 @@ elif st.session_state.mode == "manual":
                 st.subheader('Enter Baseline Data Below:')
                 final_df = st.data_editor(df_empty, num_rows="dynamic", key='baseline_e')
 
+                st.subheader('Enter Reported Data Below:')
+
                 reported_df = st.data_editor(df_empty, num_rows="dynamic", key='reported_e')
 
                 model_dict = {'Linear Regression': LinearRegression, 'Ridge Regression': Ridge,
