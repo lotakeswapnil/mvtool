@@ -273,10 +273,10 @@ elif st.session_state.mode == "upload":
                     # -------------------------
                     # EQUATION DISPLAY
                     # -------------------------
-                    st.write("## Model Equations")
+                    st.subheader("Model Equations")
 
                     if model_choice in ["3-parameter", "Both"]:
-                        st.write('### 3-parameter:')
+                        st.write('#### 3-parameter:')
                         Tb = three_res["Tb"]
                         b0 = three_res["model"].intercept_
                         b1 = three_res["model"].coef_[0]
@@ -295,7 +295,7 @@ elif st.session_state.mode == "upload":
                             )
 
                     if model_choice in ["5-parameter", "Both"]:
-                        st.write('### 5-parameter:')
+                        st.write('#### 5-parameter:')
                         st.latex(
                             fr"\text{{Energy}} = {five_res['model'].intercept_:.2f} + "
                             fr"{five_res['model'].coef_[0]:.2f}\,\max(0,\,{five_res['Tb_low']:.2f} - T) + "
@@ -305,10 +305,10 @@ elif st.session_state.mode == "upload":
                     # -------------------------
                     # DISPLAY RESULTS
                     # -------------------------
-                    st.write("## Model Results")
+                    st.subheader("Model Results")
 
                     if model_choice in ["3-parameter"]:
-                        st.subheader("3-Parameter Model")
+                        st.write("#### 3-Parameter Model")
                         if temperature_unit == 'celsius':
                             st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
                         else:
