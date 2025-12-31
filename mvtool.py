@@ -907,7 +907,6 @@ elif st.session_state.mode == "manual":
             final_df = st.data_editor(empty_df, num_rows="dynamic", key='baseline_energy')
 
             st.write('#### Enter Reported Energy Data Below:')
-
             reported_df = st.data_editor(empty_df, num_rows="dynamic", key='reported_energy')
 
             if len(final_df) < 2:
