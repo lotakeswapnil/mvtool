@@ -285,6 +285,7 @@ elif st.session_state.mode == "upload":
                         st.write(f'##### Savings: \n {savings:.2f}')
                     else:
                         mod1, mod2 = st.columns(2)
+
                         with mod1:
                             savings_3p = pred_r_3p.sum() - df_r[rep_energy].sum()
                             st.write(f'##### 3 Parameter Savings: \n {savings_3p:.2f}')
