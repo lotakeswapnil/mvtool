@@ -40,6 +40,7 @@ def fit_three_param_cp(
         # ----------------------------
         # Cooling Model
         # ----------------------------
+
         if mode in ("cooling", "auto"):
             X_cool = np.maximum(0.0, temp - Tb).reshape(-1, 1)
             mdl = LinearRegression().fit(X_cool, kwh)
