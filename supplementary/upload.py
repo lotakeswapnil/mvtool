@@ -1,6 +1,4 @@
 # import necessary packages
-from datetime import date, timedelta
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -9,7 +7,6 @@ from sklearn.linear_model import LinearRegression, Lasso, Ridge
 from sklearn.metrics import root_mean_squared_error
 
 from supplementary.change_point import (fit_three_param_cp, fit_five_param_deadband, predict_3p_for_plot,predict_5p_for_plot)
-from supplementary.weather import make_openmeteo_client, fetch_openmeteo_archive
 
 def upload_page():
 
