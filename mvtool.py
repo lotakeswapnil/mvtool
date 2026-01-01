@@ -18,8 +18,9 @@ mode = st.radio('Select Any One of the Options',options=["Manual Entry", "Upload
 # -------------------------
 
 if mode == "Upload Data":
-    from supplementary.upload import upload_page
-    upload_page()
+    with st.spinner("Loading..."):
+        from supplementary.upload import upload_page
+        upload_page()
 
 # -------------------------
 # MANUAL DATA MODE
