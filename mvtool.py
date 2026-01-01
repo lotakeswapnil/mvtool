@@ -11,7 +11,7 @@ if "mode" not in st.session_state:
 
 # --- Display Start Buttons ---
 
-mode = st.radio('Select Any One of the Options',options=["Manual Entry", "Upload Data"], index=None)
+mode = st.radio('Select Any One of the Options',options=["Manual Data", "Upload Data (CSV or Excel)"], index=None)
 
 # -------------------------
 # UPLOAD DATA MODE
