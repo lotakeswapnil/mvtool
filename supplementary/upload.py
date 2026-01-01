@@ -201,7 +201,7 @@ def upload_page():
                     # -------------------------
                     Tmin = float(np.floor(df_b[temp_data].min()))
                     Tmax = float(np.ceil(df_b[temp_data].max()))
-                    step = 0.1
+                    step = 1.0
                     rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
 
 
