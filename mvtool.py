@@ -5,9 +5,6 @@ st.title('Energy M&V Tool')
 
 st.sidebar.header("Menu")
 
-# --- Create session-state variable ---
-if "mode" not in st.session_state:
-    st.session_state.mode = None
 
 # --- Display Start Buttons ---
 
