@@ -21,8 +21,7 @@ def manual_page():
     if manual_data == 'No':
 
         # --- Display Start Buttons ---
-        weather_data = st.radio('Do you want Weather Data?', options=["Yes", "No"], index=None, key='weather_data')
-
+        weather_data = st.radio('Does your data include Temperature?', options=["Yes", "No"], index=None, key='weather_data')
 
         if weather_data == 'No':
 
