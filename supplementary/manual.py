@@ -24,7 +24,7 @@ def manual_page():
         manual_data = st.radio('Do you want Weather Data?', options=["Yes", "No"], index=None)
 
 
-        if manual_data == 'ind':
+        if manual_data == 'No':
 
             # Ask for number of rows & columns
             num_cols = st.number_input("Number of Independent Variables: ", 0, 10, 1)
@@ -98,7 +98,7 @@ def manual_page():
                 st.info('Please complete all Independent Variable names.')
 
 
-        if manual_data == 'temp':
+        if manual_data == 'Yes':
 
 
 
