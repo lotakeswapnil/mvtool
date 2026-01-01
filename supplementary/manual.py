@@ -16,11 +16,9 @@ def manual_page():
 
     st.subheader('Enter Data (Manual)')
 
-
     yes_no = st.radio('Do you want Weather Data?', options=["Yes", "No"], index=None)
 
     if yes_no == 'No':
-
 
         # --- Create session-state variable for Manual Mode---
         if "manual_data" not in st.session_state:
