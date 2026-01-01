@@ -1116,7 +1116,7 @@ elif st.session_state.mode == "manual":
 
             with lon:
                 lon = st.number_input("Longitude", format="%.4f")
-                end_date = st.date_input("End date", value=date.today()- timedelta(days=366))
+                end_date = st.date_input("End date", value=date.today()- timedelta(days=364))
 
             var = "temperature"  # or let user pick
             which = "hourly"
