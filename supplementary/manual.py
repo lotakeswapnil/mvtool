@@ -20,31 +20,11 @@ def manual_page():
 
     if yes_no == 'No':
 
-        # --- Create session-state variable for Manual Mode---
-        if "manual_data" not in st.session_state:
-            st.session_state.manual_data = None
-
         # --- Display Start Buttons ---
-        if st.session_state.manual_data is None:
-            st.markdown('Does you data include Temperature or an Independent Variable?')
+        manual_data = st.radio('Do you want Weather Data?', options=["Yes", "No"], index=None)
 
-            temp1, temp2 = st.columns([0.25, 0.5])
 
-            with temp1:
-                if st.button('Temperature'):
-                    st.session_state.manual_data = 'temp'
-                    st.rerun()
-
-            with temp2:
-                if st.button('Independent Variable'):
-                    st.session_state.manual_data = 'ind'
-                    st.rerun()
-
-        if st.session_state.manual_data == 'ind':
-
-            if st.sidebar.button("Back to Temperature or Variable selection"):
-                st.session_state.manual_data = None
-                st.rerun()
+        if manual_data == 'ind':
 
             # Ask for number of rows & columns
             num_cols = st.number_input("Number of Independent Variables: ", 0, 10, 1)
@@ -118,11 +98,9 @@ def manual_page():
                 st.info('Please complete all Independent Variable names.')
 
 
-        if st.session_state.manual_data == 'temp':
+        if manual_data == 'temp':
 
-            if st.sidebar.button("Back to Temperature or Variable selection"):
-                st.session_state.manual_data = None
-                st.rerun()
+
 
             # Build column names automatically
 
@@ -349,37 +327,11 @@ def manual_page():
             st.pyplot(fig)
 
 
-    elif st.session_state.yes_no == 'yes':
+    elif yes_no == 'yes':
 
-        if st.sidebar.button("Back to Weather Data selection"):
-            st.session_state.yes_no = None
-            st.rerun()
+        interval = st.radio('Do you want Weather Data using Intervals?', options=["Yes", "No"], index=None)
 
-        # --- Create session-state variable for Manual Mode---
-        if "interval" not in st.session_state:
-            st.session_state.interval = None
-
-        # --- Display Start Buttons ---
-        if st.session_state.interval is None:
-            st.markdown('Do you want Weather Data using Intervals?')
-
-            col1, col2 = st.columns([0.05, 0.5])
-
-            with col1:
-                if st.button('Yes'):
-                    st.session_state.interval = 'yes'
-                    st.rerun()
-
-            with col2:
-                if st.button('No'):
-                    st.session_state.interval = 'no'
-                    st.rerun()
-
-        if st.session_state.interval == 'yes':
-
-            if st.sidebar.button("Back to Weather Data Interval selection"):
-                st.session_state.interval = None
-                st.rerun()
+        if interval == 'yes':
 
             lat, lon = st.columns(2)
 
@@ -612,11 +564,8 @@ def manual_page():
                 st.pyplot(fig)
 
 
-        if st.session_state.interval == 'no':
+        if interval == 'no':
 
-            if st.sidebar.button("Back to Weather Data Interval selection"):
-                st.session_state.interval = None
-                st.rerun()
 
             # Build column names automatically
             col_names = ["Energy"]  # first column fixed
