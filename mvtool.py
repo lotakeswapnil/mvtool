@@ -13,11 +13,9 @@ if "mode" not in st.session_state:
 
 st.subheader("Select Any One of the Options")
 
-mode = st.radio(
-    "## Choose input method",
-    options=["Manual Entry", "Upload Data"],
-    index=None
-)
+st.write("## Choose input method")
+
+mode = st.radio(options=["Manual Entry", "Upload Data"],index=None)
 
 # -------------------------
 # UPLOAD DATA MODE
