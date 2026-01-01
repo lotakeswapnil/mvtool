@@ -171,7 +171,7 @@ def manual_page():
                     mode = st.selectbox("Select Change-Point Model Type:",["auto", "heating", "cooling"],index=0)
 
 
-            with st.button("Run Regression Models"):
+            if st.button("Run Regression Models"):
                 three_res = None
                 five_res = None
 
