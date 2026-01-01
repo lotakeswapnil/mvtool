@@ -15,48 +15,76 @@ st.title('Energy M&V Tool')
 
 st.sidebar.header("Menu")
 
-# --- Create session-state variable ---
-if "mode" not in st.session_state:
-    st.session_state.mode = None
+# -------------------------
+# MAIN MODE SELECTION
+# -------------------------
 
-# --- Display Start Buttons ---
+mode = st.sidebar.radio(
+    "Select Input Method",
+    ["Select", "Enter Data (Manual)", "Upload Data (CSV or Excel)"],
+    index=0
+)
 
-if st.session_state.mode is None:
-    st.subheader('Select Any One of the Options')
+# -------------------------
+# LANDING SCREEN
+# -------------------------
 
-if st.session_state.mode is None:
-    man, up = st.columns(2)
+if mode == "Select":
+    st.subheader("Select Any One of the Options")
 
-    with man:
+    col1, col2 = st.columns(2)
+
+    with col1:
         if st.button("Enter Data (Manual)"):
-            st.session_state.mode = "manual"
-            st.rerun()
+            st.session_state["_temp_mode"] = "Enter Data (Manual)"
+            st.experimental_rerun()
 
-    with up:
+    with col2:
         if st.button("Upload Data (CSV or Excel)"):
-            st.session_state.mode = "upload"
-            st.rerun()
+            st.session_state["_temp_mode"] = "Upload Data (CSV or Excel)"
+            st.experimental_rerun()
+
+    # Sync button click to radio (one-time helper state)
+    if "_temp_mode" in st.session_state:
+        st.sidebar.radio(
+            "Select Input Method",
+            ["Select", "Enter Data (Manual)", "Upload Data (CSV or Excel)"],
+            index=["Select", "Enter Data (Manual)", "Upload Data (CSV or Excel)"]
+            .index(st.session_state["_temp_mode"]),
+            key="_mode_sync"
+        )
+        del st.session_state["_temp_mode"]
 
 # -------------------------
 # UPLOAD DATA MODE
 # -------------------------
 
-elif st.session_state.mode == "upload":
+elif mode == "Upload Data (CSV or Excel)":
 
+    st.subheader("Upload Data")
 
-    if st.sidebar.button("Back to Main Menu"):
-        st.session_state.mode = None
-        st.rerun()
+    # Back button
+    if st.sidebar.button("⬅ Back to Main Menu"):
+        st.experimental_set_query_params(mode="Select")
+        st.experimental_rerun()
 
     col1, col2 = st.columns(2)
 
     with col1:
-        st.write('### Baseline Data')
-        uploaded_b = st.file_uploader('', type=['csv', 'xlsx', 'xls'], label_visibility='collapsed', key='baseline')
+        st.write("### Baseline Data")
+        uploaded_b = st.file_uploader(
+            "Baseline",
+            type=["csv", "xlsx", "xls"],
+            label_visibility="collapsed"
+        )
 
     with col2:
-        st.write('### Reported Data')
-        uploaded_r = st.file_uploader('', type=['csv', 'xlsx', 'xls'], label_visibility='collapsed', key='reported')
+        st.write("### Reported Data")
+        uploaded_r = st.file_uploader(
+            "Reported",
+            type=["csv", "xlsx", "xls"],
+            label_visibility="collapsed"
+        )
 
     if uploaded_b:
 
@@ -1085,8 +1113,6 @@ elif st.session_state.mode == "manual":
                 ax.grid(True)
 
                 st.pyplot(fig)
-
-
 
 
         if st.session_state.interval == 'no':
