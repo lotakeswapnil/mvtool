@@ -15,62 +15,48 @@ st.title('Energy M&V Tool')
 
 st.sidebar.header("Menu")
 
-# Read mode from URL (stateless)
-params = st.experimental_get_query_params()
-mode = params.get("mode", ["select"])[0]
+# --- Create session-state variable ---
+if "mode" not in st.session_state:
+    st.session_state.mode = None
+
+# --- Display Start Buttons ---
+
+if st.session_state.mode is None:
+    st.subheader('Select Any One of the Options')
+
+if st.session_state.mode is None:
+    man, up = st.columns(2)
+
+    with man:
+        if st.button("Enter Data (Manual)"):
+            st.session_state.mode = "manual"
+            st.rerun()
+
+    with up:
+        if st.button("Upload Data (CSV or Excel)"):
+            st.session_state.mode = "upload"
+            st.rerun()
 
 # -------------------------
-# MAIN SELECTION SCREEN
+# UPLOAD DATA MODE
 # -------------------------
 
-if mode == "select":
-    st.subheader("Select Any One of the Options")
+elif st.session_state.mode == "upload":
+
+
+    if st.sidebar.button("Back to Main Menu"):
+        st.session_state.mode = None
+        st.rerun()
 
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown("### 📄 Enter Data Manually")
-        st.write("Use this option if you want to input energy and variables manually.")
-        if st.button("Continue →", key="manual"):
-            st.experimental_set_query_params(mode="manual")
-            st.experimental_rerun()
+        st.write('### Baseline Data')
+        uploaded_b = st.file_uploader('', type=['csv', 'xlsx', 'xls'], label_visibility='collapsed', key='baseline')
 
     with col2:
-        st.markdown("### 📁 Upload Data")
-        st.write("Upload baseline and reported data files (CSV / Excel).")
-        if st.button("Continue →", key="upload"):
-            st.experimental_set_query_params(mode="upload")
-            st.experimental_rerun()
-
-# -------------------------
-# UPLOAD MODE
-# -------------------------
-
-elif mode == "upload":
-
-    if st.button("⬅ Back to main menu"):
-        st.experimental_set_query_params(mode="select")
-        st.experimental_rerun()
-
-    st.subheader("Upload Data")
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.write("### Baseline Data")
-        uploaded_b = st.file_uploader(
-            "Baseline",
-            type=["csv", "xlsx", "xls"],
-            label_visibility="collapsed"
-        )
-
-    with col2:
-        st.write("### Reported Data")
-        uploaded_r = st.file_uploader(
-            "Reported",
-            type=["csv", "xlsx", "xls"],
-            label_visibility="collapsed"
-        )
+        st.write('### Reported Data')
+        uploaded_r = st.file_uploader('', type=['csv', 'xlsx', 'xls'], label_visibility='collapsed', key='reported')
 
     if uploaded_b:
 
