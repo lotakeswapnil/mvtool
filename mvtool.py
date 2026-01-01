@@ -3,8 +3,6 @@ import streamlit as st
 
 st.title('Energy M&V Tool')
 
-st.sidebar.header("Menu")
-
 
 # --- Display Start Buttons ---
 
