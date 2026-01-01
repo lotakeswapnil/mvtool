@@ -1,5 +1,5 @@
 # import necessary packages
-from datetime import date
+from datetime import date, timedelta
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -1112,11 +1112,11 @@ elif st.session_state.mode == "manual":
 
             with lat:
                 lat = st.number_input("Latitude", format="%.4f")
-                start_date = st.date_input("Start date", value=date.today().replace(year=date.today().year - 1).replace(day=date.today().day - 1))
+                start_date = st.date_input("Start date", value=date.today()- timedelta(days=365))
 
             with lon:
                 lon = st.number_input("Longitude", format="%.4f")
-                end_date = st.date_input("End date", value=date.today().replace(day=date.today().day - 2))
+                end_date = st.date_input("End date", value=date.today()- timedelta(days=366)
 
             var = "temperature"  # or let user pick
             which = "hourly"
