@@ -27,5 +27,6 @@ if mode == "Upload Data":
 # -------------------------
 
 elif mode == "Manual Entry":
-    from supplementary.manual import manual_page
-    manual_page()
+    with st.spinner("Loading..."):
+        from supplementary.manual import manual_page
+        manual_page()
