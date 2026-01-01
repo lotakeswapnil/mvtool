@@ -43,4 +43,6 @@ elif st.session_state.mode == "upload":
 
 elif st.session_state.mode == "manual":
 
+    from supplementary.manual import manual_page
 
+    manual_page()
