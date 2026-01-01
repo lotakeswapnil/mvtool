@@ -23,18 +23,14 @@ mode = st.radio(
 # UPLOAD DATA MODE
 # -------------------------
 
-elif st.session_state.mode == "upload":
-
+if mode == "Upload Data":
     from supplementary.upload import upload_page
-
     upload_page()
 
 # -------------------------
 # MANUAL DATA MODE
 # -------------------------
 
-elif st.session_state.mode == "manual":
-
+elif mode == "Manual Entry":
     from supplementary.manual import manual_page
-
     manual_page()
