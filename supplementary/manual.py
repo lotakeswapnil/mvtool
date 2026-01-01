@@ -13,6 +13,7 @@ from supplementary.weather import make_openmeteo_client, fetch_openmeteo_archive
 
 
 def manual_page():
+
     if st.sidebar.button("Back to Menu"):
         st.session_state.mode = None
         st.rerun()
