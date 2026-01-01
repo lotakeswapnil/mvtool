@@ -15,58 +15,44 @@ st.title('Energy M&V Tool')
 
 st.sidebar.header("Menu")
 
-# -------------------------
-# MAIN MODE SELECTION
-# -------------------------
-
-mode = st.sidebar.radio(
-    "Select Input Method",
-    ["Select", "Enter Data (Manual)", "Upload Data (CSV or Excel)"],
-    index=0
-)
+# Read mode from URL (stateless)
+params = st.experimental_get_query_params()
+mode = params.get("mode", ["select"])[0]
 
 # -------------------------
-# LANDING SCREEN
+# MAIN SELECTION SCREEN
 # -------------------------
 
-if mode == "Select":
+if mode == "select":
     st.subheader("Select Any One of the Options")
 
     col1, col2 = st.columns(2)
 
     with col1:
-        if st.button("Enter Data (Manual)"):
-            st.session_state["_temp_mode"] = "Enter Data (Manual)"
+        st.markdown("### 📄 Enter Data Manually")
+        st.write("Use this option if you want to input energy and variables manually.")
+        if st.button("Continue →", key="manual"):
+            st.experimental_set_query_params(mode="manual")
             st.experimental_rerun()
 
     with col2:
-        if st.button("Upload Data (CSV or Excel)"):
-            st.session_state["_temp_mode"] = "Upload Data (CSV or Excel)"
+        st.markdown("### 📁 Upload Data")
+        st.write("Upload baseline and reported data files (CSV / Excel).")
+        if st.button("Continue →", key="upload"):
+            st.experimental_set_query_params(mode="upload")
             st.experimental_rerun()
 
-    # Sync button click to radio (one-time helper state)
-    if "_temp_mode" in st.session_state:
-        st.sidebar.radio(
-            "Select Input Method",
-            ["Select", "Enter Data (Manual)", "Upload Data (CSV or Excel)"],
-            index=["Select", "Enter Data (Manual)", "Upload Data (CSV or Excel)"]
-            .index(st.session_state["_temp_mode"]),
-            key="_mode_sync"
-        )
-        del st.session_state["_temp_mode"]
-
 # -------------------------
-# UPLOAD DATA MODE
+# UPLOAD MODE
 # -------------------------
 
-elif mode == "Upload Data (CSV or Excel)":
+elif mode == "upload":
+
+    if st.button("⬅ Back to main menu"):
+        st.experimental_set_query_params(mode="select")
+        st.experimental_rerun()
 
     st.subheader("Upload Data")
-
-    # Back button
-    if st.sidebar.button("⬅ Back to Main Menu"):
-        st.experimental_set_query_params(mode="Select")
-        st.experimental_rerun()
 
     col1, col2 = st.columns(2)
 
@@ -131,6 +117,7 @@ elif mode == "Upload Data (CSV or Excel)":
             else:
                 base_energy = st.text_input('Energy column name')
                 temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
+
 
         if base_ind_var == 'Independent Variable':
 
