@@ -10,10 +10,6 @@ from supplementary.change_point import (fit_three_param_cp, fit_five_param_deadb
 
 def upload_page():
 
-    if st.sidebar.button("Back to Main Menu"):
-        st.session_state.mode = None
-        st.rerun()
-
     col1, col2 = st.columns(2)
 
     with col1:

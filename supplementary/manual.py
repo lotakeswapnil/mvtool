@@ -324,7 +324,7 @@ def manual_page():
 
             st.pyplot(fig)
 
-    elif manual_data == 'yes':
+    elif manual_data == 'Yes':
 
         interval = st.radio('Do you want Weather Data using Intervals?', options=["Yes", "No"], index=None, key='interval_data')
 
