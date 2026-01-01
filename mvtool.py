@@ -12,7 +12,7 @@ mode = st.radio('Select Any One of the Options',options=["Manual Data", "Upload 
 # UPLOAD DATA MODE
 # -------------------------
 
-if mode == "Upload Data (CSV or Excel):":
+if mode == "Upload Data (CSV or Excel)":
     with st.spinner("Loading..."):
         from supplementary.upload import upload_page
         upload_page()
