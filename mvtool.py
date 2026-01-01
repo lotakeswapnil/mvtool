@@ -132,7 +132,6 @@ elif mode == "Upload Data (CSV or Excel)":
                 base_energy = st.text_input('Energy column name')
                 temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
 
-
         if base_ind_var == 'Independent Variable':
 
             st.subheader('Reported Data details:')
