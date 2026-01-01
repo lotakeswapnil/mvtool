@@ -47,7 +47,6 @@ elif st.session_state.mode == "upload":
 
     upload_page()
 
-
 # -------------------------
 # MANUAL DATA MODE
 # -------------------------
