@@ -16,15 +16,15 @@ def manual_page():
 
     st.subheader('Enter Data (Manual)')
 
-    yes_no = st.radio('Do you want Weather Data?', options=["Yes", "No"], index=None)
+    manual_data = st.radio('Do you want Weather Data?', options=["Yes", "No"], index=None, key='manual_data')
 
-    if yes_no == 'No':
+    if manual_data == 'No':
 
         # --- Display Start Buttons ---
-        manual_data = st.radio('Do you want Weather Data?', options=["Yes", "No"], index=None)
+        weather_data = st.radio('Do you want Weather Data?', options=["Yes", "No"], index=, key='weather_data')
 
 
-        if manual_data == 'No':
+        if weather_data == 'No':
 
             # Ask for number of rows & columns
             num_cols = st.number_input("Number of Independent Variables: ", 0, 10, 1)
@@ -98,9 +98,7 @@ def manual_page():
                 st.info('Please complete all Independent Variable names.')
 
 
-        if manual_data == 'Yes':
-
-
+        if weather_data == 'Yes':
 
             # Build column names automatically
 
@@ -326,9 +324,9 @@ def manual_page():
 
             st.pyplot(fig)
 
-    elif yes_no == 'yes':
+    elif manual_data == 'yes':
 
-        interval = st.radio('Do you want Weather Data using Intervals?', options=["Yes", "No"], index=None)
+        interval = st.radio('Do you want Weather Data using Intervals?', options=["Yes", "No"], index=None, key='interval_data')
 
         if interval == 'yes':
 
