@@ -1113,8 +1113,7 @@ elif st.session_state.mode == "manual":
             with lat:
                 lat = st.number_input("Latitude", format="%.4f")
                 start_date = st.date_input("Start date",
-                                           value=date.today().replace(year=date.today().year - 1).replace(
-                                               day=date.today().day - 1))
+                                           value=date.today().replace(year=date.today().year - 1).replace(day=date.today().day - 1))
 
             with lon:
                 lon = st.number_input("Longitude", format="%.4f")
