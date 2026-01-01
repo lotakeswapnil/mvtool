@@ -11,11 +11,23 @@ if "mode" not in st.session_state:
 
 # --- Display Start Buttons ---
 
-st.subheader("Select Any One of the Options")
+with st.sidebar:
+    mode = st.radio(
+        "Navigation",
+        ["Main Menu", "Manual Entry", "Upload Data"],
+        index=0
+    )
 
-st.write("## Choose input method")
+# Main content
+if mode == "Main Menu":
+    st.subheader("Select Any One of the Options")
 
-mode = st.radio(options=["Manual Entry", "Upload Data"],index=None)
+    st.markdown(
+        """
+        Choose how you want to provide data.
+        Use the sidebar to navigate afterward.
+        """
+    )
 
 # -------------------------
 # UPLOAD DATA MODE
