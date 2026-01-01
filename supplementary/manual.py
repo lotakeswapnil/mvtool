@@ -328,7 +328,7 @@ def manual_page():
 
         interval = st.radio('Do you want Weather Data using Intervals?', options=["Yes", "No"], index=None, key='interval_data')
 
-        if interval == 'yes':
+        if interval == 'Yes':
 
             lat, lon = st.columns(2)
 
@@ -561,7 +561,7 @@ def manual_page():
                 st.pyplot(fig)
 
 
-        if interval == 'no':
+        if interval == 'No':
 
 
             # Build column names automatically
