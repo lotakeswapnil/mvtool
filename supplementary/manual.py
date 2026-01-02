@@ -328,13 +328,16 @@ def manual_page():
 
         if interval == 'Yes':
 
-            lat, lon = st.columns(2)
+            lat, lon, temp = st.columns(3)
 
             with lat:
                 lat = st.number_input("Latitude", format="%.4f")
 
             with lon:
                 lon = st.number_input("Longitude", format="%.4f")
+
+            with temp:
+                temperature_unit = st.selectbox('Select Temperature Unit:',['celsius','fahrenheit'])
 
 
             var = "temperature"  # or let user pick
@@ -345,10 +348,7 @@ def manual_page():
 
             client = make_openmeteo_client()
 
-            temp, step_unit, model_c, model_m = st.columns(4)
-
-            with temp:
-                temperature_unit = st.selectbox('Select Temperature Unit:',['celsius','fahrenheit'])
+            step_unit, model_c, model_m = st.columns(4)
 
             with step_unit:
                 step = st.selectbox('Select Decimals For Balance Point:',[1.0,0.5,0.1])
