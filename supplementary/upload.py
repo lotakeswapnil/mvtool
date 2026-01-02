@@ -38,7 +38,7 @@ def upload_page():
                 st.write('### Reported Data Preview:', df_r.head())
 
 
-        st.subheader('Select Baseline Data details:')
+        st.subheader('Enter Baseline Data details:')
 
         base1, base2 = st.columns(2)
 
@@ -75,11 +75,11 @@ def upload_page():
 
             with rep1:
                 rep_ind_var = base_ind_var
-                st.write(f'###### Reported Variable Name: \n {rep_ind_var}')
+                st.text_input('Reported Variable Name:', rep_ind_var, disabled=True)
 
             with rep2:
                 rep_energy = base_energy
-                st.write(f'###### Reported Energy column name: \n {rep_energy}')
+                st.text_input('Reported Energy column name:', rep_energy, disabled=True)
 
             with rep3:
                 if rep_ind_var == 'Independent Variable':
@@ -154,7 +154,7 @@ def upload_page():
 
         if base_ind_var == 'Temperature':
 
-            mod1, mod2 = st.columns([0.25, 0.25])
+            mod1, mod2, step_unit = st.columns(3)
 
             with mod1:
                 model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
@@ -171,17 +171,23 @@ def upload_page():
                 else:
                     mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"], index=0)
 
+            with step_unit:
+                step = st.selectbox('Select Decimals for Balance Point:',[1.0,0.5,0.1], help='This interval will be used to calculate Balance Point.'
+                                                                                             '\n E.g., If you select 1.0, balance point will be calculated between 55, 56, 57, and so on.'
+                                                                                              '\n If you select 0.5, it will be calculated between 55.0, 55.5, 56.0, and so on.')
+
+
             st.subheader('Reported Data details:')
 
             rep1, rep2, rep3 = st.columns(3)
 
             with rep1:
                 rep_ind_var = base_ind_var
-                st.write(f'###### Reported Variable Name: \n {rep_ind_var}')
+                st.text_input('Reported Variable Name:', rep_ind_var, disabled=True)
 
             with rep2:
                 rep_energy = base_energy
-                st.write(f'###### Reported Energy column name: \n {rep_energy}')
+                st.text_input('Reported Energy column name:', rep_energy, disabled=True)
 
             with rep3:
                 if rep_ind_var == 'Independent Variable':
@@ -190,7 +196,7 @@ def upload_page():
                         st.write(globals()[f"ind_var_{i}"])
 
                 else:
-                    st.write(f'###### Reported Independent Variable Name: \n {temp_data}')
+                    st.text_input('Reported Independent Variable Name:', temp_data, disabled=True)
 
 
             if st.button('Calculate Savings'):
@@ -201,7 +207,6 @@ def upload_page():
                     # -------------------------
                     Tmin = float(np.floor(df_b[temp_data].min()))
                     Tmax = float(np.ceil(df_b[temp_data].max()))
-                    step = 1.0
                     rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
 
 

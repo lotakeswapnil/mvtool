@@ -328,7 +328,10 @@ def manual_page():
 
         if interval == 'Yes':
 
+            st.write('#### Enter Location Details')
+
             lat, lon, temp = st.columns(3)
+
 
             with lat:
                 lat = st.number_input("Latitude", format="%.4f")
@@ -347,6 +350,8 @@ def manual_page():
             # create client once (you can cache it)
 
             client = make_openmeteo_client()
+
+            st.write('#### Select Model Details')
 
             model_c, model_m, step_unit = st.columns(3)
 
@@ -592,19 +597,45 @@ def manual_page():
 
             # Fetch Weather Data
 
+            st.write('#### Select Baseline Period Dates')
+
+            start_b, end_b, weather_int_b = st.columns(3)
+
+            with start_b:
+                start_date_b = st.date_input("Start date", value=date.today() - timedelta(days=365*2+1))
+            with end_b:
+                end_date_b = st.date_input("End date", value=date.today() - timedelta(days=366))
+            with weather_int_b:
+                weather_interval = st.selectbox('Select Interval', {'Hourly', 'Daily', 'Monthly'})
+
+            st.write('#### Select Reported Period Dates')
+
+            start_r, end_r, weather_int_r = st.columns(3)
+
+            with start_r:
+                start_date_r = st.date_input("Start date", value=date.today() - timedelta(days=365))
+            with end_r:
+                end_date_r = st.date_input("End date", value=date.today() - timedelta(days=1))
+            with weather_int_r:
+                st.selectbox('Select Interval', weather_interval, disabled=True, help='This will be same as baseline interval to avoid errors.')
+
+
+            st.write('#### Enter Location Details')
+
             lat, lon, temp = st.columns(3)
 
             with lat:
                 lat = st.number_input("Latitude", format="%.4f")
-                start_date = st.date_input("Start date", value=date.today()- timedelta(days=365))
+
 
             with lon:
                 lon = st.number_input("Longitude", format="%.4f")
-                end_date = st.date_input("End date", value=date.today()- timedelta(days=1))
+
 
             with temp:
                 temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
-                weather_interval = st.selectbox('Select Interval', {'Hourly', 'Daily', 'Monthly'})
+
+
 
             var = "temperature"  # or let user pick
             which = "hourly"
@@ -613,6 +644,8 @@ def manual_page():
             # create client once (you can cache it)
 
             client = make_openmeteo_client()
+
+            st.write('#### Select Model Details')
 
             weather_i, model_c, step_unit = st.columns(3)
 
@@ -640,11 +673,11 @@ def manual_page():
                                                                                               '\n If you select 0.5, it will be calculated between 55.0, 55.5, 56.0, and so on.')
 
             if st.button("Fetch Weather Data & Run Regression"):
-                if start_date > end_date:
+                if start_date_b > end_date_b:
                     st.error("Start must be <= end")
                 else:
-                    start_str = start_date.isoformat()
-                    end_str = end_date.isoformat()
+                    start_str = start_date_b.isoformat()
+                    end_str = end_date_b.isoformat()
                     with st.spinner("Fetching..."):
                         try:
                             meta, df_weather = fetch_openmeteo_archive(client, lat, lon, start_str, end_str, temperature_unit, which, var)
