@@ -409,19 +409,18 @@ def manual_page():
                     temp = final_df['temperature'].values
                     energy = final_df['Energy'].values
     
-                    with st.spinner("Running change-point models..."):
-                        three_res = None
-                        five_res = None
+                    three_res = None
+                    five_res = None
     
-                        if model_choice == "3-parameter":
-                            three_res = fit_three_param_cp(temp, energy, Tmin, Tmax, step, mode=mode)
+                    if model_choice == "3-parameter":
+                        three_res = fit_three_param_cp(temp, energy, Tmin, Tmax, step, mode=mode)
     
-                        if model_choice == "5-parameter":
-                            five_res = fit_five_param_deadband(temp, energy, Tmin, Tmax, step)
+                    if model_choice == "5-parameter":
+                        five_res = fit_five_param_deadband(temp, energy, Tmin, Tmax, step)
     
-                        if model_choice == "Both":
-                            three_res = fit_three_param_cp(temp, energy, Tmin, Tmax, step, mode=mode)
-                            five_res = fit_five_param_deadband(temp, energy, Tmin, Tmax, step)
+                    if model_choice == "Both":
+                        three_res = fit_three_param_cp(temp, energy, Tmin, Tmax, step, mode=mode)
+                        five_res = fit_five_param_deadband(temp, energy, Tmin, Tmax, step)
     
                     mean_energy = float(final_df['Energy'].mean())
                     # preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct,mean_energy)
