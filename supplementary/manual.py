@@ -348,10 +348,7 @@ def manual_page():
 
             client = make_openmeteo_client()
 
-            step_unit, model_c, model_m = st.columns(4)
-
-            with step_unit:
-                step = st.selectbox('Select Decimals For Balance Point:',[1.0,0.5,0.1])
+            model_c, model_m, step_unit = st.columns(3)
 
             with model_c:
                 model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
@@ -370,14 +367,17 @@ def manual_page():
                     mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
                                         index=0)
 
+            with step_unit:
+                step = st.selectbox('Select Intervals For Balance Point:',[1.0,0.5,0.1], help='This interval will be used to calculate Balance Point.'
+                                                                                             '\n E.g., If you select 1.0, balance point will be calculated between 55, 56, 57, and so on.'
+                                                                                              '\n If you select 0.5, it will be calculated between 55.0, 55.5, 56.0, and so on.')
+
             # Build column names automatically
-            col_names = ['Start Date','End Date','Energy']  # first column fixed
             empty_df = pd.DataFrame({'Start Date (yyyy-mm-dd)': pd.Series(['2025-01-01'], dtype='datetime64[ns]'),
                                      'End Date (yyyy-mm-dd)': pd.Series(['2025-02-01'], dtype='datetime64[ns]'),
                                      'Energy': pd.Series([0], dtype=float)})
 
             st.write('#### Enter Baseline Energy Data Below:')
-
             final_df = st.data_editor(empty_df, num_rows="dynamic", key='baseline_energy')
 
             if len(final_df) < 2:
@@ -569,19 +569,30 @@ def manual_page():
 
 
             # Build column names automatically
-            col_names = ["Energy"]  # first column fixed
             empty_df = pd.DataFrame({"Energy": pd.Series([0], dtype=float)})
 
-            st.write('#### Enter Energy Data Below:')
+            base, reported = st.columns(2)
 
-            manual_df = st.data_editor(empty_df, num_rows="dynamic")
+            with base:
+                st.write('##### Enter Baseline Energy Data Below:')
 
-            if len(manual_df) < 2:
-                st.error("Please enter at least 2 rows.")
+                manual_df = st.data_editor(empty_df, num_rows="dynamic", key='baseline_dataframe')
+
+                if len(manual_df) < 2:
+                    st.error("Please enter at least 2 rows.")
+
+            with reported:
+                st.write('##### Enter Reported Energy Data Below:')
+
+                reported_df = st.data_editor(empty_df, num_rows="dynamic", key='reported_dataframe')
+
+                if len(reported_df) < 2:
+                    st.error("Please enter at least 2 rows.")
+
 
             # Fetch Weather Data
 
-            lat, lon = st.columns(2)
+            lat, lon, temp = st.columns(3)
 
             with lat:
                 lat = st.number_input("Latitude", format="%.4f")
@@ -589,7 +600,11 @@ def manual_page():
 
             with lon:
                 lon = st.number_input("Longitude", format="%.4f")
-                end_date = st.date_input("End date", value=date.today()- timedelta(days=364))
+                end_date = st.date_input("End date", value=date.today()- timedelta(days=1))
+
+            with temp:
+                temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
+                weather_interval = st.selectbox('Select Interval', {'Hourly', 'Daily', 'Monthly'})
 
             var = "temperature"  # or let user pick
             which = "hourly"
@@ -599,14 +614,13 @@ def manual_page():
 
             client = make_openmeteo_client()
 
-            weather_i, model_c = st.columns(2)
+            weather_i, model_c, step_unit = st.columns(3)
 
             with weather_i:
-                weather_interval = st.selectbox('Select Interval', {'Hourly', 'Daily', 'Monthly'})
                 model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
 
             with model_c:
-                temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
+
                 if model_choice == "3-parameter":
                     mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
                                         index=0)
@@ -619,6 +633,11 @@ def manual_page():
                 else:
                     mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
                                         index=0)
+
+            with step_unit:
+                step = st.selectbox('Select Decimals for Balance Point:', [1.0,0.5,0.1], help='This interval will be used to calculate Balance Point.'
+                                                                                             '\n E.g., If you select 1.0, balance point will be calculated between 55, 56, 57, and so on.'
+                                                                                              '\n If you select 0.5, it will be calculated between 55.0, 55.5, 56.0, and so on.')
 
             if st.button("Fetch Weather Data & Run Regression"):
                 if start_date > end_date:
@@ -663,8 +682,6 @@ def manual_page():
 
                             Tmin = float(np.floor(final_df['temperature'].min()))
                             Tmax = float(np.ceil(final_df['temperature'].max()))
-                            step = 1.0
-                            rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
 
                             # -------------------------
                             # RUN MODELS
@@ -736,8 +753,8 @@ def manual_page():
                                         st.write(f"**Tb:** {three_res['Tb']:.2f} °F")
                                     st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
                                     st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
-                                    st.write(f"**RMSE:** {three_res['rmse']:.2f}")
-                                    st.write(f"**R²:** {three_res['r2']:.2f}")
+                                    st.write(f"**CV (RMSE):** {three_res['rmse']/mean_energy:.2%}")
+                                    st.write(f"**R²:** {three_res['r2']:.2%}")
 
                                 if model_choice in ["5-parameter"]:
                                     st.subheader("5-Parameter Model")
@@ -752,7 +769,7 @@ def manual_page():
                                     st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
                                     st.write(f"**β_h:** {five_res['model'].coef_[0]:.2f}")
                                     st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
-                                    st.write(f"**RMSE:** {five_res['rmse']:.2f}")
+                                    st.write(f"**CV (RMSE):** {five_res['rmse']/mean_energy:.2%}")
                                     st.write(f"**R²:** {five_res['r2']:.2f}")
 
                                 if model_choice in ["Both"]:
@@ -765,8 +782,8 @@ def manual_page():
                                             st.write(f"**Tb:** {three_res['Tb']:.2f} °F")
                                         st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
                                         st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
-                                        st.write(f"**RMSE:** {three_res['rmse']:.2f}")
-                                        st.write(f"**R²:** {three_res['r2']:.2f}")
+                                        st.write(f"**CV (RMSE):** {three_res['rmse']/mean_energy:.2%}")
+                                        st.write(f"**R²:** {three_res['r2']:.2%}")
                                     with col2:
                                         st.subheader("5-Parameter Model")
                                         if temperature_unit == 'celsius':
@@ -780,8 +797,8 @@ def manual_page():
                                         st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
                                         st.write(f"**β_h:** {five_res['model'].coef_[0]:.2f}")
                                         st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
-                                        st.write(f"**RMSE:** {five_res['rmse']:.2f}")
-                                        st.write(f"**R²:** {five_res['r2']:.2f}")
+                                        st.write(f"**CV (RMSE):** {five_res['rmse']/mean_energy:.2%}")
+                                        st.write(f"**R²:** {five_res['r2']:.2%}")
 
                                 # -------------------------
                                 # PLOT MODELS
@@ -819,7 +836,13 @@ def manual_page():
                                 else:
                                     ax.set_xlabel("Temperature (°F)")
                                 ax.set_ylabel("Energy")
-                                ax.set_title("3-Parameter vs 5-Parameter Change-Point Models")
+
+                                if model_choice in ["3-parameter"]:
+                                    ax.set_title("3-Parameter Change-Point Model")
+                                elif model_choice in ["5-parameter"]:
+                                    ax.set_title("5-Parameter Change-Point Model")
+                                else:
+                                    ax.set_title("3-Parameter and 5-parameter Change-Point Models")
                                 ax.legend()
                                 ax.grid(True)
 
