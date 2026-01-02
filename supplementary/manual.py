@@ -345,10 +345,13 @@ def manual_page():
 
             client = make_openmeteo_client()
 
-            temp, model_c, model_m = st.columns(3)
+            temp, step_unit, model_c, model_m = st.columns(3)
 
             with temp:
                 temperature_unit = st.selectbox('Select Temperature Unit:',['celsius','fahrenheit'])
+
+            with step_unit:
+                step = st.selectbox('Select Decimals For Balance Point:',[1.0,0.5,0.1])
 
             with model_c:
                 model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
@@ -403,7 +406,6 @@ def manual_page():
     
                     Tmin = float(np.floor(final_df['temperature'].min()))
                     Tmax = float(np.ceil(final_df['temperature'].max()))
-                    step = 1.0
                     rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
     
                     # -------------------------
