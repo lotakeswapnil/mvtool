@@ -345,7 +345,7 @@ def manual_page():
 
             client = make_openmeteo_client()
 
-            temp, step_unit, model_c, model_m = st.columns(3)
+            temp, step_unit, model_c, model_m = st.columns(4)
 
             with temp:
                 temperature_unit = st.selectbox('Select Temperature Unit:',['celsius','fahrenheit'])
