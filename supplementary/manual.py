@@ -380,7 +380,7 @@ def manual_page():
             st.write('#### Enter Reported Energy Data Below:')
             reported_df = st.data_editor(empty_df, num_rows="dynamic", key='reported_energy')
 
-            if len(final_df) < 2:
+            if len(final_df) or len(reported_df) < 2:
                 st.error("Please enter at least 2 rows.")
 
             if st.button("Fetch Weather Data & Run Regression"):
