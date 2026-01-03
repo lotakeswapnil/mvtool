@@ -6,8 +6,7 @@ st.title('Energy M&V Tool')
 
 # --- Select Mode of Analysis ---
 
-mode = st.radio('',options=["Manual Data", "Upload Data (CSV or Excel)"], index=None)
-
+mode = st.radio('Select any one Option:',options=["Manual Data", "Upload Data (CSV or Excel)"], index=None)
 
 with st.spinner('Loading...'):
 
