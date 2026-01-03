@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import streamlit as st
-from sklearn.linear_model import LinearRegression, Lasso, Ridge
+from sklearn.linear_model import LinearRegression
 from sklearn.metrics import root_mean_squared_error
 
 from supplementary.change_point import (fit_three_param_cp, fit_five_param_deadband, predict_3p_for_plot,predict_5p_for_plot)
@@ -58,15 +58,12 @@ def manual_page():
 
                 reported_df = st.data_editor(df_empty, num_rows="dynamic", key='reported_e')
 
-                model_dict = {'Linear Regression': LinearRegression, 'Ridge Regression': Ridge,
-                              'Lasso Regression': Lasso}
-                model_list = st.selectbox('Select models', model_dict)
 
-                if st.button('Run Regression'):
+                if st.button('Calculate Savings'):
                     X = final_df[independent_vars]
                     y = final_df['Energy']
 
-                    model = model_dict[model_list]()
+                    model = LinearRegression()
                     model.fit(X, y)
                     preds = model.predict(X)
                     regression = model.score(X, y)
@@ -93,6 +90,16 @@ def manual_page():
                     st.line_chart(pd.DataFrame({'Actual': y, 'Predicted': preds}).reset_index(drop=True))
 
 
+                    X_r = reported_df[independent_vars]
+                    Y_r = reported_df['Energy']
+                    pred_r = model.predict(X_r)
+
+                    st.write(f'##### Predicted Baseline Consumption: \n {pred_r.sum():.2f}')
+                    st.write(f'##### Reported Consumption: \n {Y_r.sum():.2f}')
+                    savings = pred_r.sum() - Y_r.sum()
+                    st.write(f'##### Savings: \n {savings:.2f}')
+
+
             else:
                 st.info('Please complete all Independent Variable names.')
 
@@ -104,9 +111,13 @@ def manual_page():
             empty_df = pd.DataFrame({"Energy": pd.Series([0], dtype=float),"Temperature": pd.Series([0], dtype=float)})
 
 
-            st.write('#### Enter Energy Data Below:')
+            st.write('#### Enter Baseline Energy Data Below:')
 
-            final_df = st.data_editor(empty_df, num_rows='dynamic')
+            final_df = st.data_editor(empty_df, num_rows='dynamic', key='baseline_df')
+
+            st.write('#### Enter Reported Energy Data Below:')
+
+            reported_df = st.data_editor(empty_df, num_rows='dynamic', key='reported_df')
 
             # -------------------------
             # VALIDATE USER INPUT
@@ -140,7 +151,6 @@ def manual_page():
 
             Tmin = float(np.floor(final_df['Temperature'].min()))
             Tmax = float(np.ceil(final_df['Temperature'].max()))
-            step = 1.0
             rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
 
 
@@ -150,15 +160,16 @@ def manual_page():
             temp = final_df['Temperature'].values
             energy = final_df['Energy'].values
 
-            temp_sel,mod1,mod2 = st.columns([0.25,0.25,0.25])
+            temp_sel,cp_model = st.columns(2)
 
             with temp_sel:
                 temperature_unit = st.selectbox('Select Temperature unit:',['celsius','fahrenheit'])
+                model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
 
-            with mod1:
-                model_choice = st.selectbox("Select Change-Point Model:",["3-parameter", "5-parameter", "Both"])
-
-            with mod2:
+            with cp_model:
+                step = st.selectbox('Select Intervals For Balance Point:',[1.0,0.5,0.1], help='This interval will be used to calculate Balance Point.'
+                                                                                             '\n E.g., If you select 1.0, balance point will be calculated between 55, 56, 57, and so on.'
+                                                                                              '\n If you select 0.5, it will be calculated between 55.0, 55.5, 56.0, and so on.')
                 if model_choice == "3-parameter":
                     mode = st.selectbox("Select Change-Point Model Type:",["auto", "heating", "cooling"],index=0)
                 elif model_choice == "5-parameter":
@@ -171,7 +182,7 @@ def manual_page():
                     mode = st.selectbox("Select Change-Point Model Type:",["auto", "heating", "cooling"],index=0)
 
 
-            if st.button("Run Regression Models"):
+            if st.button("Calculate Savings"):
                 three_res = None
                 five_res = None
 
@@ -235,8 +246,8 @@ def manual_page():
                         st.write(f"**Tb:** {three_res['Tb']:.2f} °F")
                     st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
                     st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
-                    st.write(f"**RMSE:** {three_res['rmse']:.2f}")
-                    st.write(f"**R²:** {three_res['r2']:.2f}")
+                    st.write(f"**CV (RMSE):** {three_res['rmse']/mean_energy:.2%}")
+                    st.write(f"**R²:** {three_res['r2']:.2%}")
 
                 if model_choice in ["5-parameter"]:
                     st.subheader("5-Parameter Model")
@@ -251,8 +262,8 @@ def manual_page():
                     st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
                     st.write(f"**β_h:** {five_res['model'].coef_[0]:.2f}")
                     st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
-                    st.write(f"**RMSE:** {five_res['rmse']:.2f}")
-                    st.write(f"**R²:** {five_res['r2']:.2f}")
+                    st.write(f"**CV (RMSE):** {five_res['rmse']/mean_energy:.2%}")
+                    st.write(f"**R²:** {five_res['r2']:.2%}")
 
                 if model_choice in ["Both"]:
                     col1, col2 = st.columns(2)
@@ -264,8 +275,8 @@ def manual_page():
                             st.write(f"**Tb:** {three_res['Tb']:.2f} °F")
                         st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
                         st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
-                        st.write(f"**RMSE:** {three_res['rmse']:.2f}")
-                        st.write(f"**R²:** {three_res['r2']:.2f}")
+                        st.write(f"**CV (RMSE):** {three_res['rmse']/mean_energy:.2%}")
+                        st.write(f"**R²:** {three_res['r2']:.2%}")
                     with col2:
                         st.subheader("5-Parameter Model")
                         if temperature_unit == 'celsius':
@@ -279,8 +290,8 @@ def manual_page():
                         st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
                         st.write(f"**β_h:** {five_res['model'].coef_[0]:.2f}")
                         st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
-                        st.write(f"**RMSE:** {five_res['rmse']:.2f}")
-                        st.write(f"**R²:** {five_res['r2']:.2f}")
+                        st.write(f"**CV (RMSE):** {five_res['rmse']/mean_energy:.2%}")
+                        st.write(f"**R²:** {five_res['r2']:.2%}")
 
 
 
@@ -321,6 +332,50 @@ def manual_page():
                 ax.grid(True)
 
                 st.pyplot(fig)
+
+                # --------------------------
+
+                y_r = reported_df['Energy']
+                x_r = reported_df['Temperature']
+
+                if model_choice == "3-parameter":
+                    pred_r = predict_3p_for_plot(x_r.to_numpy(), three_res["Tb"], three_res["model"],
+                                                 mode=three_res["mode"])
+
+                elif model_choice == "5-parameter":
+                    pred_r = predict_5p_for_plot(x_r.to_numpy(), five_res["Tb_low"], five_res["Tb_high"],
+                                                 five_res["model"])
+
+                else:  # Both
+                    pred_r_3p = predict_3p_for_plot(x_r.to_numpy(), three_res["Tb"], three_res["model"],
+                                                    mode=three_res["mode"])
+                    pred_r_5p = predict_5p_for_plot(x_r.to_numpy(), five_res["Tb_low"], five_res["Tb_high"],
+                                                    five_res["model"])
+
+                if model_choice == "3-parameter" or model_choice == "5-parameter":
+                    st.write(f'##### Predicted Baseline Consumption: \n {pred_r.sum():.2f}')
+
+                else:
+                    mod1, mod2 = st.columns(2)
+                    with mod1:
+                        st.write(f'##### 3 Parameter Predicted Baseline Consumption: \n {pred_r_3p.sum():.2f}')
+                    with mod2:
+                        st.write(f'##### 5 Parameter Predicted Baseline Consumption: \n {pred_r_5p.sum():.2f}')
+
+                st.write(f'##### Reported Consumption: \n {y_r.sum():.2f}')
+
+                if model_choice == "3-parameter" or model_choice == "5-parameter":
+                    savings = pred_r.sum() - y_r.sum()
+                    st.write(f'##### Savings: \n {savings:.2f}')
+                else:
+                    mod1, mod2 = st.columns(2)
+
+                    with mod1:
+                        savings_3p = pred_r_3p.sum() - y_r.sum()
+                        st.write(f'##### 3 Parameter Savings: \n {savings_3p:.2f}')
+                    with mod2:
+                        savings_5p = pred_r_5p.sum() - y_r.sum()
+                        st.write(f'##### 5 Parameter Savings: \n {savings_5p:.2f}')
 
     elif manual_data == 'Yes':
 
