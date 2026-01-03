@@ -420,8 +420,7 @@ def manual_page():
 
                             temperature_data['date_local'] = pd.to_datetime(temperature_data['date_local'])
 
-                            mask = ((temperature_data['date_local'] >= start_dt) & (
-                                        temperature_data['date_local'] <= end_dt))
+                            mask = ((temperature_data['date_local'] >= start_dt) & (temperature_data['date_local'] <= end_dt))
 
                             filtered_temp = temperature_data.loc[mask]
 
