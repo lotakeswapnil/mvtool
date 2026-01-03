@@ -12,7 +12,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import root_mean_squared_error
 
 from supplementary.change_point import (fit_three_param_cp, fit_five_param_deadband, predict_3p_for_plot,predict_5p_for_plot)
-from supplementary.weather import make_openmeteo_client, fetch_openmeteo_archive
+from supplementary.weather import make_openmeteo_client, fetch_openmeteo_archive, get_timezone_from_coords
 from supplementary.model_results import three_para_results, five_para_results, three_five_para_results
 
 # ----------------------------------------
@@ -354,31 +354,32 @@ def manual_page():
                                                                                              '\n E.g., If you select 1.0, balance point will be calculated between 55, 56, 57, and so on.'
                                                                                               '\n If you select 0.5, it will be calculated between 55.0, 55.5, 56.0, and so on.')
 
+            timezone = get_timezone_from_coords(lat, lon)
+            st.write(timezone)
+
             # Build column names automatically
-            empty_df = pd.DataFrame({'Start Date (yyyy-mm-dd)': pd.Series(['2025-01-01'], dtype='datetime64[ns]'),
-                                     #'Start Time (0-23)': pd.Series([00], dtype='int64'),
-                                     'End Date (yyyy-mm-dd)': pd.Series(['2025-02-01'], dtype='datetime64[ns]'),
-                                     #'End Time (0-23)': pd.Series([00], dtype='int64'),
-                                     'Energy': pd.Series([0], dtype=float)})
+            empty_df = pd.DataFrame({'Start Date (yyyy-mm-dd)': pd.to_datetime(['2025-01-01']).tz_localize('UTC').tz_convert(timezone),
+                                     'End Date (yyyy-mm-dd)': pd.to_datetime(['2025-02-01']).tz_localize('UTC').tz_convert(timezone),
+                                     'Energy': pd.Series([0.0], dtype='float64')})
 
             st.write('#### Enter Baseline Energy Data Below:')
-            final_df = st.data_editor(empty_df, num_rows="dynamic", key='baseline_energy',
-                                      column_config={'Start Date (yyyy-mm-dd)': st.column_config.DateColumn(format="YYYY-MM-DD"),
+            final_df = st.data_editor(empty_df, num_rows="dynamic", key='baseline_energy')
+                                      #column_config={'Start Date (yyyy-mm-dd)': st.column_config.DateColumn(format="YYYY-MM-DD"),
                                                      #'Start Time (0-23)': st.column_config.NumberColumn(min_value=0, max_value=23, step=1),
-                                                     'End Date (yyyy-mm-dd)': st.column_config.DateColumn(format="YYYY-MM-DD"),
+                                                     #'End Date (yyyy-mm-dd)': st.column_config.DateColumn(format="YYYY-MM-DD"),
                                                      #'End Time (0-23)': st.column_config.NumberColumn(min_value=0, max_value=23, step=1)
-                                                     })
+                                                     #})
 
             if len(final_df) < 2:
                 st.error("Please enter at least 2 rows.")
 
             st.write('#### Enter Reported Energy Data Below:')
-            reported_df = st.data_editor(empty_df, num_rows="dynamic", key='reported_energy',
-                                         column_config={'Start Date (yyyy-mm-dd)': st.column_config.DateColumn(format="YYYY-MM-DD"),
+            reported_df = st.data_editor(empty_df, num_rows="dynamic", key='reported_energy')
+                                         #column_config={'Start Date (yyyy-mm-dd)': st.column_config.DateColumn(format="YYYY-MM-DD"),
                                                        # 'Start Time (0-23)': st.column_config.NumberColumn(min_value=0, max_value=23, step=1),
-                                                        'End Date (yyyy-mm-dd)': st.column_config.DateColumn(format="YYYY-MM-DD"),
+                                                       # 'End Date (yyyy-mm-dd)': st.column_config.DateColumn(format="YYYY-MM-DD"),
                                                        # 'End Time (0-23)': st.column_config.NumberColumn(min_value=0, max_value=23, step=1)
-                                                        })
+                                                       # })
 
 
             if len(final_df) >= 2:
@@ -388,16 +389,50 @@ def manual_page():
                     with st.spinner('Calculating...'):
 
                         for i in range(len(final_df)):
-                            start_date = final_df.loc[i, 'Start Date (yyyy-mm-dd)'].date().isoformat()
-                            end_date = final_df.loc[i, 'End Date (yyyy-mm-dd)'].date().isoformat()
+                            start_dt = final_df.loc[i, 'Start Date (yyyy-mm-dd)'].tz_convert(timezone)
+                            end_dt = final_df.loc[i, 'End Date (yyyy-mm-dd)'].tz_convert(timezone)
+
+                            start_date = start_dt.date().isoformat()
+                            end_date = end_dt.date().isoformat()
                             meta, temperature_data = fetch_openmeteo_archive(client, lat, lon, start_date, end_date, temperature_unit, which, var)
-                            final_df.loc[i, 'temperature'] = temperature_data["temperature"].mean()
+
+                            temperature_data['date_local'] = pd.to_datetime(temperature_data['date_local'])
+
+                            mask = ((temperature_data['date_local'] >= start_dt)&(temperature_data['date_local'] <= end_dt))
+
+                            filtered_temp = temperature_data.loc[mask]
+
+                            filtered_temp['date'] = filtered_temp['date_local'].dt.date
+                            filtered_temp['hour'] = filtered_temp['date_local'].dt.hour
+
+                            hourly_avg = (filtered_temp.groupby(['date', 'hour'], as_index=False)['temperature'].mean())
+
+                            final_df.loc[i, 'temperature'] = hourly_avg["temperature"].mean()
+
 
                         for i in range(len(reported_df)):
-                            start_date = reported_df.loc[i, 'Start Date (yyyy-mm-dd)'].date().isoformat()
-                            end_date = reported_df.loc[i, 'End Date (yyyy-mm-dd)'].date().isoformat()
+                            start_dt = reported_df.loc[i, 'Start Date (yyyy-mm-dd)'].tz_convert(timezone)
+                            end_dt = reported_df.loc[i, 'End Date (yyyy-mm-dd)'].tz_convert(timezone)
+
+                            start_date = start_dt.date().isoformat()
+                            end_date = end_dt.date().isoformat()
                             meta, temperature_data = fetch_openmeteo_archive(client, lat, lon, start_date, end_date, temperature_unit, which, var)
-                            reported_df.loc[i, 'temperature'] = temperature_data["temperature"].mean()
+
+                            temperature_data['date_local'] = pd.to_datetime(temperature_data['date_local'])
+
+                            mask = ((temperature_data['date_local'] >= start_dt) & (
+                                        temperature_data['date_local'] <= end_dt))
+
+                            filtered_temp = temperature_data.loc[mask]
+
+                            filtered_temp['date'] = filtered_temp['date_local'].dt.date
+                            filtered_temp['hour'] = filtered_temp['date_local'].dt.hour
+
+                            hourly_avg = (filtered_temp.groupby(['date', 'hour'], as_index=False)['temperature'].mean())
+
+                            reported_df.loc[i, 'temperature'] = hourly_avg["temperature"].mean()
+
+                        st.write(reported_df)
 
 
                         # -------------------------
