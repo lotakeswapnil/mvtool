@@ -3,7 +3,6 @@ import streamlit as st
 
 st.title('Energy M&V Tool')
 
-
 # --- Select Mode of Analysis ---
 
 mode = st.radio('Select any one Option:',options=["Manual Data", "Upload Data (CSV or Excel)"], index=None)

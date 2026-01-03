@@ -1,4 +1,7 @@
+# --------------------------
 # import necessary packages
+# --------------------------
+
 from datetime import date, timedelta
 
 import matplotlib.pyplot as plt
