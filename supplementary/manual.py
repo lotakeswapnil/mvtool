@@ -340,17 +340,14 @@ def manual_page():
 
             with model_m:
                 if model_choice == "3-parameter":
-                    mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
-                                        index=0)
+                    mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],index=0)
+
                 elif model_choice == "5-parameter":
                     # Disable the mode selection if the model is not "3-parameter"
                     mode_disabled = model_choice != "3-parameter"
-
-                    mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
-                                        index=0, disabled=mode_disabled)
+                    mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],index=0, disabled=mode_disabled)
                 else:
-                    mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],
-                                        index=0)
+                    mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],index=0)
 
             with step_unit:
                 step = st.selectbox('Select Intervals For Balance Point:',[1.0,0.5,0.1], help='This interval will be used to calculate Balance Point.'
@@ -395,7 +392,6 @@ def manual_page():
                             end_date = final_df.loc[i, 'End Date (yyyy-mm-dd)'].date().isoformat()
                             meta, temperature_data = fetch_openmeteo_archive(client, lat, lon, start_date, end_date, temperature_unit, which, var)
                             final_df.loc[i, 'temperature'] = temperature_data["temperature"].mean()
-
 
                         for i in range(len(reported_df)):
                             start_date = reported_df.loc[i, 'Start Date (yyyy-mm-dd)'].date().isoformat()
