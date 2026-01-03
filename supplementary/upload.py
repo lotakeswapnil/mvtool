@@ -7,6 +7,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import root_mean_squared_error
 
 from supplementary.change_point import (fit_three_param_cp, fit_five_param_deadband, predict_3p_for_plot,predict_5p_for_plot)
+from supplementary.model_results import three_para_results, five_para_results, three_five_para_results
 
 def upload_page():
 
@@ -276,59 +277,13 @@ def upload_page():
                     st.subheader("Model Results")
 
                     if model_choice in ["3-parameter"]:
-                        st.write("### 3-Parameter Model")
-                        if temperature_unit == 'celsius':
-                            st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
-                        else:
-                            st.write(f"**Tb:** {three_res['Tb']:.2f} °F")
-                        st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
-                        st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
-                        st.write(f"**RMSE:** {three_res['rmse']:.2f}")
-                        st.write(f"**R²:** {three_res['r2']:.2f}")
+                        three_para_results(three_res, temperature_unit, mean_energy)
 
                     if model_choice in ["5-parameter"]:
-                        st.write("### 5-Parameter Model")
-                        if temperature_unit == 'celsius':
-                            st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °C")
-                        else:
-                            st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °F")
-                        if temperature_unit == 'celsius':
-                            st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °C")
-                        else:
-                            st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °F")
-                        st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
-                        st.write(f"**β_h:** {five_res['model'].coef_[0]:.2f}")
-                        st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
-                        st.write(f"**RMSE:** {five_res['rmse']:.2f}")
-                        st.write(f"**R²:** {five_res['r2']:.2f}")
+                        five_para_results(five_res, temperature_unit, mean_energy)
 
                     if model_choice in ["Both"]:
-                        col1, col2 = st.columns(2, border=True)
-                        with col1:
-                            st.write("### 3-Parameter Model")
-                            if temperature_unit == 'celsius':
-                                st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
-                            else:
-                                st.write(f"**Tb:** {three_res['Tb']:.2f} °F")
-                            st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
-                            st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
-                            st.write(f"**RMSE:** {three_res['rmse']:.2f}")
-                            st.write(f"**R²:** {three_res['r2']:.2f}")
-                        with col2:
-                            st.write("### 5-Parameter Model")
-                            if temperature_unit == 'celsius':
-                                st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °C")
-                            else:
-                                st.write(f"**Tb_low:** {five_res['Tb_low']:.2f} °F")
-                            if temperature_unit == 'celsius':
-                                st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °C")
-                            else:
-                                st.write(f"**Tb_high:** {five_res['Tb_high']:.2f} °F")
-                            st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
-                            st.write(f"**β_h:** {five_res['model'].coef_[0]:.2f}")
-                            st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
-                            st.write(f"**RMSE:** {five_res['rmse']:.2f}")
-                            st.write(f"**R²:** {five_res['r2']:.2f}")
+                        three_five_para_results(three_res, five_res, temperature_unit, mean_energy)
 
                     # -------------------------
                     # PLOT MODELS
