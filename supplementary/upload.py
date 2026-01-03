@@ -392,7 +392,7 @@ def upload_page():
                         st.write(f'##### Predicted Baseline Consumption: \n {pred_r.sum():.2f}')
 
                     else:
-                        mod1, mod2 = st.columns(2, border=True)
+                        mod1, mod2 = st.columns(2, border=True, vertical_alignment=True)
                         with mod1:
                             st.write(f'##### 3 Parameter Predicted Baseline Consumption: \n {pred_r_3p.sum():.2f}')
                         with mod2:

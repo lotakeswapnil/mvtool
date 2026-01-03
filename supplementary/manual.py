@@ -160,7 +160,7 @@ def manual_page():
             temp = final_df['Temperature'].values
             energy = final_df['Energy'].values
 
-            temp_sel,cp_model = st.columns(2,border=True)
+            temp_sel,cp_model = st.columns(2, border=True)
 
             with temp_sel:
                 temperature_unit = st.selectbox('Select Temperature unit:',['celsius','fahrenheit'])
