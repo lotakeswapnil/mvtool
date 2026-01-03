@@ -397,12 +397,10 @@ def manual_page():
                                                         'End Date (yyyy-mm-dd)': st.column_config.DateColumn(
                                                             format="YYYY-MM-DD")})
 
-            if len(reported_df) < 2:
-                st.error("Please enter at least 2 rows.")
 
-            if len(final_df) >= 2 and len(reported_df) >= 2:
+            if len(final_df) >= 2:
 
-                if st.button("Fetch Weather Data & Run Regression"):
+                if st.button("Fetch Weather Data & Calculate Savings"):
 
                     with st.spinner('Calculating...'):
 
@@ -581,8 +579,51 @@ def manual_page():
                         ax.grid(True)
 
                         st.pyplot(fig)
-            else:
-                None
+
+                        # --------------------------
+
+                        y_r = reported_df['Energy']
+                        x_r = reported_df['temperature']
+
+                        if model_choice == "3-parameter":
+                            pred_r = predict_3p_for_plot(x_r.to_numpy(), three_res["Tb"], three_res["model"],
+                                                         mode=three_res["mode"])
+
+                        elif model_choice == "5-parameter":
+                            pred_r = predict_5p_for_plot(x_r.to_numpy(), five_res["Tb_low"], five_res["Tb_high"],
+                                                         five_res["model"])
+
+                        else:  # Both
+                            pred_r_3p = predict_3p_for_plot(x_r.to_numpy(), three_res["Tb"], three_res["model"],
+                                                            mode=three_res["mode"])
+                            pred_r_5p = predict_5p_for_plot(x_r.to_numpy(), five_res["Tb_low"], five_res["Tb_high"],
+                                                            five_res["model"])
+
+                        if model_choice == "3-parameter" or model_choice == "5-parameter":
+                            st.write(f'##### Predicted Baseline Consumption: \n {pred_r.sum():.2f}')
+
+                        else:
+                            mod1, mod2 = st.columns(2)
+                            with mod1:
+                                st.write(f'##### 3 Parameter Predicted Baseline Consumption: \n {pred_r_3p.sum():.2f}')
+                            with mod2:
+                                st.write(f'##### 5 Parameter Predicted Baseline Consumption: \n {pred_r_5p.sum():.2f}')
+
+                        st.write(f'##### Reported Consumption: \n {y_r.sum():.2f}')
+
+                        if model_choice == "3-parameter" or model_choice == "5-parameter":
+                            savings = pred_r.sum() - y_r.sum()
+                            st.write(f'##### Savings: \n {savings:.2f}')
+                        else:
+                            mod1, mod2 = st.columns(2)
+
+                            with mod1:
+                                savings_3p = pred_r_3p.sum() - y_r.sum()
+                                st.write(f'##### 3 Parameter Savings: \n {savings_3p:.2f}')
+                            with mod2:
+                                savings_5p = pred_r_5p.sum() - y_r.sum()
+                                st.write(f'##### 5 Parameter Savings: \n {savings_5p:.2f}')
+
 
         if interval == 'No':
 
@@ -605,8 +646,6 @@ def manual_page():
 
                 reported_df = st.data_editor(empty_df, num_rows="dynamic", key='reported_dataframe')
 
-                if len(reported_df) < 2:
-                    st.error("Please enter at least 2 rows.")
 
 
             # Fetch Weather Data
@@ -686,13 +725,13 @@ def manual_page():
                                                                                              '\n E.g., If you select 1.0, balance point will be calculated between 55, 56, 57, and so on.'
                                                                                               '\n If you select 0.5, it will be calculated between 55.0, 55.5, 56.0, and so on.')
 
-            if st.button("Fetch Weather Data & Run Regression"):
+            if st.button("Fetch Weather Data & Calculate savings"):
                 if start_date_b > end_date_b:
                     st.error("Start must be <= end")
                 else:
                     start_str = start_date_b.isoformat()
                     end_str = end_date_b.isoformat()
-                    with st.spinner("Fetching..."):
+                    with st.spinner("Calculating..."):
                         try:
                             meta, df_weather = fetch_openmeteo_archive(client, lat, lon, start_str, end_str, temperature_unit, which, var)
                         except Exception as e:
