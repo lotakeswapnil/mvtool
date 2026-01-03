@@ -685,7 +685,7 @@ def manual_page():
             # Build column names automatically
             empty_df = pd.DataFrame({"Energy": pd.Series([0], dtype=float)})
 
-            base, reported = st.columns(2, border=True)
+            base, reported = st.columns(2)
 
             with base:
                 st.write('##### Enter Baseline Energy Data Below:')
