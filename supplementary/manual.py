@@ -726,41 +726,53 @@ def manual_page():
                                                                                               '\n If you select 0.5, it will be calculated between 55.0, 55.5, 56.0, and so on.')
 
             if st.button("Fetch Weather Data & Calculate savings"):
-                if start_date_b > end_date_b:
+                if start_date_b > end_date_b and start_date_r > end_date_r:
                     st.error("Start must be <= end")
                 else:
-                    start_str = start_date_b.isoformat()
-                    end_str = end_date_b.isoformat()
+                    start_str_b = start_date_b.isoformat()
+                    end_str_b = end_date_b.isoformat()
+                    start_str_r = start_date_r.isoformat()
+                    end_str_r = end_date_r.isoformat()
                     with st.spinner("Calculating..."):
                         try:
-                            meta, df_weather = fetch_openmeteo_archive(client, lat, lon, start_str, end_str, temperature_unit, which, var)
+                            meta, df_weather = fetch_openmeteo_archive(client, lat, lon, start_str_b, end_str_b, temperature_unit, which, var)
+                            meta, df_weather_r = fetch_openmeteo_archive(client, lat, lon, start_str_r, end_str_r, temperature_unit, which, var)
                         except Exception as e:
                             st.error(f"Weather fetch failed: {e}")
                         else:
                             st.success("Fetched weather data")
 
                             df_temp = df_weather.copy()
+                            df_temp_r = df_weather_r.copy()
 
                             if weather_interval == "Hourly":
 
                                 df_weather_final = df_temp
+                                df_weather_final_r = df_temp_r
 
                             elif weather_interval == "Monthly":
 
                                 df_temp['month'] = df_temp['date_local'].dt.month  # 1–12
+                                df_temp_r['month'] = df_temp_r['date_local'].dt.month
 
                                 df_weather_final = (df_temp.groupby('month', as_index=False).mean(numeric_only=True))
+                                df_weather_final_r = (df_temp_r.groupby('month', as_index=False).mean(numeric_only=True))
 
                             else:
 
                                 df_temp['month'] = df_temp['date_local'].dt.month
                                 df_temp['day'] = df_temp['date_local'].dt.day
+                                df_temp_r['month'] = df_temp_r['date_local'].dt.month
+                                df_temp_r['day'] = df_temp_r['date_local'].dt.day
 
                                 df_weather_final = (
                                     df_temp.groupby(['month', 'day'], as_index=False).mean(numeric_only=True))
+                                df_weather_final_r = (
+                                    df_temp_r.groupby(['month', 'day'], as_index=False).mean(numeric_only=True))
 
 
                             final_df = pd.concat([manual_df, df_weather_final], axis=1)
+                            reported_df = pd.concat([reported_df, df_weather_final_r], axis=1)
 
                             # -------------------------
                             # DEFAULT MODEL SETTINGS
@@ -933,6 +945,54 @@ def manual_page():
                                 ax.grid(True)
 
                                 st.pyplot(fig)
+
+                                # --------------------------
+
+                                y_r = reported_df['Energy']
+                                x_r = reported_df['temperature']
+
+                                if model_choice == "3-parameter":
+                                    pred_r = predict_3p_for_plot(x_r.to_numpy(), three_res["Tb"], three_res["model"],
+                                                                 mode=three_res["mode"])
+
+                                elif model_choice == "5-parameter":
+                                    pred_r = predict_5p_for_plot(x_r.to_numpy(), five_res["Tb_low"],
+                                                                 five_res["Tb_high"],
+                                                                 five_res["model"])
+
+                                else:  # Both
+                                    pred_r_3p = predict_3p_for_plot(x_r.to_numpy(), three_res["Tb"], three_res["model"],
+                                                                    mode=three_res["mode"])
+                                    pred_r_5p = predict_5p_for_plot(x_r.to_numpy(), five_res["Tb_low"],
+                                                                    five_res["Tb_high"],
+                                                                    five_res["model"])
+
+                                if model_choice == "3-parameter" or model_choice == "5-parameter":
+                                    st.write(f'##### Predicted Baseline Consumption: \n {pred_r.sum():.2f}')
+
+                                else:
+                                    mod1, mod2 = st.columns(2)
+                                    with mod1:
+                                        st.write(
+                                            f'##### 3 Parameter Predicted Baseline Consumption: \n {pred_r_3p.sum():.2f}')
+                                    with mod2:
+                                        st.write(
+                                            f'##### 5 Parameter Predicted Baseline Consumption: \n {pred_r_5p.sum():.2f}')
+
+                                st.write(f'##### Reported Consumption: \n {y_r.sum():.2f}')
+
+                                if model_choice == "3-parameter" or model_choice == "5-parameter":
+                                    savings = pred_r.sum() - y_r.sum()
+                                    st.write(f'##### Savings: \n {savings:.2f}')
+                                else:
+                                    mod1, mod2 = st.columns(2)
+
+                                    with mod1:
+                                        savings_3p = pred_r_3p.sum() - y_r.sum()
+                                        st.write(f'##### 3 Parameter Savings: \n {savings_3p:.2f}')
+                                    with mod2:
+                                        savings_5p = pred_r_5p.sum() - y_r.sum()
+                                        st.write(f'##### 5 Parameter Savings: \n {savings_5p:.2f}')
 
                             else:
                                 st.error('Please select correct interval as per your data.')
