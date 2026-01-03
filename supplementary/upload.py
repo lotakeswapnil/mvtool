@@ -214,7 +214,6 @@ def upload_page():
                     rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
 
 
-
                     # -------------------------
                     # RUN MODELS
                     # -------------------------
