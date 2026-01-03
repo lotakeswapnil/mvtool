@@ -405,20 +405,18 @@ def manual_page():
                 with st.spinner('Calculating...'):
                 
                     for i in range(len(final_df)):
-                        start_date = final_df['Start Date (yyyy-mm-dd)'][i].date().isoformat()
-                        end_date = final_df['End Date (yyyy-mm-dd)'][i].date().isoformat()
+                        start_date = final_df.loc[i, 'Start Date (yyyy-mm-dd)'].isoformat()
+                        end_date = final_df.loc[i, 'End Date (yyyy-mm-dd)'].isoformat()
                         meta, temperature_data = fetch_openmeteo_archive(client, lat, lon, start_date, end_date, temperature_unit, which, var)
                         final_df.loc[i, 'temperature'] = temperature_data["temperature"].mean()
-                        # st.write(manual_df)
-    
+
                     # -------------------------
                     # DEFAULT MODEL SETTINGS
                     # -------------------------
     
                     Tmin = float(np.floor(final_df['temperature'].min()))
                     Tmax = float(np.ceil(final_df['temperature'].max()))
-                    rel_tol_pct = 0.1  # 0.1% RMSE tie tolerance
-    
+
                     # -------------------------
                     # RUN MODELS
                     # -------------------------
