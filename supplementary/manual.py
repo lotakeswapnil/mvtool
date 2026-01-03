@@ -383,13 +383,19 @@ def manual_page():
                                      'Energy': pd.Series([0], dtype=float)})
 
             st.write('#### Enter Baseline Energy Data Below:')
-            final_df = st.data_editor(empty_df, num_rows="dynamic", key='baseline_energy')
+            final_df = st.data_editor(empty_df, num_rows="dynamic", key='baseline_energy',
+                                      column_config={'Start Date (yyyy-mm-dd)': st.column_config.DateColumn(format="YYYY-MM-DD"),
+                                                     'End Date (yyyy-mm-dd)': st.column_config.DateColumn(format="YYYY-MM-DD")})
 
             if len(final_df) < 2:
                 st.error("Please enter at least 2 rows.")
 
             st.write('#### Enter Reported Energy Data Below:')
-            reported_df = st.data_editor(empty_df, num_rows="dynamic", key='reported_energy')
+            reported_df = st.data_editor(empty_df, num_rows="dynamic", key='reported_energy',
+                                         column_config={'Start Date (yyyy-mm-dd)': st.column_config.DateColumn(
+                                             format="YYYY-MM-DD"),
+                                                        'End Date (yyyy-mm-dd)': st.column_config.DateColumn(
+                                                            format="YYYY-MM-DD")})
 
             if len(reported_df) < 2:
                 st.error("Please enter at least 2 rows.")
