@@ -308,7 +308,6 @@ def manual_page():
 
             lat, lon, temp = st.columns(3, border=True)
 
-
             with lat:
                 lat = st.number_input("Latitude", format="%.4f")
 
@@ -318,10 +317,8 @@ def manual_page():
             with temp:
                 temperature_unit = st.selectbox('Select Temperature Unit:',['celsius','fahrenheit'])
 
-
             var = "temperature"  # or let user pick
             which = "hourly"
-
 
             # create client once (you can cache it)
 
@@ -355,23 +352,29 @@ def manual_page():
 
             # Build column names automatically
             empty_df = pd.DataFrame({'Start Date (yyyy-mm-dd)': pd.Series(['2025-01-01'], dtype='datetime64[ns]'),
+              #                       'Start Time (0-23)': pd.Series([00], dtype='int64'),
                                      'End Date (yyyy-mm-dd)': pd.Series(['2025-02-01'], dtype='datetime64[ns]'),
+             #                        'End Time (0-23)': pd.Series([00], dtype='int64'),
                                      'Energy': pd.Series([0], dtype=float)})
 
             st.write('#### Enter Baseline Energy Data Below:')
-            final_df = st.data_editor(empty_df, num_rows="dynamic", key='baseline_energy',
-                                      column_config={'Start Date (yyyy-mm-dd)': st.column_config.DateColumn(format="YYYY-MM-DD"),
-                                                     'End Date (yyyy-mm-dd)': st.column_config.DateColumn(format="YYYY-MM-DD")})
+            final_df = st.data_editor(empty_df, num_rows="dynamic", key='baseline_energy')
+                                      #column_config={'Start Date (yyyy-mm-dd)': st.column_config.DateColumn(format="YYYY-MM-DD"),
+                                                     #'Start Time (0-23)': st.column_config.NumberColumn(min_value=0, max_value=23, step=1),
+                                                     #'End Date (yyyy-mm-dd)': st.column_config.DateColumn(format="YYYY-MM-DD"),
+                                                     #'End Time (0-23)': st.column_config.NumberColumn(min_value=0, max_value=23, step=1)
+                                                    # })
 
             if len(final_df) < 2:
                 st.error("Please enter at least 2 rows.")
 
             st.write('#### Enter Reported Energy Data Below:')
-            reported_df = st.data_editor(empty_df, num_rows="dynamic", key='reported_energy',
-                                         column_config={'Start Date (yyyy-mm-dd)': st.column_config.DateColumn(
-                                             format="YYYY-MM-DD"),
-                                                        'End Date (yyyy-mm-dd)': st.column_config.DateColumn(
-                                                            format="YYYY-MM-DD")})
+            reported_df = st.data_editor(empty_df, num_rows="dynamic", key='reported_energy')
+                                         #column_config={'Start Date (yyyy-mm-dd)': st.column_config.DateColumn(format="YYYY-MM-DD"),
+                                                       # 'Start Time (0-23)': st.column_config.NumberColumn(min_value=0, max_value=23, step=1),
+                                                       # 'End Date (yyyy-mm-dd)': st.column_config.DateColumn(format="YYYY-MM-DD"),
+                                                       # 'End Time (0-23)': st.column_config.NumberColumn(min_value=0, max_value=23, step=1)
+                                                       # })
 
 
             if len(final_df) >= 2:
