@@ -15,6 +15,10 @@ from supplementary.change_point import (fit_three_param_cp, fit_five_param_deadb
 from supplementary.weather import make_openmeteo_client, fetch_openmeteo_archive
 from supplementary.model_results import three_para_results, five_para_results, three_five_para_results
 
+# ----------------------------------------
+# define manual data calculations function
+# ----------------------------------------
+
 def manual_page():
 
     st.subheader('Enter Data (Manual)')
