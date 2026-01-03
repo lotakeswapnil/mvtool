@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import streamlit as st
-from sklearn.linear_model import LinearRegression, Lasso, Ridge
+from sklearn.linear_model import LinearRegression
 from sklearn.metrics import root_mean_squared_error
 
 from supplementary.change_point import (fit_three_param_cp, fit_five_param_deadband, predict_3p_for_plot,predict_5p_for_plot)
@@ -143,7 +143,7 @@ def upload_page():
                         y_r = df_r[rep_energy]
                         x_r = df_r[independent]
                         pred_r = model.predict(x_r)
-                        savings = pred_r.sum() - df_r[rep_energy].sum()
+                        savings = pred_r.sum() - y_r.sum()
                         st.write(f'### Savings: {savings:.2f}')
 
 
