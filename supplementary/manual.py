@@ -10,7 +10,7 @@ from sklearn.metrics import root_mean_squared_error
 
 from supplementary.change_point import (fit_three_param_cp, fit_five_param_deadband, predict_3p_for_plot,predict_5p_for_plot)
 from supplementary.weather import make_openmeteo_client, fetch_openmeteo_archive
-
+from supplementary.model_results import three_para_results
 
 def manual_page():
 
@@ -239,15 +239,8 @@ def manual_page():
                 st.write("## Model Results")
 
                 if model_choice in ["3-parameter"]:
-                    st.subheader("3-Parameter Model")
-                    if temperature_unit == 'celsius':
-                        st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
-                    else:
-                        st.write(f"**Tb:** {three_res['Tb']:.2f} °F")
-                    st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
-                    st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
-                    st.write(f"**CV (RMSE):** {three_res['rmse']/mean_energy:.2%}")
-                    st.write(f"**R²:** {three_res['r2']:.2%}")
+                    three_para_results(three_res,temperature_unit,mean_energy)
+
 
                 if model_choice in ["5-parameter"]:
                     st.subheader("5-Parameter Model")
@@ -545,8 +538,8 @@ def manual_page():
                                 st.write(f"**Tb:** {three_res['Tb']:.2f} °F")
                             st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
                             st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
-                            st.write(f"**RMSE:** {three_res['rmse']:.2f}")
-                            st.write(f"**R²:** {three_res['r2']:.2f}")
+                            st.write(f"**RMSE:** {three_res['rmse']:.2%}")
+                            st.write(f"**R²:** {three_res['r2']:.2%}")
 
                         if model_choice in ["5-parameter"]:
                             st.subheader("5-Parameter Model")
@@ -561,8 +554,8 @@ def manual_page():
                             st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
                             st.write(f"**β_h:** {five_res['model'].coef_[0]:.2f}")
                             st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
-                            st.write(f"**RMSE:** {five_res['rmse']:.2f}")
-                            st.write(f"**R²:** {five_res['r2']:.2f}")
+                            st.write(f"**RMSE:** {five_res['rmse']:.2%}")
+                            st.write(f"**R²:** {five_res['r2']:.2%}")
 
                         if model_choice in ["Both"]:
                             col1, col2 = st.columns(2, border=True)
@@ -574,8 +567,8 @@ def manual_page():
                                     st.write(f"**Tb:** {three_res['Tb']:.2f} °F")
                                 st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
                                 st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
-                                st.write(f"**RMSE:** {three_res['rmse']:.2f}")
-                                st.write(f"**R²:** {three_res['r2']:.2f}")
+                                st.write(f"**RMSE:** {three_res['rmse']:.2%}")
+                                st.write(f"**R²:** {three_res['r2']:.2%}")
                             with col2:
                                 st.subheader("5-Parameter Model")
                                 if temperature_unit == 'celsius':
@@ -589,8 +582,8 @@ def manual_page():
                                 st.write(f"**β0:** {five_res['model'].intercept_:.2f}")
                                 st.write(f"**β_h:** {five_res['model'].coef_[0]:.2f}")
                                 st.write(f"**β_c:** {five_res['model'].coef_[1]:.2f}")
-                                st.write(f"**RMSE:** {five_res['rmse']:.2f}")
-                                st.write(f"**R²:** {five_res['r2']:.2f}")
+                                st.write(f"**RMSE:** {five_res['rmse']:.2%}")
+                                st.write(f"**R²:** {five_res['r2']:.2%}")
 
                         # -------------------------
                         # PLOT MODELS
