@@ -10,7 +10,7 @@ from supplementary.change_point import (fit_three_param_cp, fit_five_param_deadb
 
 def upload_page():
 
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns(2, border=True)
 
     with col1:
         st.write('### Baseline Data')
@@ -40,7 +40,7 @@ def upload_page():
 
         st.subheader('Enter Baseline Data details:')
 
-        base1, base2 = st.columns(2)
+        base1, base2 = st.columns(2, border=True)
 
         with base1:
             base_ind_var = st.selectbox('Select Independent Variable Type', {'Temperature', 'Independent Variable'})
@@ -71,7 +71,7 @@ def upload_page():
 
             st.subheader('Reported Data details:')
 
-            rep1, rep2, rep3 = st.columns(3)
+            rep1, rep2, rep3 = st.columns(3, border=True)
 
             with rep1:
                 rep_ind_var = base_ind_var
@@ -154,7 +154,7 @@ def upload_page():
 
         if base_ind_var == 'Temperature':
 
-            mod1, mod2, step_unit = st.columns(3)
+            mod1, mod2, step_unit = st.columns(3, border=True)
 
             with mod1:
                 model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
@@ -179,7 +179,7 @@ def upload_page():
 
             st.subheader('Reported Data details:')
 
-            rep1, rep2, rep3 = st.columns(3)
+            rep1, rep2, rep3 = st.columns(3, border=True)
 
             with rep1:
                 rep_ind_var = base_ind_var
@@ -300,7 +300,7 @@ def upload_page():
                         st.write(f"**R²:** {five_res['r2']:.2f}")
 
                     if model_choice in ["Both"]:
-                        col1, col2 = st.columns(2)
+                        col1, col2 = st.columns(2, border=True)
                         with col1:
                             st.write("### 3-Parameter Model")
                             if temperature_unit == 'celsius':
@@ -392,7 +392,7 @@ def upload_page():
                         st.write(f'##### Predicted Baseline Consumption: \n {pred_r.sum():.2f}')
 
                     else:
-                        mod1, mod2 = st.columns(2)
+                        mod1, mod2 = st.columns(2, border=True)
                         with mod1:
                             st.write(f'##### 3 Parameter Predicted Baseline Consumption: \n {pred_r_3p.sum():.2f}')
                         with mod2:
@@ -404,7 +404,7 @@ def upload_page():
                         savings = pred_r.sum() - df_r[rep_energy].sum()
                         st.write(f'##### Savings: \n {savings:.2f}')
                     else:
-                        mod1, mod2 = st.columns(2)
+                        mod1, mod2 = st.columns(2, border=True)
 
                         with mod1:
                             savings_3p = pred_r_3p.sum() - df_r[rep_energy].sum()

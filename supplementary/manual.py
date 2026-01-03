@@ -160,7 +160,7 @@ def manual_page():
             temp = final_df['Temperature'].values
             energy = final_df['Energy'].values
 
-            temp_sel,cp_model = st.columns(2)
+            temp_sel,cp_model = st.columns(2,border=True)
 
             with temp_sel:
                 temperature_unit = st.selectbox('Select Temperature unit:',['celsius','fahrenheit'])
@@ -266,7 +266,7 @@ def manual_page():
                     st.write(f"**R²:** {five_res['r2']:.2%}")
 
                 if model_choice in ["Both"]:
-                    col1, col2 = st.columns(2)
+                    col1, col2 = st.columns(2, border=True)
                     with col1:
                         st.subheader("3-Parameter Model")
                         if temperature_unit == 'celsius':
@@ -355,7 +355,7 @@ def manual_page():
                     st.write(f'##### Predicted Baseline Consumption: \n {pred_r.sum():.2f}')
 
                 else:
-                    mod1, mod2 = st.columns(2)
+                    mod1, mod2 = st.columns(2, border=True)
                     with mod1:
                         st.write(f'##### 3 Parameter Predicted Baseline Consumption: \n {pred_r_3p.sum():.2f}')
                     with mod2:
@@ -367,7 +367,7 @@ def manual_page():
                     savings = pred_r.sum() - y_r.sum()
                     st.write(f'##### Savings: \n {savings:.2f}')
                 else:
-                    mod1, mod2 = st.columns(2)
+                    mod1, mod2 = st.columns(2, border=True)
 
                     with mod1:
                         savings_3p = pred_r_3p.sum() - y_r.sum()
@@ -384,7 +384,7 @@ def manual_page():
 
             st.write('#### Enter Location Details')
 
-            lat, lon, temp = st.columns(3)
+            lat, lon, temp = st.columns(3, border=True)
 
 
             with lat:
@@ -407,7 +407,7 @@ def manual_page():
 
             st.write('#### Select Model Details')
 
-            model_c, model_m, step_unit = st.columns(3)
+            model_c, model_m, step_unit = st.columns(3, border=True)
 
             with model_c:
                 model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
@@ -565,7 +565,7 @@ def manual_page():
                             st.write(f"**R²:** {five_res['r2']:.2f}")
 
                         if model_choice in ["Both"]:
-                            col1, col2 = st.columns(2)
+                            col1, col2 = st.columns(2, border=True)
                             with col1:
                                 st.subheader("3-Parameter Model")
                                 if temperature_unit == 'celsius':
@@ -657,7 +657,7 @@ def manual_page():
                             st.write(f'##### Predicted Baseline Consumption: \n {pred_r.sum():.2f}')
 
                         else:
-                            mod1, mod2 = st.columns(2)
+                            mod1, mod2 = st.columns(2, border=True)
                             with mod1:
                                 st.write(f'##### 3 Parameter Predicted Baseline Consumption: \n {pred_r_3p.sum():.2f}')
                             with mod2:
@@ -669,7 +669,7 @@ def manual_page():
                             savings = pred_r.sum() - y_r.sum()
                             st.write(f'##### Savings: \n {savings:.2f}')
                         else:
-                            mod1, mod2 = st.columns(2)
+                            mod1, mod2 = st.columns(2, border=True)
 
                             with mod1:
                                 savings_3p = pred_r_3p.sum() - y_r.sum()
@@ -685,7 +685,7 @@ def manual_page():
             # Build column names automatically
             empty_df = pd.DataFrame({"Energy": pd.Series([0], dtype=float)})
 
-            base, reported = st.columns(2)
+            base, reported = st.columns(2, border=True)
 
             with base:
                 st.write('##### Enter Baseline Energy Data Below:')
@@ -706,7 +706,7 @@ def manual_page():
 
             st.write('#### Select Baseline Period Dates')
 
-            start_b, end_b, weather_int_b = st.columns(3)
+            start_b, end_b, weather_int_b = st.columns(3, border=True)
 
             with start_b:
                 start_date_b = st.date_input("Start date", value=date.today() - timedelta(days=365*2+1))
@@ -717,7 +717,7 @@ def manual_page():
 
             st.write('#### Select Reported Period Dates')
 
-            start_r, end_r, weather_int_r = st.columns(3)
+            start_r, end_r, weather_int_r = st.columns(3, border=True)
 
             with start_r:
                 start_date_r = st.date_input("Start date", value=date.today() - timedelta(days=365))
@@ -729,7 +729,7 @@ def manual_page():
 
             st.write('#### Enter Location Details')
 
-            lat, lon, temp = st.columns(3)
+            lat, lon, temp = st.columns(3, border=True)
 
             with lat:
                 lat = st.number_input("Latitude", format="%.4f")
@@ -754,7 +754,7 @@ def manual_page():
 
             st.write('#### Select Model Details')
 
-            weather_i, model_c, step_unit = st.columns(3)
+            weather_i, model_c, step_unit = st.columns(3, border=True)
 
             with weather_i:
                 model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
@@ -925,7 +925,7 @@ def manual_page():
                                     st.write(f"**R²:** {five_res['r2']:.2f}")
 
                                 if model_choice in ["Both"]:
-                                    col1, col2 = st.columns(2)
+                                    col1, col2 = st.columns(2, border=True)
                                     with col1:
                                         st.subheader("3-Parameter Model")
                                         if temperature_unit == 'celsius':
@@ -1025,7 +1025,7 @@ def manual_page():
                                     st.write(f'##### Predicted Baseline Consumption: \n {pred_r.sum():.2f}')
 
                                 else:
-                                    mod1, mod2 = st.columns(2)
+                                    mod1, mod2 = st.columns(2, border=True)
                                     with mod1:
                                         st.write(
                                             f'##### 3 Parameter Predicted Baseline Consumption: \n {pred_r_3p.sum():.2f}')
@@ -1039,7 +1039,7 @@ def manual_page():
                                     savings = pred_r.sum() - y_r.sum()
                                     st.write(f'##### Savings: \n {savings:.2f}')
                                 else:
-                                    mod1, mod2 = st.columns(2)
+                                    mod1, mod2 = st.columns(2, border=True)
 
                                     with mod1:
                                         savings_3p = pred_r_3p.sum() - y_r.sum()
