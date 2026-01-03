@@ -10,7 +10,7 @@ from supplementary.change_point import (fit_three_param_cp, fit_five_param_deadb
 
 def upload_page():
 
-    col1, col2 = st.columns(2, border=True)
+    col1, col2 = st.columns(2)
 
     with col1:
         st.write('### Baseline Data')
@@ -115,12 +115,6 @@ def upload_page():
                         regression = model.score(X, y)
                         cvrmse = root_mean_squared_error(y, preds)/y.mean()
 
-                        #--------------------------------------------------
-                        y_r = df_r[rep_energy]
-                        x_r = df_r[independent]
-                        pred_r = model.predict(x_r)
-                        savings = pred_r.sum() - df_r[rep_energy].sum()
-                        st.write(f'### Savings: {savings:.2f}')
 
                         # ---------- ADDED: Regression Equation Display ----------
                         coef = model.coef_
@@ -143,6 +137,15 @@ def upload_page():
                             st.line_chart(chart_df, x=independent[0], y=["Actual", "Predicted"])
                         else:
                             st.line_chart(pd.DataFrame({'Actual': y, 'Predicted': preds}).reset_index(drop=True))
+
+
+                        # --------------------------------------------------
+                        y_r = df_r[rep_energy]
+                        x_r = df_r[independent]
+                        pred_r = model.predict(x_r)
+                        savings = pred_r.sum() - df_r[rep_energy].sum()
+                        st.write(f'### Savings: {savings:.2f}')
+
 
                 else:
                     st.error('All variables not defined.')
@@ -392,7 +395,7 @@ def upload_page():
                         st.write(f'##### Predicted Baseline Consumption: \n {pred_r.sum():.2f}')
 
                     else:
-                        mod1, mod2 = st.columns(2, border=True, vertical_alignment=True)
+                        mod1, mod2 = st.columns(2, border=True)
                         with mod1:
                             st.write(f'##### 3 Parameter Predicted Baseline Consumption: \n {pred_r_3p.sum():.2f}')
                         with mod2:

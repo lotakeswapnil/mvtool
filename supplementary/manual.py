@@ -681,7 +681,6 @@ def manual_page():
 
         if interval == 'No':
 
-
             # Build column names automatically
             empty_df = pd.DataFrame({"Energy": pd.Series([0], dtype=float)})
 
