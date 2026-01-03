@@ -200,38 +200,6 @@ def manual_page():
                 mean_energy = float(final_df['Energy'].mean())
                 #preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct, mean_kwh)
 
-                # -------------------------
-                # EQUATION DISPLAY
-                # -------------------------
-
-                st.write("## Model Equations")
-
-                if model_choice in ["3-parameter", "Both"]:
-                    st.write('### 3-parameter:')
-                    Tb = three_res["Tb"]
-                    b0 = three_res["model"].intercept_
-                    b1 = three_res["model"].coef_[0]
-                    mode_used = three_res["mode"]  # "heating" or "cooling"
-
-                    if mode_used == "cooling":
-                        # Cooling: Energy = b0 + b1 * max(0, T - Tb)
-                        st.latex(
-                            fr"\text{{Energy}} = {b0:.2f} + {b1:.2f}\,\max(0,\,T - {Tb:.2f})"
-                        )
-
-                    elif mode_used == "heating":
-                        # Heating: Energy = b0 + b1 * max(0, Tb - T)
-                        st.latex(
-                            fr"\text{{Energy}} = {b0:.2f} + {b1:.2f}\,\max(0,\,{Tb:.2f} - T)"
-                        )
-
-                if model_choice in ["5-parameter", "Both"]:
-                    st.write('### 5-parameter:')
-                    st.latex(
-                        fr"\text{{Energy}} = {five_res['model'].intercept_:.2f} + "
-                        fr"{five_res['model'].coef_[0]:.2f}\,\max(0,\,{five_res['Tb_low']:.2f} - T) + "
-                        fr"{five_res['model'].coef_[1]:.2f}\,\max(0,\,T - {five_res['Tb_high']:.2f})"
-                    )
 
                 # -------------------------
                 # DISPLAY RESULTS
@@ -454,37 +422,6 @@ def manual_page():
                         mean_energy = float(final_df['Energy'].mean())
                         # preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct,mean_energy)
 
-                        # -------------------------
-                        # EQUATION DISPLAY
-                        # -------------------------
-                        st.write("## Model Equations")
-
-                        if model_choice in ["3-parameter", "Both"]:
-                            st.write('### 3-parameter:')
-                            Tb = three_res["Tb"]
-                            b0 = three_res["model"].intercept_
-                            b1 = three_res["model"].coef_[0]
-                            mode_used = three_res["mode"]  # "heating" or "cooling"
-
-                            if mode_used == "cooling":
-                                # Cooling: Energy = b0 + b1 * max(0, T - Tb)
-                                st.latex(
-                                    fr"\text{{Energy}} = {b0:.2f} + {b1:.2f}\,\max(0,\,T - {Tb:.2f})"
-                                )
-
-                            elif mode_used == "heating":
-                                # Heating: Energy = b0 + b1 * max(0, Tb - T)
-                                st.latex(
-                                    fr"\text{{Energy}} = {b0:.2f} + {b1:.2f}\,\max(0,\,{Tb:.2f} - T)"
-                                )
-
-                        if model_choice in ["5-parameter", "Both"]:
-                            st.write('### 5-parameter:')
-                            st.latex(
-                                fr"\text{{Energy}} = {five_res['model'].intercept_:.2f} + "
-                                fr"{five_res['model'].coef_[0]:.2f}\,\max(0,\,{five_res['Tb_low']:.2f} - T) + "
-                                fr"{five_res['model'].coef_[1]:.2f}\,\max(0,\,T - {five_res['Tb_high']:.2f})"
-                            )
 
                         # -------------------------
                         # DISPLAY RESULTS
@@ -767,37 +704,6 @@ def manual_page():
                                 mean_energy = float(final_df['Energy'].mean())
                                 # preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct,mean_kwh)
 
-                                # -------------------------
-                                # EQUATION DISPLAY
-                                # -------------------------
-                                st.write("## Model Equations")
-
-                                if model_choice in ['3-parameter', 'Both']:
-                                    st.write('### 3-parameter:')
-                                    Tb = three_res['Tb']
-                                    b0 = three_res['model'].intercept_
-                                    b1 = three_res['model'].coef_[0]
-                                    mode_used = three_res['mode']  # "heating" or "cooling"
-
-                                    if mode_used == "cooling":
-                                        # Cooling: Energy = b0 + b1 * max(0, T - Tb)
-                                        st.latex(
-                                            fr"\text{{Energy}} = {b0:.2f} + {b1:.2f}\,\max(0,\,T - {Tb:.2f})"
-                                        )
-
-                                    elif mode_used == "heating":
-                                        # Heating: Energy = b0 + b1 * max(0, Tb - T)
-                                        st.latex(
-                                            fr"\text{{Energy}} = {b0:.2f} + {b1:.2f}\,\max(0,\,{Tb:.2f} - T)"
-                                        )
-
-                                if model_choice in ["5-parameter", "Both"]:
-                                    st.write('### 5-parameter:')
-                                    st.latex(
-                                        fr"\text{{Energy}} = {five_res['model'].intercept_:.2f} + "
-                                        fr"{five_res['model'].coef_[0]:.2f}\,\max(0,\,{five_res['Tb_low']:.2f} - T) + "
-                                        fr"{five_res['model'].coef_[1]:.2f}\,\max(0,\,T - {five_res['Tb_high']:.2f})"
-                                    )
 
                                 # -------------------------
                                 # DISPLAY RESULTS
