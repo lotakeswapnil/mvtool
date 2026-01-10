@@ -7,6 +7,9 @@ from typing import Tuple, Dict
 from timezonefinder import TimezoneFinder
 import requests
 
+#--------------------------
+#OpenMeteo Weather Function
+#--------------------------
 
 def make_openmeteo_client(cache_name: str = ".cache", expire_after: int = -1,
                           retries: int = 5, backoff: float = 0.2) -> openmeteo_requests.Client:
