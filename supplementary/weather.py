@@ -5,7 +5,7 @@ from retry_requests import retry
 import openmeteo_requests
 from typing import Tuple, Dict
 from timezonefinder import TimezoneFinder
-
+import requests
 
 
 def make_openmeteo_client(cache_name: str = ".cache", expire_after: int = -1,
@@ -85,3 +85,23 @@ def fetch_openmeteo_archive(client: openmeteo_requests.Client,
         df[var] = vals
 
     return meta, df
+
+
+
+def download_pvgis_tmy_csv(lat, lon, filename="pvgis_tmy.csv"):
+    url = "https://re.jrc.ec.europa.eu/api/tmy"
+
+    params = {
+        "lat": lat,
+        "lon": lon,
+        "outputformat": "csv",
+        "usehorizon": 1
+    }
+
+    response = requests.get(url, params=params)
+    response.raise_for_status()
+
+    with open(filename, "wb") as f:
+        f.write(response.content)
+
+    print(f"TMY CSV saved to: {filename}")
