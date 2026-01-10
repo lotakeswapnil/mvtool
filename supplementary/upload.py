@@ -11,10 +11,8 @@ from supplementary.model_results import three_para_results, five_para_results, t
 from supplementary.weather import download_pvgis_tmy_csv
 
 def upload_page():
-    # Example usage
-    download_pvgis_tmy_csv(
-        lat=48.8566,  # Paris
-        lon=2.3522)
+
+    download_pvgis_tmy_csv(lat=18.5246, lon=73.8786)
 
     col1, col2 = st.columns(2)
 
