@@ -307,7 +307,7 @@ def manual_page():
 
     elif manual_data == 'Yes':
 
-        interval = st.radio('Do you want Weather Data using Intervals?', options=["Yes", "No"], index=None, key='interval_data')
+        interval = st.radio('Do you want Weather Data using Specific Intervals?', options=["Yes", "No"], index=None, key='interval_data')
 
         if interval == 'Yes':
 
