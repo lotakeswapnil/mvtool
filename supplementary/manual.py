@@ -626,7 +626,6 @@ def manual_page():
                 temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
 
 
-
             var = "temperature"  # or let user pick
             which = "hourly"
 
