@@ -7,9 +7,6 @@ from typing import Tuple, Dict
 from timezonefinder import TimezoneFinder
 import requests
 
-#--------------------------
-#OpenMeteo Weather Function
-#--------------------------
 
 def make_openmeteo_client(cache_name: str = ".cache", expire_after: int = -1,
                           retries: int = 5, backoff: float = 0.2) -> openmeteo_requests.Client:
@@ -19,6 +16,9 @@ def make_openmeteo_client(cache_name: str = ".cache", expire_after: int = -1,
     client = openmeteo_requests.Client(session=session)
     return client
 
+# ---------------------------------------------
+# TimeZone Function for Converting UTC to Local
+# ---------------------------------------------
 
 def get_timezone_from_coords(latitude: float, longitude: float) -> str:
     """Return IANA timezone name (e.g., 'Europe/Berlin') from coordinates."""
@@ -28,6 +28,10 @@ def get_timezone_from_coords(latitude: float, longitude: float) -> str:
         raise ValueError(f"Could not determine timezone for coords {latitude}, {longitude}")
     return tz
 
+
+# --------------------------
+# OpenMeteo Weather Function
+# --------------------------
 
 def fetch_openmeteo_archive(client: openmeteo_requests.Client,
                             latitude: float,
