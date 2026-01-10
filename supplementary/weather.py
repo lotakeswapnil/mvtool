@@ -1,6 +1,5 @@
 # weather_api.py
 from io import StringIO
-import streamlit as st
 
 import pandas as pd
 import requests_cache
@@ -97,12 +96,15 @@ def fetch_openmeteo_archive(client: openmeteo_requests.Client,
     return meta, df
 
 
-def download_pvgis_tmy_csv(lat, lon):
+def download_pvgis_tmy_csv(latitude, longitude):
+    # --- Detect timezone ---
+    timezone = get_timezone_from_coords(latitude, longitude)
+
     url = "https://re.jrc.ec.europa.eu/api/tmy"
 
     params = {
-        "lat": lat,
-        "lon": lon,
+        "lat": latitude,
+        "lon": longitude,
         "outputformat": "csv",
         "usehorizon": 1
     }
@@ -124,4 +126,6 @@ def download_pvgis_tmy_csv(lat, lon):
 
     df = pd.read_csv(StringIO("\n".join(lines[start_row:start_row+8761])), sep=",", usecols=["time(UTC)", "T2m"])
 
-    st.write(df)
+    df['time(UTC)'] = (pd.to_datetime(df['time(UTC)'], format='%Y%m%d:%H%M', utc=True).dt.tz_convert(timezone))
+
+    return df

@@ -12,7 +12,8 @@ from supplementary.weather import download_pvgis_tmy_csv
 
 def upload_page():
 
-    download_pvgis_tmy_csv(lat=18.5246, lon=73.8786)
+    weather_tmy = download_pvgis_tmy_csv(18.5246, 73.8786)
+    st.write(weather_tmy)
 
     col1, col2 = st.columns(2)
 
