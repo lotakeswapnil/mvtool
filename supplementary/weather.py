@@ -87,7 +87,6 @@ def fetch_openmeteo_archive(client: openmeteo_requests.Client,
     return meta, df
 
 
-
 def download_pvgis_tmy_csv(lat, lon, filename="pvgis_tmy.csv"):
     url = "https://re.jrc.ec.europa.eu/api/tmy"
 
