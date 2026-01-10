@@ -354,7 +354,7 @@ def manual_page():
                                                                                              '\n E.g., If you select 1.0, balance point will be calculated between 55, 56, 57, and so on.'
                                                                                               '\n If you select 0.5, it will be calculated between 55.0, 55.5, 56.0, and so on.')
 
-
+            timezone = get_timezone_from_coords(lat, lon)
 
             # Build column names automatically
             empty_df = pd.DataFrame({'Start Date (yyyy-mm-dd)': pd.to_datetime(['2025-01-01']).tz_localize('UTC').tz_convert(timezone),
@@ -379,7 +379,6 @@ def manual_page():
                                                        # 'End Date (yyyy-mm-dd)': st.column_config.DateColumn(format="YYYY-MM-DD"),
                                                        # 'End Time (0-23)': st.column_config.NumberColumn(min_value=0, max_value=23, step=1)
                                                        # })
-
 
             if len(final_df) >= 2:
 
