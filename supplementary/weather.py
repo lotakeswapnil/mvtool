@@ -1,4 +1,7 @@
 # weather_api.py
+from io import StringIO
+import streamlit as st
+
 import pandas as pd
 import requests_cache
 from retry_requests import retry
@@ -107,7 +110,22 @@ def download_pvgis_tmy_csv(lat, lon, filename="pvgis_tmy.csv"):
     response = requests.get(url, params=params)
     response.raise_for_status()
 
-    with open(filename, "wb") as f:
-        f.write(response.content)
+    lines = response.text.splitlines()
 
-    print(f"TMY CSV saved to: {filename}")
+    # Find start of hourly data
+    start_row = None
+    for i, line in enumerate(lines):
+        if line.startswith("time(UTC)"):
+            start_row = i
+            break
+
+    if start_row is None:
+        raise ValueError("Hourly TMY header not found")
+
+    df = pd.read_csv(
+        StringIO("\n".join(lines[start_row:])),
+        sep=",",
+        usecols=["time(UTC)", "T2m"]  # ✅ only required columns
+    )
+
+    st.write(df)
