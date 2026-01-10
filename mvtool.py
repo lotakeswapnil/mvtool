@@ -7,12 +7,6 @@ st.title('Energy M&V Tool')
 
 mode = st.radio('Select any one Option:',options=["Manual Data", "Upload Data (CSV or Excel)"], index=None)
 
-# Example usage
-download_pvgis_tmy_csv(
-    lat=48.8566,   # Paris
-    lon=2.3522
-)
-
 with st.spinner('Loading...'):
 
 # -------------------------
