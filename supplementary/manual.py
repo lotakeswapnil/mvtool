@@ -7,6 +7,7 @@ from datetime import date, timedelta
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import requests
 import streamlit as st
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import root_mean_squared_error
@@ -14,6 +15,7 @@ from sklearn.metrics import root_mean_squared_error
 from supplementary.change_point import (fit_three_param_cp, fit_five_param_deadband, predict_3p_for_plot,predict_5p_for_plot)
 from supplementary.weather import make_openmeteo_client, fetch_openmeteo_archive, get_timezone_from_coords
 from supplementary.model_results import three_para_results, five_para_results, three_five_para_results
+from supplementary.weather import pvgis_tmy
 
 # ----------------------------------------
 # define manual data calculations function
@@ -328,6 +330,13 @@ def manual_page():
             which = "hourly"
 
             # create client once (you can cache it)
+
+            try:
+                weather_tmy = pvgis_tmy(lat, lon)
+                st.write(weather_tmy)
+            except requests.exceptions.HTTPError as e:
+                st.error(f'Please Enter Correct Latitude and Longitude')
+
 
             client = make_openmeteo_client()
 

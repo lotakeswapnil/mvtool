@@ -8,12 +8,8 @@ from sklearn.metrics import root_mean_squared_error
 
 from supplementary.change_point import (fit_three_param_cp, fit_five_param_deadband, predict_3p_for_plot,predict_5p_for_plot)
 from supplementary.model_results import three_para_results, five_para_results, three_five_para_results
-from supplementary.weather import pvgis_tmy
 
 def upload_page():
-
-    weather_tmy = pvgis_tmy(18.5246, 73.8786)
-    st.write(weather_tmy)
 
     col1, col2 = st.columns(2)
 
