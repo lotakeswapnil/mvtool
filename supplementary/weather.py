@@ -97,7 +97,7 @@ def fetch_openmeteo_archive(client: openmeteo_requests.Client,
     return meta, df
 
 
-def download_pvgis_tmy_csv(lat, lon, filename="pvgis_tmy.csv"):
+def download_pvgis_tmy_csv(lat, lon):
     url = "https://re.jrc.ec.europa.eu/api/tmy"
 
     params = {
@@ -122,10 +122,6 @@ def download_pvgis_tmy_csv(lat, lon, filename="pvgis_tmy.csv"):
     if start_row is None:
         raise ValueError("Hourly TMY header not found")
 
-    df = pd.read_csv(
-        StringIO("\n".join(lines[start_row:])),
-        sep=",",
-        usecols=["time(UTC)", "T2m"]  # ✅ only required columns
-    )
+    df = pd.read_csv(StringIO("\n".join(lines[start_row:start_row+8761])), sep=",", usecols=["time(UTC)", "T2m"])
 
     st.write(df)
