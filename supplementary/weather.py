@@ -96,7 +96,7 @@ def fetch_openmeteo_archive(client: openmeteo_requests.Client,
     return meta, df
 
 
-def download_pvgis_tmy_csv(latitude, longitude):
+def pvgis_tmy(latitude, longitude):
 
     #timezone = get_timezone_from_coords(latitude, longitude)
 
