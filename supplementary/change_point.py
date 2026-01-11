@@ -2,6 +2,7 @@
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from typing import Dict, Any, Tuple
+import streamlit as st
 
 def rmse(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     """Root mean squared error."""
@@ -192,3 +193,31 @@ def predict_5p_for_plot(T_plot: np.ndarray, Tb_low: float, Tb_high: float, model
     cool = np.maximum(0.0, T_plot - Tb_high)
     X = np.column_stack([heat, cool])
     return model.predict(X)
+
+
+def model_details():
+
+    model_c, model_m, step_unit = st.columns(3, border=True)
+
+    with model_c:
+        model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
+
+    with model_m:
+        if model_choice == "3-parameter":
+            mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"], index=0)
+
+        elif model_choice == "5-parameter":
+            # Disable the mode selection if the model is not "3-parameter"
+            mode_disabled = model_choice != "3-parameter"
+            mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"], index=0,
+                                disabled=mode_disabled)
+        else:
+            mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"], index=0)
+
+    with step_unit:
+        step = st.selectbox('Select Intervals For Balance Point:', [1.0, 0.5, 0.1],
+                            help='This interval will be used to calculate Balance Point.'
+                                 '\n E.g., If you select 1.0, balance point will be calculated between 55, 56, 57, and so on.'
+                                 '\n If you select 0.5, it will be calculated between 55.0, 55.5, 56.0, and so on.')
+
+    return model_choice, mode, step

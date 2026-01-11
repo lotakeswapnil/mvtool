@@ -12,7 +12,7 @@ import streamlit as st
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import root_mean_squared_error
 
-from supplementary.change_point import (fit_three_param_cp, fit_five_param_deadband, predict_3p_for_plot,predict_5p_for_plot)
+from supplementary.change_point import (fit_three_param_cp, fit_five_param_deadband, predict_3p_for_plot,predict_5p_for_plot, model_details)
 from supplementary.weather import make_openmeteo_client, fetch_openmeteo_archive, get_timezone_from_coords
 from supplementary.model_results import three_para_results, five_para_results, three_five_para_results
 from supplementary.weather import pvgis_tmy
@@ -346,26 +346,7 @@ def manual_page():
 
                 st.write('#### Select Model Details')
 
-                model_c, model_m, step_unit = st.columns(3, border=True)
-
-                with model_c:
-                    model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
-
-                with model_m:
-                    if model_choice == "3-parameter":
-                        mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],index=0)
-
-                    elif model_choice == "5-parameter":
-                        # Disable the mode selection if the model is not "3-parameter"
-                        mode_disabled = model_choice != "3-parameter"
-                        mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],index=0, disabled=mode_disabled)
-                    else:
-                        mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"],index=0)
-
-                with step_unit:
-                    step = st.selectbox('Select Intervals For Balance Point:',[1.0,0.5,0.1], help='This interval will be used to calculate Balance Point.'
-                                                                                                 '\n E.g., If you select 1.0, balance point will be calculated between 55, 56, 57, and so on.'
-                                                                                                  '\n If you select 0.5, it will be calculated between 55.0, 55.5, 56.0, and so on.')
+                model_choice, mode, step = model_details()
 
                 timezone = get_timezone_from_coords(lat, lon)
 
@@ -591,28 +572,7 @@ def manual_page():
 
                 st.write('#### Select Model Details')
 
-                model_c, model_m, step_unit = st.columns(3, border=True)
-
-                with model_c:
-                    model_choice = st.selectbox("Select Change-Point Model:", ["3-parameter", "5-parameter", "Both"])
-
-                with model_m:
-                    if model_choice == "3-parameter":
-                        mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"], index=0)
-
-                    elif model_choice == "5-parameter":
-                        # Disable the mode selection if the model is not "3-parameter"
-                        mode_disabled = model_choice != "3-parameter"
-                        mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"], index=0,
-                                            disabled=mode_disabled)
-                    else:
-                        mode = st.selectbox("Select Change-Point Model Type:", ["auto", "heating", "cooling"], index=0)
-
-                with step_unit:
-                    step = st.selectbox('Select Intervals For Balance Point:', [1.0, 0.5, 0.1],
-                                        help='This interval will be used to calculate Balance Point.'
-                                             '\n E.g., If you select 1.0, balance point will be calculated between 55, 56, 57, and so on.'
-                                             '\n If you select 0.5, it will be calculated between 55.0, 55.5, 56.0, and so on.')
+                model_choice, mode, step = model_details()
 
                 timezone = get_timezone_from_coords(lat, lon)
 
