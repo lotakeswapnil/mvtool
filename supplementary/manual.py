@@ -420,12 +420,17 @@ def manual_page():
 
                                 mask = ((temperature_data['date_local'] >= start_dt) & (temperature_data['date_local'] <= end_dt))
 
-                                filtered_temp = temperature_data.loc[mask]
+                                if daily_hourly == 'Daily':
+                                    filtered_temp['date'] = filtered_temp['date_local'].dt.date
 
-                                filtered_temp['date'] = filtered_temp['date_local'].dt.date
-                                filtered_temp['hour'] = filtered_temp['date_local'].dt.hour
+                                    hourly_avg = (filtered_temp.groupby(['date'], as_index=False)['temperature'].mean())
 
-                                hourly_avg = (filtered_temp.groupby(['date', 'hour'], as_index=False)['temperature'].mean())
+                                else:
+                                    filtered_temp['date'] = filtered_temp['date_local'].dt.date
+                                    filtered_temp['hour'] = filtered_temp['date_local'].dt.hour
+
+                                    hourly_avg = (
+                                        filtered_temp.groupby(['date', 'hour'], as_index=False)['temperature'].mean())
 
                                 reported_df.loc[i, 'temperature'] = hourly_avg["temperature"].mean()
 
