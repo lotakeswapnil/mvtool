@@ -313,6 +313,8 @@ def manual_page():
 
         if interval == 'Yes':
 
+            daily_hourly = st.radio('Do you have Daily or Hourly Intervals?', options=["Daily", "Hourly"], index=None, key='daily_hourly')
+
             tmy = st.radio('Do you want to Normalize Savings using TMY?', options=["Yes", "No"], index=None, key='tmy_data')
 
             if tmy == 'Yes':
@@ -370,8 +372,6 @@ def manual_page():
                     baseline_df[col] = (pd.to_datetime(baseline_df[col]).dt.tz_localize(timezone))
                     reported_df[col] = (pd.to_datetime(reported_df[col]).dt.tz_localize(timezone))
 
-                st.write(reported_df)
-
                 if len(baseline_df) >= 2:
 
                     if st.button("Fetch Weather Data & Calculate Savings"):
@@ -392,13 +392,21 @@ def manual_page():
 
                                 filtered_temp = temperature_data.loc[mask]
 
-                                filtered_temp['date'] = filtered_temp['date_local'].dt.date
-                                filtered_temp['hour'] = filtered_temp['date_local'].dt.hour
+                                if daily_hourly == 'Daily':
+                                    filtered_temp['date'] = filtered_temp['date_local'].dt.date
 
-                                hourly_avg = (filtered_temp.groupby(['date', 'hour'], as_index=False)['temperature'].mean())
+                                    hourly_avg = (filtered_temp.groupby(['date'], as_index=False)['temperature'].mean())
+
+                                else:
+                                    filtered_temp['date'] = filtered_temp['date_local'].dt.date
+                                    filtered_temp['hour'] = filtered_temp['date_local'].dt.hour
+
+                                    hourly_avg = (filtered_temp.groupby(['date', 'hour'], as_index=False)['temperature'].mean())
 
                                 baseline_df.loc[i, 'temperature'] = hourly_avg["temperature"].mean()
 
+                            st.write(temperature_data)
+                            st.write(hourly_avg)
 
                             for i in range(len(reported_df)):
                                 start_dt = reported_df.loc[i, 'Start Date (yyyy-mm-dd)']
@@ -420,8 +428,6 @@ def manual_page():
                                 hourly_avg = (filtered_temp.groupby(['date', 'hour'], as_index=False)['temperature'].mean())
 
                                 reported_df.loc[i, 'temperature'] = hourly_avg["temperature"].mean()
-
-                            st.write(reported_df)
 
 
                             # -------------------------
@@ -543,7 +549,14 @@ def manual_page():
                             else:
                                 ax.set_xlabel("Temperature (°F)")
                             ax.set_ylabel("Energy")
-                            ax.set_title("3-Parameter vs 5-Parameter Change-Point Models")
+
+                            if model_choice in ["3-parameter"]:
+                                ax.set_title("3-Parameter Change-Point Model")
+                            elif model_choice in ["5-parameter"]:
+                                ax.set_title("5-Parameter Change-Point Model")
+                            else:
+                                ax.set_title("3-Parameter and 5-parameter Change-Point Models")
+
                             ax.legend()
                             ax.grid(True)
 
@@ -586,7 +599,14 @@ def manual_page():
                             else:
                                 ax.set_xlabel("Temperature (°F)")
                             ax.set_ylabel("Energy")
-                            ax.set_title("3-Parameter vs 5-Parameter Change-Point Models")
+
+                            if model_choice in ["3-parameter"]:
+                                ax.set_title("3-Parameter Change-Point Model")
+                            elif model_choice in ["5-parameter"]:
+                                ax.set_title("5-Parameter Change-Point Model")
+                            else:
+                                ax.set_title("3-Parameter and 5-parameter Change-Point Models")
+
                             ax.legend()
                             ax.grid(True)
 
