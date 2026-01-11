@@ -334,7 +334,7 @@ def manual_page():
             try:
                 weather_tmy = pvgis_tmy(lat, lon)
                 st.write(weather_tmy)
-            except requests.exceptions.HTTPError as e:
+            except requests.exceptions.HTTPError:
                 st.error(f'Please Enter Correct Latitude and Longitude')
 
 
