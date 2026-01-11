@@ -339,11 +339,13 @@ def manual_page():
 
                 try:
                     weather_tmy = pvgis_tmy(lat, lon)
+                    weather_tmy['month'] = weather_tmy['time'].dt.month
+                    avg_weather_tmy = weather_tmy.groupby('month')['temperature'].mean().reset_index()
                     if temperature_unit == "celsius":
-                        st.write(weather_tmy)
+                        st.write(avg_weather_tmy)
                     else:
-                        weather_tmy['temperature'] = (weather_tmy['temperature'] * 9/5) + 32
-                        st.write(weather_tmy)
+                        avg_weather_tmy['temperature'] = (avg_weather_tmy['temperature'] * 9/5) + 32
+                        st.write(avg_weather_tmy)
                 except requests.exceptions.HTTPError:
                     st.error(f'Please Enter Correct Latitude and Longitude')
 
@@ -621,7 +623,7 @@ def manual_page():
 
                             # TMY Calculations--------------------------
 
-                            x_tmy = weather_tmy['temperature']
+                            x_tmy = avg_weather_tmy['temperature']
 
                             if model_choice == "3-parameter":
                                 pred_base_tmy = predict_3p_for_plot(x_tmy.to_numpy(), three_res_b["Tb"], three_res_b["model"],
@@ -657,24 +659,23 @@ def manual_page():
                                 mod1, mod2 = st.columns(2, border=True)
                                 with mod1:
                                     st.write(f'##### 3 Parameter Predicted Baseline Consumption: \n {pred_base_tmy_3p.sum():.2f}')
+                                    st.write(f'##### 3 Parameter Predicted Reported Consumption: \n {pred_rep_tmy_3p.sum():.2f}')
                                 with mod2:
                                     st.write(f'##### 5 Parameter Predicted Baseline Consumption: \n {pred_base_tmy_5p.sum():.2f}')
+                                    st.write(f'##### 5 Parameter Predicted Reported Consumption: \n {pred_rep_tmy_5p.sum():.2f}')
 
-
-
-                            st.write(f'##### TMY Reported Consumption: \n {y_r.sum():.2f}')
 
                             if model_choice == "3-parameter" or model_choice == "5-parameter":
-                                savings = pred_r.sum() - y_r.sum()
+                                savings = pred_base_tmy.sum() - pred_rep_tmy.sum()
                                 st.write(f'##### Savings: \n {savings:.2f}')
                             else:
                                 mod1, mod2 = st.columns(2, border=True)
 
                                 with mod1:
-                                    savings_3p = pred_r_3p.sum() - y_r.sum()
+                                    savings_3p = pred_base_tmy_3p.sum() - pred_rep_tmy_3p.sum()
                                     st.write(f'##### 3 Parameter Savings: \n {savings_3p:.2f}')
                                 with mod2:
-                                    savings_5p = pred_r_5p.sum() - y_r.sum()
+                                    savings_5p = pred_base_tmy_5p.sum() - pred_rep_tmy_5p.sum()
                                     st.write(f'##### 5 Parameter Savings: \n {savings_5p:.2f}')
 
             if tmy == 'No':
