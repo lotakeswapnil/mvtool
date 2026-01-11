@@ -543,11 +543,11 @@ def manual_page():
 
                             st.pyplot(fig)
 
+
                             # -------------------------
                             # PLOT MODELS FOR REPORTED
                             # -------------------------
-                            T_plot = np.linspace(reported_df['temperature'].min(), reported_df['temperature'].max(),
-                                                 400)
+                            T_plot = np.linspace(reported_df['temperature'].min(), reported_df['temperature'].max(),400)
 
                             fig, ax = plt.subplots(figsize=(9, 5))
                             ax.scatter(reported_df['temperature'], reported_df['Energy'], label="Measured Energy", s=50)
