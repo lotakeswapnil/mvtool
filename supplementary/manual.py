@@ -339,7 +339,11 @@ def manual_page():
 
                 try:
                     weather_tmy = pvgis_tmy(lat, lon)
-                    st.write(weather_tmy)
+                    if temperature_unit == "celsius":
+                        st.write(weather_tmy)
+                    else:
+                        weather_tmy['temperature'] = (weather_tmy['temperature'] * 9/5) + 32
+                        st.write(weather_tmy)
                 except requests.exceptions.HTTPError:
                     st.error(f'Please Enter Correct Latitude and Longitude')
 
@@ -405,9 +409,6 @@ def manual_page():
 
                                 baseline_df.loc[i, 'temperature'] = hourly_avg["temperature"].mean()
 
-                            st.write(temperature_data)
-                            st.write(hourly_avg)
-
                             for i in range(len(reported_df)):
                                 start_dt = reported_df.loc[i, 'Start Date (yyyy-mm-dd)']
                                 end_dt = reported_df.loc[i, 'End Date (yyyy-mm-dd)']
@@ -419,6 +420,8 @@ def manual_page():
                                 temperature_data['date_local'] = pd.to_datetime(temperature_data['date_local'])
 
                                 mask = ((temperature_data['date_local'] >= start_dt) & (temperature_data['date_local'] <= end_dt))
+
+                                filtered_temp = temperature_data.loc[mask]
 
                                 if daily_hourly == 'Daily':
                                     filtered_temp['date'] = filtered_temp['date_local'].dt.date
@@ -490,7 +493,7 @@ def manual_page():
                             # ----------------------------
                             # DISPLAY RESULTS FOR BASELINE
                             # ----------------------------
-                            st.write("## Model Results")
+                            st.write("## Baseline Model Results")
 
                             if model_choice in ["3-parameter"]:
                                 three_para_results(three_res_b, temperature_unit, mean_energy_b)
@@ -500,21 +503,6 @@ def manual_page():
 
                             if model_choice in ["Both"]:
                                 three_five_para_results(three_res_b, five_res_b, temperature_unit, mean_energy_b)
-
-
-                            # ----------------------------
-                            # DISPLAY RESULTS FOR REPORTED
-                            # ----------------------------
-                            st.write("## Model Results")
-
-                            if model_choice in ["3-parameter"]:
-                                three_para_results(three_res_r, temperature_unit, mean_energy_r)
-
-                            if model_choice in ["5-parameter"]:
-                                five_para_results(five_res_r, temperature_unit, mean_energy_r)
-
-                            if model_choice in ["Both"]:
-                                three_five_para_results(three_res_r, five_res_r, temperature_unit, mean_energy_r)
 
 
                             # -------------------------
@@ -565,6 +553,20 @@ def manual_page():
                             ax.grid(True)
 
                             st.pyplot(fig)
+
+                            # ----------------------------
+                            # DISPLAY RESULTS FOR REPORTED
+                            # ----------------------------
+                            st.write("## Reported Model Results")
+
+                            if model_choice in ["3-parameter"]:
+                                three_para_results(three_res_r, temperature_unit, mean_energy_r)
+
+                            if model_choice in ["5-parameter"]:
+                                five_para_results(five_res_r, temperature_unit, mean_energy_r)
+
+                            if model_choice in ["Both"]:
+                                three_five_para_results(three_res_r, five_res_r, temperature_unit, mean_energy_r)
 
 
                             # -------------------------
@@ -617,36 +619,50 @@ def manual_page():
                             st.pyplot(fig)
 
 
-                            # --------------------------
+                            # TMY Calculations--------------------------
 
-                            y_r = reported_df['Energy']
-                            x_r = reported_df['temperature']
+                            x_tmy = weather_tmy['temperature']
 
                             if model_choice == "3-parameter":
-                                pred_r = predict_3p_for_plot(x_r.to_numpy(), three_res["Tb"], three_res["model"],
-                                                             mode=three_res["mode"])
+                                pred_base_tmy = predict_3p_for_plot(x_tmy.to_numpy(), three_res_b["Tb"], three_res_b["model"],
+                                                             mode=three_res_b["mode"])
+                                pred_rep_tmy = predict_3p_for_plot(x_tmy.to_numpy(), three_res_r["Tb"],
+                                                                    three_res_r["model"],
+                                                                    mode=three_res_r["mode"])
 
                             elif model_choice == "5-parameter":
-                                pred_r = predict_5p_for_plot(x_r.to_numpy(), five_res["Tb_low"], five_res["Tb_high"],
-                                                             five_res["model"])
+                                pred_base_tmy = predict_5p_for_plot(x_tmy.to_numpy(), five_res_b["Tb_low"], five_res_b["Tb_high"],
+                                                             five_res_b["model"])
+                                pred_rep_tmy = predict_5p_for_plot(x_tmy.to_numpy(), five_res_r["Tb_low"],
+                                                                    five_res_r["Tb_high"],
+                                                                    five_res_r["model"])
 
                             else:  # Both
-                                pred_r_3p = predict_3p_for_plot(x_r.to_numpy(), three_res["Tb"], three_res["model"],
-                                                                mode=three_res["mode"])
-                                pred_r_5p = predict_5p_for_plot(x_r.to_numpy(), five_res["Tb_low"], five_res["Tb_high"],
-                                                                five_res["model"])
+                                pred_base_tmy_3p = predict_3p_for_plot(x_tmy.to_numpy(), three_res_b["Tb"], three_res_b["model"],
+                                                                mode=three_res_b["mode"])
+                                pred_rep_tmy_3p = predict_3p_for_plot(x_tmy.to_numpy(), three_res_r["Tb"],
+                                                                       three_res_r["model"],
+                                                                       mode=three_res_r["mode"])
+                                pred_base_tmy_5p = predict_5p_for_plot(x_tmy.to_numpy(), five_res_b["Tb_low"], five_res_b["Tb_high"],
+                                                                five_res_b["model"])
+                                pred_rep_tmy_5p = predict_5p_for_plot(x_tmy.to_numpy(), five_res_r["Tb_low"],
+                                                                       five_res_r["Tb_high"],
+                                                                       five_res_r["model"])
 
                             if model_choice == "3-parameter" or model_choice == "5-parameter":
-                                st.write(f'##### Predicted Baseline Consumption: \n {pred_r.sum():.2f}')
+                                st.write(f'##### Predicted Baseline Consumption: \n {pred_base_tmy.sum():.2f}')
+                                st.write(f'##### Predicted Reported Consumption: \n {pred_rep_tmy.sum():.2f}')
 
                             else:
                                 mod1, mod2 = st.columns(2, border=True)
                                 with mod1:
-                                    st.write(f'##### 3 Parameter Predicted Baseline Consumption: \n {pred_r_3p.sum():.2f}')
+                                    st.write(f'##### 3 Parameter Predicted Baseline Consumption: \n {pred_base_tmy_3p.sum():.2f}')
                                 with mod2:
-                                    st.write(f'##### 5 Parameter Predicted Baseline Consumption: \n {pred_r_5p.sum():.2f}')
+                                    st.write(f'##### 5 Parameter Predicted Baseline Consumption: \n {pred_base_tmy_5p.sum():.2f}')
 
-                            st.write(f'##### Reported Consumption: \n {y_r.sum():.2f}')
+
+
+                            st.write(f'##### TMY Reported Consumption: \n {y_r.sum():.2f}')
 
                             if model_choice == "3-parameter" or model_choice == "5-parameter":
                                 savings = pred_r.sum() - y_r.sum()
@@ -691,8 +707,8 @@ def manual_page():
 
                 # Build column names automatically
                 empty_df = pd.DataFrame(
-                    {'Start Date (yyyy-mm-dd)': pd.to_datetime(['2025-01-01']).tz_localize('UTC').tz_convert(timezone),
-                     'End Date (yyyy-mm-dd)': pd.to_datetime(['2025-02-01']).tz_localize('UTC').tz_convert(timezone),
+                    {'Start Date (yyyy-mm-dd)': pd.to_datetime(['2025-01-01']),
+                     'End Date (yyyy-mm-dd)': pd.to_datetime(['2025-02-01']),
                      'Energy': pd.Series([0.0], dtype='float64')})
 
                 st.write('#### Enter Baseline Energy Data Below:')
@@ -705,6 +721,12 @@ def manual_page():
                 st.write('#### Enter Reported Energy Data Below:')
                 reported_df = st.data_editor(empty_df, num_rows="dynamic", key='reported_energy')
 
+                date_cols = ['Start Date (yyyy-mm-dd)', 'End Date (yyyy-mm-dd)']
+
+                for col in date_cols:
+                    baseline_df[col] = (pd.to_datetime(baseline_df[col]).dt.tz_localize(timezone))
+                    reported_df[col] = (pd.to_datetime(reported_df[col]).dt.tz_localize(timezone))
+
 
                 if len(baseline_df) >= 2:
 
@@ -713,8 +735,8 @@ def manual_page():
                         with st.spinner('Calculating...'):
 
                             for i in range(len(baseline_df)):
-                                start_dt = baseline_df.loc[i, 'Start Date (yyyy-mm-dd)'].tz_convert(timezone)
-                                end_dt = baseline_df.loc[i, 'End Date (yyyy-mm-dd)'].tz_convert(timezone)
+                                start_dt = baseline_df.loc[i, 'Start Date (yyyy-mm-dd)']
+                                end_dt = baseline_df.loc[i, 'End Date (yyyy-mm-dd)']
 
                                 start_date = start_dt.date().isoformat()
                                 end_date = end_dt.date().isoformat()

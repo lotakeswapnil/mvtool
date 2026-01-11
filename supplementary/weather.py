@@ -103,8 +103,6 @@ def pvgis_tmy(latitude, longitude):
     params = {
         "lat": latitude,
         "lon": longitude,
-        "outputformat": "csv",
-        "usehorizon": 1,
         "localtime": 1
     }
 
@@ -126,6 +124,6 @@ def pvgis_tmy(latitude, longitude):
     df = pd.read_csv(StringIO("\n".join(lines[start_row:start_row+8761])), sep=",", usecols=["time(UTC)", "T2m"])
 
     df['time(UTC)'] = pd.to_datetime(df['time(UTC)'], format='%Y%m%d:%H%M', utc=False)
-    df.rename(columns={'time(UTC)':'Time','T2m': 'Temperature'}, inplace=True)
+    df.rename(columns={'time(UTC)':'time','T2m': 'temperature'}, inplace=True)
 
     return df
