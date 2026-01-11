@@ -353,8 +353,8 @@ def manual_page():
                 timezone = get_timezone_from_coords(lat, lon)
 
                 # Build column names automatically
-                empty_df = pd.DataFrame({'Start Date (yyyy-mm-dd)': pd.to_datetime(['2025-01-01']),#.tz_localize('UTC').tz_convert(timezone),
-                                         'End Date (yyyy-mm-dd)': pd.to_datetime(['2025-02-01']),#.tz_localize('UTC').tz_convert(timezone),
+                empty_df = pd.DataFrame({'Start Date (yyyy-mm-dd)': pd.to_datetime(['2025-01-01']),
+                                         'End Date (yyyy-mm-dd)': pd.to_datetime(['2025-02-01']),
                                          'Energy': pd.Series([0.0], dtype='float64')})
 
                 st.write('#### Enter Baseline Energy Data Below:')
@@ -429,8 +429,7 @@ def manual_page():
                                     filtered_temp['date'] = filtered_temp['date_local'].dt.date
                                     filtered_temp['hour'] = filtered_temp['date_local'].dt.hour
 
-                                    hourly_avg = (
-                                        filtered_temp.groupby(['date', 'hour'], as_index=False)['temperature'].mean())
+                                    hourly_avg = (filtered_temp.groupby(['date', 'hour'], as_index=False)['temperature'].mean())
 
                                 reported_df.loc[i, 'temperature'] = hourly_avg["temperature"].mean()
 
