@@ -351,13 +351,12 @@ def manual_page():
                 timezone = get_timezone_from_coords(lat, lon)
 
                 # Build column names automatically
-                empty_df = pd.DataFrame({'Start Date (yyyy-mm-dd)': pd.to_datetime(['2025-01-01']).tz_localize('UTC').tz_convert(timezone),
-                                         'End Date (yyyy-mm-dd)': pd.to_datetime(['2025-02-01']).tz_localize('UTC').tz_convert(timezone),
+                empty_df = pd.DataFrame({'Start Date (yyyy-mm-dd)': pd.to_datetime(['2025-01-01']),#.tz_localize('UTC').tz_convert(timezone),
+                                         'End Date (yyyy-mm-dd)': pd.to_datetime(['2025-02-01']),#.tz_localize('UTC').tz_convert(timezone),
                                          'Energy': pd.Series([0.0], dtype='float64')})
 
                 st.write('#### Enter Baseline Energy Data Below:')
                 baseline_df = st.data_editor(empty_df, num_rows="dynamic", key='baseline_energy')
-
 
                 if len(baseline_df) < 2:
                     st.error("Please enter at least 2 rows.")
@@ -365,6 +364,13 @@ def manual_page():
                 st.write('#### Enter Reported Energy Data Below:')
                 reported_df = st.data_editor(empty_df, num_rows="dynamic", key='reported_energy')
 
+                date_cols = ['Start Date (yyyy-mm-dd)', 'End Date (yyyy-mm-dd)']
+
+                for col in date_cols:
+                    baseline_df[col] = (pd.to_datetime(baseline_df[col]).dt.tz_localize(timezone))
+                    reported_df[col] = (pd.to_datetime(reported_df[col]).dt.tz_localize(timezone))
+
+                st.write(reported_df)
 
                 if len(baseline_df) >= 2:
 
@@ -373,8 +379,8 @@ def manual_page():
                         with st.spinner('Calculating...'):
 
                             for i in range(len(baseline_df)):
-                                start_dt = baseline_df.loc[i, 'Start Date (yyyy-mm-dd)'].tz_convert(timezone)
-                                end_dt = baseline_df.loc[i, 'End Date (yyyy-mm-dd)'].tz_convert(timezone)
+                                start_dt = baseline_df.loc[i, 'Start Date (yyyy-mm-dd)']
+                                end_dt = baseline_df.loc[i, 'End Date (yyyy-mm-dd)']
 
                                 start_date = start_dt.date().isoformat()
                                 end_date = end_dt.date().isoformat()
@@ -395,8 +401,8 @@ def manual_page():
 
 
                             for i in range(len(reported_df)):
-                                start_dt = reported_df.loc[i, 'Start Date (yyyy-mm-dd)'].tz_convert(timezone)
-                                end_dt = reported_df.loc[i, 'End Date (yyyy-mm-dd)'].tz_convert(timezone)
+                                start_dt = reported_df.loc[i, 'Start Date (yyyy-mm-dd)']
+                                end_dt = reported_df.loc[i, 'End Date (yyyy-mm-dd)']
 
                                 start_date = start_dt.date().isoformat()
                                 end_date = end_dt.date().isoformat()
