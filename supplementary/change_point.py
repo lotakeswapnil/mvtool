@@ -12,6 +12,7 @@ def rmse(y_true: np.ndarray, y_pred: np.ndarray) -> float:
 def fit_three_param_cp(
         temp: np.ndarray,
         kwh: np.ndarray,
+        days: np.ndarray,
         Tmin: float,
         Tmax: float,
         step: float = 1.0,
@@ -62,7 +63,7 @@ def fit_three_param_cp(
         # Heating Model
         # ----------------------------
         if mode in ("heating", "auto"):
-            X_heat = np.maximum(0.0, Tb - temp).reshape(-1, 1)
+            X_heat = np.column_stack([days, np.maximum(0.0, Tb - temp) * days])
             mdl = LinearRegression().fit(X_heat, kwh)
             pred = mdl.predict(X_heat)
             rmse_val = rmse(kwh, pred)
