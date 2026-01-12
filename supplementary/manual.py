@@ -1513,22 +1513,22 @@ def manual_page():
                                     x_r = reported_df['temperature']
 
                                     if model_choice == "3-parameter":
-                                        pred_r = predict_3p_for_plot(x_r.to_numpy(), three_res["Tb"],
-                                                                     three_res["model"],
-                                                                     mode=three_res["mode"])
+                                        pred_r = predict_3p_for_plot(x_r.to_numpy(), three_res_b["Tb"],
+                                                                     three_res_b["model"],
+                                                                     mode=three_res_b["mode"])
 
                                     elif model_choice == "5-parameter":
-                                        pred_r = predict_5p_for_plot(x_r.to_numpy(), five_res["Tb_low"],
-                                                                     five_res["Tb_high"],
-                                                                     five_res["model"])
+                                        pred_r = predict_5p_for_plot(x_r.to_numpy(), five_res_b["Tb_low"],
+                                                                     five_res_b["Tb_high"],
+                                                                     five_res_b["model"])
 
                                     else:  # Both
-                                        pred_r_3p = predict_3p_for_plot(x_r.to_numpy(), three_res["Tb"],
-                                                                        three_res["model"],
-                                                                        mode=three_res["mode"])
-                                        pred_r_5p = predict_5p_for_plot(x_r.to_numpy(), five_res["Tb_low"],
-                                                                        five_res["Tb_high"],
-                                                                        five_res["model"])
+                                        pred_r_3p = predict_3p_for_plot(x_r.to_numpy(), three_res_b["Tb"],
+                                                                        three_res_b["model"],
+                                                                        mode=three_res_b["mode"])
+                                        pred_r_5p = predict_5p_for_plot(x_r.to_numpy(), five_res_b["Tb_low"],
+                                                                        five_res_b["Tb_high"],
+                                                                        five_res_b["model"])
 
                                     if model_choice == "3-parameter" or model_choice == "5-parameter":
                                         st.write(f'##### Predicted Baseline Consumption: \n {pred_r.sum():.2f}')
