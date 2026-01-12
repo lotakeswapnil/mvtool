@@ -414,7 +414,7 @@ def manual_page():
                                     hourly_avg = (filtered_temp.groupby(['date', 'hour'], as_index=False)['temperature'].mean())
 
                                 baseline_df.loc[i, 'temperature'] = hourly_avg["temperature"].mean()
-                                baseline_df['days'] = end_date - start_date
+                                baseline_df['days'] = (end_date - start_date).dt.days
                             st.write(baseline_df)
 
                             for i in range(len(reported_df)):
