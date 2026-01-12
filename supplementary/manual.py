@@ -460,7 +460,7 @@ def manual_page():
                             five_res_b = None
 
                             if model_choice == "3-parameter":
-                                three_res_b = fit_three_param_cp(temp_b, energy_b, Tmin_b, Tmax_b, step, mode=mode)
+                                three_res_b = fit_three_param_cp(temp_b, energy_b, days_b, Tmin_b, Tmax_b, step, mode=mode)
 
                             if model_choice == "5-parameter":
                                 five_res_b = fit_five_param_deadband(temp_b, energy_b, Tmin_b, Tmax_b, step)
