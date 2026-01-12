@@ -18,7 +18,7 @@ def three_para_results(three_res,temperature_unit,mean_energy):
     elif mode_used == "heating":
         # Heating: Energy = b0 + b1 * max(0, Tb - T)
         st.latex(
-            fr"\text{{Energy}} = {b0:.2f} + {b1:.2f}\,\max(0,\,{Tb:.2f} - T) + {b2:.f}"
+            fr"\text{{Energy}} = {b0:.2f} + {b2:.f} + {b1:.2f}\,\max(0,\,{Tb:.2f} - T)"
         )
 
     st.write("#### Model Results")
