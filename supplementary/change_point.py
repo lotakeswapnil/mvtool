@@ -64,7 +64,7 @@ def fit_three_param_cp(
         # ----------------------------
         if mode in ("heating", "auto"):
             X_heat = np.column_stack([days, np.maximum(0.0, Tb - temp) * days])
-            mdl = LinearRegression().fit(X_heat, kwh)
+            mdl = LinearRegression(fit_intercept=False).fit(X_heat, kwh)
             pred = mdl.predict(X_heat)
             rmse_val = rmse(kwh, pred)
 
