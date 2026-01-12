@@ -15,7 +15,7 @@ def fit_three_param_cp(
         days: np.ndarray,
         Tmin: float,
         Tmax: float,
-        step: float = 1.0,
+        step: float,
         mode: str = "auto",  # NEW: "heating", "cooling", or "auto"
 ) -> Dict[str, Any]:
     """
@@ -63,8 +63,8 @@ def fit_three_param_cp(
         # Heating Model
         # ----------------------------
         if mode in ("heating", "auto"):
-            X_heat = np.column_stack([days, np.maximum(0.0, Tb - temp) * days])
-            mdl = LinearRegression(fit_intercept=False).fit(X_heat, kwh)
+            X_heat = np.maximum(0.0, Tb - temp).reshape(-1, 1)
+            mdl = LinearRegression().fit(X_heat, kwh)
             pred = mdl.predict(X_heat)
             rmse_val = rmse(kwh, pred)
 
@@ -78,6 +78,31 @@ def fit_three_param_cp(
                     "r2": mdl.score(X_heat, kwh),
                 }
 
+        # --------------------------------------------------
+        # 2) NEW: HDD calculation using best Tb
+        # --------------------------------------------------
+        Tb_best = best["Tb"]
+
+        HDD = np.maximum(0.0, Tb_best - temp) * days  # proxy HDD scaled by days
+
+        # --------------------------------------------------
+        # 3) NEW: Billing-style regression
+        #     Energy = b0 * Days + b1 * HDD
+        # --------------------------------------------------
+        X_hdd = np.column_stack([days, HDD])
+
+        hdd_model = LinearRegression(fit_intercept=False)
+        hdd_model.fit(X_hdd, kwh)
+
+        hdd_pred = hdd_model.predict(X_hdd)
+
+        best.update({
+            "HDD": HDD,
+            "hdd_model": hdd_model,
+            "hdd_rmse": rmse(kwh, hdd_pred),
+            "hdd_r2": hdd_model.score(X_hdd, kwh),
+        })
+
     return best
 
 
@@ -86,7 +111,7 @@ def fit_five_param_deadband(
     kwh: np.ndarray,
     Tmin: float,
     Tmax: float,
-    step: float = 1.0
+    step: float
 ) -> Dict[str, Any]:
     """
     Fit 5-parameter deadband model:

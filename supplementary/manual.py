@@ -415,6 +415,8 @@ def manual_page():
 
                                 baseline_df.loc[i, 'temperature'] = hourly_avg["temperature"].mean()
 
+                            baseline_df['days'] = (baseline_df['End Date (yyyy-mm-dd)'] - baseline_df['Start Date (yyyy-mm-dd)']).dt.days
+
                             for i in range(len(reported_df)):
                                 start_dt = reported_df.loc[i, 'Start Date (yyyy-mm-dd)']
                                 end_dt = reported_df.loc[i, 'End Date (yyyy-mm-dd)']
@@ -442,6 +444,8 @@ def manual_page():
 
                                 reported_df.loc[i, 'temperature'] = hourly_avg["temperature"].mean()
 
+                            reported_df['days'] = (reported_df['End Date (yyyy-mm-dd)'] - reported_df['Start Date (yyyy-mm-dd)']).dt.days
+
 
                             # -------------------------
                             # RUN MODELS FOR BASELINE
@@ -452,12 +456,13 @@ def manual_page():
 
                             temp_b = baseline_df['temperature'].values
                             energy_b = baseline_df['Energy'].values
+                            days_b = baseline_df['days'].values
 
                             three_res_b = None
                             five_res_b = None
 
                             if model_choice == "3-parameter":
-                                three_res_b = fit_three_param_cp(temp_b, energy_b, Tmin_b, Tmax_b, step, mode=mode)
+                                three_res_b = fit_three_param_cp(temp_b, energy_b, days_b, Tmin_b, Tmax_b, step, mode=mode)
 
                             if model_choice == "5-parameter":
                                 five_res_b = fit_five_param_deadband(temp_b, energy_b, Tmin_b, Tmax_b, step)
@@ -478,12 +483,13 @@ def manual_page():
 
                             temp_r = reported_df['temperature'].values
                             energy_r = reported_df['Energy'].values
+                            days_r = reported_df['days'].values
 
                             three_res_r = None
                             five_res_r = None
 
                             if model_choice == "3-parameter":
-                                three_res_r = fit_three_param_cp(temp_r, energy_r, Tmin_r, Tmax_r, step, mode=mode)
+                                three_res_r = fit_three_param_cp(temp_r, energy_r, days_r, Tmin_r, Tmax_r, step, mode=mode)
 
                             if model_choice == "5-parameter":
                                 five_res_r = fit_five_param_deadband(temp_r, energy_r, Tmin_r, Tmax_r, step)
@@ -1142,15 +1148,13 @@ def manual_page():
                                             five_res_r = None
 
                                             if model_choice == '3-parameter':
-                                                three_res_r = fit_three_param_cp(temp_r, energy_r, Tmin_r, Tmax_r, step,
-                                                                                 mode=mode)
+                                                three_res_r = fit_three_param_cp(temp_r, energy_r, Tmin_r, Tmax_r, step,mode=mode)
 
                                             if model_choice == '5-parameter':
                                                 five_res_r = fit_five_param_deadband(temp_r, energy_r, Tmin_r, Tmax_r, step)
 
                                             if model_choice == 'Both':
-                                                three_res_r = fit_three_param_cp(temp_r, energy_r, Tmin_r, Tmax_r, step,
-                                                                                 mode=mode)
+                                                three_res_r = fit_three_param_cp(temp_r, energy_r, Tmin_r, Tmax_r, step,mode=mode)
                                                 five_res_r = fit_five_param_deadband(temp_r, energy_r, Tmin_r, Tmax_r, step)
 
                                         mean_energy_r = float(reported_df['Energy'].mean())
@@ -1286,7 +1290,6 @@ def manual_page():
 
                                     st.pyplot(fig)
 
-                                    # --------------------------
 
                                     # TMY Calculations--------------------------
 

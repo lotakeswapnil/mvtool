@@ -1,34 +1,44 @@
 import streamlit as st
 
-def three_para_results(three_res,temperature_unit,mean_energy):
-    st.subheader("3-Parameter Model")
-    st.write("#### Model Equations")
+def three_para_results(three_res, temperature_unit, mean_energy):
+
+    st.subheader("3-Parameter Model (HDD-Based)")
+    st.write("#### Model Equation")
+
     Tb = three_res["Tb"]
-    b0 = three_res["model"].intercept_
-    b1 = three_res["model"].coef_[0]
-    mode_used = three_res["mode"]  # "heating" or "cooling"
+    mode_used = three_res["mode"]
 
-    if mode_used == "cooling":
-        # Cooling: Energy = b0 + b1 * max(0, T - Tb)
+    # Billing-style HDD model (no intercept)
+    hdd_model = three_res["hdd_model"]
+    b0, b1 = hdd_model.coef_   # b0 = kWh/day, b1 = kWh/HDD
+
+    # ----------------------------
+    # Display equation
+    # ----------------------------
+    if mode_used == "heating":
         st.latex(
-            fr"\text{{Energy}} = {b0:.2f} + {b1:.2f}\,\max(0,\,T - {Tb:.2f})"
+            fr"\text{{Energy}} = {b0:.2f}\cdot \text{{Days}} + "
+            fr"{b1:.2f}\cdot \text{{HDD}}_{{{Tb:.1f}}}"
         )
-
-    elif mode_used == "heating":
-        # Heating: Energy = b0 + b1 * max(0, Tb - T)
-        st.latex(
-            fr"\text{{Energy}} = {b0:.2f} + {b1:.2f}\,\max(0,\,{Tb:.2f} - T)"
-        )
-
-    st.write("#### Model Results")
-    if temperature_unit == 'celsius':
-        st.write(f"**Tb:** {three_res['Tb']:.2f} °C")
     else:
-        st.write(f"**Tb:** {three_res['Tb']:.2f} °F")
-    st.write(f"**β0:** {three_res['model'].intercept_:.2f}")
-    st.write(f"**β1:** {three_res['model'].coef_[0]:.2f}")
-    st.write(f"**CV (RMSE):** {three_res['rmse']/mean_energy:.2%}")
-    st.write(f"**R²:** {three_res['r2']:.2%}")
+        st.info("HDD equation shown only for heating-dominated behavior.")
+
+    # ----------------------------
+    # Model results
+    # ----------------------------
+    st.write("#### Model Results")
+
+    if temperature_unit == "celsius":
+        st.write(f"**Balance Temperature (Tb):** {Tb:.2f} °C")
+    else:
+        st.write(f"**Balance Temperature (Tb):** {Tb:.2f} °F")
+
+    st.write(f"**β₀ (Baseload):** {b0:.2f} kWh/day")
+    st.write(f"**β₁ (Heating Slope):** {b1:.2f} kWh/HDD")
+
+    st.write(f"**CV(RMSE):** {three_res['hdd_rmse'] / mean_energy:.2%}")
+    st.write(f"**R²:** {three_res['hdd_r2']:.2%}")
+
 
 def five_para_results(five_res,temperature_unit,mean_energy):
     st.subheader("5-Parameter Model")
