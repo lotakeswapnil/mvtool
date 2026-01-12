@@ -415,8 +415,6 @@ def manual_page():
 
                                 baseline_df.loc[i, 'temperature'] = hourly_avg["temperature"].mean()
 
-                            baseline_df['days'] = (baseline_df['End Date (yyyy-mm-dd)'] - baseline_df['Start Date (yyyy-mm-dd)']).dt.days
-
                             for i in range(len(reported_df)):
                                 start_dt = reported_df.loc[i, 'Start Date (yyyy-mm-dd)']
                                 end_dt = reported_df.loc[i, 'End Date (yyyy-mm-dd)']
@@ -454,13 +452,12 @@ def manual_page():
 
                             temp_b = baseline_df['temperature'].values
                             energy_b = baseline_df['Energy'].values
-                            days_b = baseline_df['days'].values
 
                             three_res_b = None
                             five_res_b = None
 
                             if model_choice == "3-parameter":
-                                three_res_b = fit_three_param_cp(temp_b, energy_b, days_b, Tmin_b, Tmax_b, step, mode=mode)
+                                three_res_b = fit_three_param_cp(temp_b, energy_b, Tmin_b, Tmax_b, step, mode=mode)
 
                             if model_choice == "5-parameter":
                                 five_res_b = fit_five_param_deadband(temp_b, energy_b, Tmin_b, Tmax_b, step)

@@ -6,7 +6,6 @@ def three_para_results(three_res,temperature_unit,mean_energy):
     Tb = three_res["Tb"]
     b0 = three_res["model"].intercept_
     b1 = three_res["model"].coef_[0]
-    b2 = three_res["model"].coef_[1]
     mode_used = three_res["mode"]  # "heating" or "cooling"
 
     if mode_used == "cooling":
@@ -18,7 +17,7 @@ def three_para_results(three_res,temperature_unit,mean_energy):
     elif mode_used == "heating":
         # Heating: Energy = b0 + b1 * max(0, Tb - T)
         st.latex(
-            fr"\text{{Energy}} = {b0:.2f} + {b2:.2f} + {b1:.2f}\,\max(0,\,{Tb:.2f} - T)"
+            fr"\text{{Energy}} = {b0:.2f} + {b1:.2f}\,\max(0,\,{Tb:.2f} - T)"
         )
 
     st.write("#### Model Results")
