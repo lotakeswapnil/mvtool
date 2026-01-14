@@ -2,7 +2,7 @@ import streamlit as st
 
 def three_para_results(three_res, temperature_unit, mean_energy):
 
-    st.subheader("3-Parameter Model (HDD-Based)")
+    st.subheader("3-Parameter Model")
     st.write("#### Model Equation")
 
     Tb = three_res["Tb"]
@@ -33,8 +33,8 @@ def three_para_results(three_res, temperature_unit, mean_energy):
     else:
         st.write(f"**Balance Temperature (Tb):** {Tb:.2f} °F")
 
-    st.write(f"**β₀ (Baseload):** {b0:.2f} kWh/day")
-    st.write(f"**β₁ (Heating Slope):** {b1:.2f} kWh/HDD")
+    st.write(f"**β₀ (Baseload):** {b0:.2f} Energy/day")
+    st.write(f"**β₁ (Heating Slope):** {b1:.2f} Energy/HDD")
 
     st.write(f"**CV(RMSE):** {three_res['hdd_rmse'] / mean_energy:.2%}")
     st.write(f"**R²:** {three_res['hdd_r2']:.2%}")
