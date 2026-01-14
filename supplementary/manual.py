@@ -378,6 +378,8 @@ def manual_page():
 
                 date_cols = ['Start Date (yyyy-mm-dd)', 'End Date (yyyy-mm-dd)']
 
+                temp = pd.DataFrame()
+
                 for col in date_cols:
                     baseline_df[col] = (pd.to_datetime(baseline_df[col]).dt.tz_localize(timezone))
                     reported_df[col] = (pd.to_datetime(reported_df[col]).dt.tz_localize(timezone))
@@ -398,9 +400,11 @@ def manual_page():
 
                                 temperature_data['date_local'] = pd.to_datetime(temperature_data['date_local'])
 
-                                mask = ((temperature_data['date_local'] >= start_dt)&(temperature_data['date_local'] <= end_dt))
+                                temp = pd.concat([temp,temperature_data])
 
-                                filtered_temp = temperature_data.loc[mask]
+                                #mask = ((temperature_data['date_local'] >= start_date)&(temperature_data['date_local'] <= end_date))
+
+                                filtered_temp = temperature_data#.loc[mask]
 
                                 if daily_hourly == 'Daily':
                                     filtered_temp['date'] = filtered_temp['date_local'].dt.date
@@ -427,9 +431,9 @@ def manual_page():
 
                                 temperature_data['date_local'] = pd.to_datetime(temperature_data['date_local'])
 
-                                mask = ((temperature_data['date_local'] >= start_dt) & (temperature_data['date_local'] <= end_dt))
+                                #mask = ((temperature_data['date_local'] >= start_dt) & (temperature_data['date_local'] <= end_dt))
 
-                                filtered_temp = temperature_data.loc[mask]
+                                filtered_temp = temperature_data#.loc[mask]
 
                                 if daily_hourly == 'Daily':
                                     filtered_temp['date'] = filtered_temp['date_local'].dt.date
@@ -445,7 +449,6 @@ def manual_page():
                                 reported_df.loc[i, 'temperature'] = hourly_avg["temperature"].mean()
 
                             reported_df['days'] = (reported_df['End Date (yyyy-mm-dd)'] - reported_df['Start Date (yyyy-mm-dd)']).dt.days
-
 
                             # -------------------------
                             # RUN MODELS FOR BASELINE
