@@ -776,6 +776,9 @@ def manual_page():
 
                                 baseline_df.loc[i, 'temperature'] = hourly_avg["temperature"].mean()
 
+                            baseline_df['days'] = (baseline_df['End Date (yyyy-mm-dd)'] - baseline_df['Start Date (yyyy-mm-dd)']).dt.days
+
+
                             for i in range(len(reported_df)):
                                 start_dt = reported_df.loc[i, 'Start Date (yyyy-mm-dd)'].tz_convert(timezone)
                                 end_dt = reported_df.loc[i, 'End Date (yyyy-mm-dd)'].tz_convert(timezone)
@@ -805,6 +808,8 @@ def manual_page():
 
                                 reported_df.loc[i, 'temperature'] = hourly_avg["temperature"].mean()
 
+                            reported_df['days'] = (reported_df['End Date (yyyy-mm-dd)'] - reported_df['Start Date (yyyy-mm-dd)']).dt.days
+
 
                             # -------------------------
                             # DEFAULT MODEL SETTINGS
@@ -818,12 +823,13 @@ def manual_page():
                             # -------------------------
                             temp = baseline_df['temperature'].values
                             energy = baseline_df['Energy'].values
+                            days = baseline_df['days'].values
 
                             three_res = None
                             five_res = None
 
                             if model_choice == "3-parameter":
-                                three_res = fit_three_param_cp(temp, energy, Tmin, Tmax, step, mode=mode)
+                                three_res = fit_three_param_cp(temp, energy, days, Tmin, Tmax, step, mode=mode)
 
                             if model_choice == "5-parameter":
                                 five_res = fit_five_param_deadband(temp, energy, Tmin, Tmax, step)
