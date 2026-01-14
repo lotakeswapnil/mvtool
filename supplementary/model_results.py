@@ -8,21 +8,24 @@ def three_para_results(three_res, temperature_unit, mean_energy):
     Tb = three_res["Tb"]
     mode_used = three_res["mode"]
 
-    # Billing-style HDD model (no intercept)
-    hdd_model = three_res["hdd_model"]
-    b0, b1 = hdd_model.coef_   # b0 = kWh/day, b1 = kWh/HDD
 
     # ----------------------------
     # Display equation
     # ----------------------------
     if mode_used == "heating":
+        hdd_model = three_res["hdd_model"]
+        b0, b1 = hdd_model.coef_  # b0 = kWh/day, b1 = kWh/HDD
         st.latex(
-            fr"\text{{Energy}} = {b0:.2f}\cdot \text{{Days}} + "
-            fr"{b1:.2f}\cdot \text{{HDD}}_{{{Tb:.1f}}}"
+            fr"\text{{Energy}} = {b0:.4f}\cdot \text{{Days}} + "
+            fr"{b1:.4f}\cdot \text{{HDD}}_{{{Tb:.1f}}}"
         )
     else:
-        st.info("HDD equation shown only for heating-dominated behavior.")
-
+        cdd_model = three_res["cdd_model"]
+        b0, b1 = cdd_model.coef_  # b0 = kWh/day, b1 = kWh/HDD
+        st.latex(
+            fr"\text{{Energy}} = {b0:.4f}\cdot \text{{Days}} + "
+            fr"{b1:.4f}\cdot \text{{CDD}}_{{{Tb:.1f}}}"
+        )
     # ----------------------------
     # Model results
     # ----------------------------
@@ -33,11 +36,15 @@ def three_para_results(three_res, temperature_unit, mean_energy):
     else:
         st.write(f"**Balance Temperature (Tb):** {Tb:.2f} °F")
 
-    st.write(f"**β₀ (Baseload):** {b0:.2f} Energy/day")
-    st.write(f"**β₁ (Heating Slope):** {b1:.2f} Energy/HDD")
+    st.write(f"**β₀ (Baseload):** {b0:.4f} Energy/day")
+    st.write(f"**β₁ (Slope):** {b1:.4f} Energy/HDD")
 
-    st.write(f"**CV(RMSE):** {three_res['hdd_rmse'] / mean_energy:.2%}")
-    st.write(f"**R²:** {three_res['hdd_r2']:.2%}")
+    if mode_used == 'heating':
+        st.write(f"**CV(RMSE):** {three_res['hdd_rmse'] / mean_energy:.2%}")
+        st.write(f"**R²:** {three_res['hdd_r2']:.2%}")
+    else:
+        st.write(f"**CV(RMSE):** {three_res['cdd_rmse'] / mean_energy:.2%}")
+        st.write(f"**R²:** {three_res['cdd_r2']:.2%}")
 
 
 def five_para_results(five_res,temperature_unit,mean_energy):

@@ -79,29 +79,39 @@ def fit_three_param_cp(
                 }
 
         # --------------------------------------------------
-        # 2) NEW: HDD calculation using best Tb
+        # HDD/CDD calculation using best Tb
         # --------------------------------------------------
         Tb_best = best["Tb"]
 
-        HDD = np.maximum(0.0, Tb_best - temp) * days  # proxy HDD scaled by days
+        if mode in ("cooling", "auto"):
+            CDD = np.maximum(0.0, temp - Tb_best) * days
+            X_cdd = np.column_stack([days, CDD])
+            cdd_model = LinearRegression(fit_intercept=False)
+            cdd_model.fit(X_cdd, kwh)
 
-        # --------------------------------------------------
-        # 3) NEW: Billing-style regression
-        #     Energy = b0 * Days + b1 * HDD
-        # --------------------------------------------------
-        X_hdd = np.column_stack([days, HDD])
+            cdd_pred = cdd_model.predict(X_cdd)
 
-        hdd_model = LinearRegression(fit_intercept=False)
-        hdd_model.fit(X_hdd, kwh)
+            best.update({
+                "CDD": CDD,
+                "cdd_model": cdd_model,
+                "cdd_rmse": rmse(kwh, cdd_pred),
+                "cdd_r2": cdd_model.score(X_cdd, kwh),
+            })
 
-        hdd_pred = hdd_model.predict(X_hdd)
+        if mode in ("heating", "auto"):
+            HDD = np.maximum(0.0, Tb_best - temp) * days  # proxy HDD scaled by days
+            X_hdd = np.column_stack([days, HDD])
+            hdd_model = LinearRegression(fit_intercept=False)
+            hdd_model.fit(X_hdd, kwh)
 
-        best.update({
-            "HDD": HDD,
-            "hdd_model": hdd_model,
-            "hdd_rmse": rmse(kwh, hdd_pred),
-            "hdd_r2": hdd_model.score(X_hdd, kwh),
-        })
+            hdd_pred = hdd_model.predict(X_hdd)
+
+            best.update({
+                "HDD": HDD,
+                "hdd_model": hdd_model,
+                "hdd_rmse": rmse(kwh, hdd_pred),
+                "hdd_r2": hdd_model.score(X_hdd, kwh),
+            })
 
     return best
 
