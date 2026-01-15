@@ -99,7 +99,7 @@ def fit_three_param_cp(
             })
 
         if mode in ("heating", "auto"):
-            HDD = np.maximum(0.0, Tb_best - temp) * days  # proxy HDD scaled by days
+            HDD = np.maximum(0.0, Tb_best - temp) * days
             X_hdd = np.column_stack([days, HDD])
             hdd_model = LinearRegression(fit_intercept=False)
             hdd_model.fit(X_hdd, kwh)

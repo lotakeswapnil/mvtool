@@ -3,6 +3,7 @@
 # --------------------------
 
 from datetime import date, timedelta
+import time
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -345,11 +346,8 @@ def manual_page():
                     weather_tmy = pvgis_tmy(lat, lon)
                     weather_tmy['month'] = weather_tmy['time'].dt.month
                     avg_weather_tmy = weather_tmy.groupby('month')['temperature'].mean().reset_index()
-                    if temperature_unit == "celsius":
-                        st.write(avg_weather_tmy)
-                    else:
+                    if temperature_unit == 'fahrenheit':
                         avg_weather_tmy['temperature'] = (avg_weather_tmy['temperature'] * 9/5) + 32
-                        st.write(avg_weather_tmy)
                 except requests.exceptions.HTTPError:
                     st.error(f'Please Enter Correct Latitude and Longitude')
 
@@ -388,308 +386,338 @@ def manual_page():
 
                     if st.button("Fetch Weather Data & Calculate Savings"):
 
-                        with st.spinner('Calculating...'):
+                        progress = st.progress(0)
+                        status = st.empty()
 
-                            for i in range(len(baseline_df)):
-                                start_dt = baseline_df.loc[i, 'Start Date (yyyy-mm-dd)']
-                                end_dt = baseline_df.loc[i, 'End Date (yyyy-mm-dd)']
+                        status.text("Fetching baseline period temperatures...")
 
-                                start_date = start_dt.date().isoformat()
-                                end_date = end_dt.date().isoformat()
-                                meta, temperature_data = fetch_openmeteo_archive(client, lat, lon, start_date, end_date, temperature_unit, which, var)
+                        for i in range(len(baseline_df)):
+                            start_dt = baseline_df.loc[i, 'Start Date (yyyy-mm-dd)']
+                            end_dt = baseline_df.loc[i, 'End Date (yyyy-mm-dd)']
 
-                                temperature_data['date_local'] = pd.to_datetime(temperature_data['date_local'])
+                            start_date = start_dt.date().isoformat()
+                            end_date = end_dt.date().isoformat()
+                            meta, temperature_data = fetch_openmeteo_archive(client, lat, lon, start_date, end_date, temperature_unit, which, var)
 
-                                temp = pd.concat([temp,temperature_data])
+                            temperature_data['date_local'] = pd.to_datetime(temperature_data['date_local'])
 
-                                #mask = ((temperature_data['date_local'] >= start_date)&(temperature_data['date_local'] <= end_date))
+                            temp = pd.concat([temp,temperature_data])
 
-                                filtered_temp = temperature_data#.loc[mask]
+                            #mask = ((temperature_data['date_local'] >= start_date)&(temperature_data['date_local'] <= end_date))
 
-                                if daily_hourly == 'Daily':
-                                    filtered_temp['date'] = filtered_temp['date_local'].dt.date
+                            filtered_temp = temperature_data#.loc[mask]
 
-                                    hourly_avg = (filtered_temp.groupby(['date'], as_index=False)['temperature'].mean())
+                            if daily_hourly == 'Daily':
+                                filtered_temp['date'] = filtered_temp['date_local'].dt.date
 
-                                else:
-                                    filtered_temp['date'] = filtered_temp['date_local'].dt.date
-                                    filtered_temp['hour'] = filtered_temp['date_local'].dt.hour
+                                hourly_avg = (filtered_temp.groupby(['date'], as_index=False)['temperature'].mean())
 
-                                    hourly_avg = (filtered_temp.groupby(['date', 'hour'], as_index=False)['temperature'].mean())
-
-                                baseline_df.loc[i, 'temperature'] = hourly_avg["temperature"].mean()
-
-                            baseline_df['days'] = (baseline_df['End Date (yyyy-mm-dd)'] - baseline_df['Start Date (yyyy-mm-dd)']).dt.days
-
-                            for i in range(len(reported_df)):
-                                start_dt = reported_df.loc[i, 'Start Date (yyyy-mm-dd)']
-                                end_dt = reported_df.loc[i, 'End Date (yyyy-mm-dd)']
-
-                                start_date = start_dt.date().isoformat()
-                                end_date = end_dt.date().isoformat()
-                                meta, temperature_data = fetch_openmeteo_archive(client, lat, lon, start_date, end_date, temperature_unit, which, var)
-
-                                temperature_data['date_local'] = pd.to_datetime(temperature_data['date_local'])
-
-                                #mask = ((temperature_data['date_local'] >= start_dt) & (temperature_data['date_local'] <= end_dt))
-
-                                filtered_temp = temperature_data#.loc[mask]
-
-                                if daily_hourly == 'Daily':
-                                    filtered_temp['date'] = filtered_temp['date_local'].dt.date
-
-                                    hourly_avg = (filtered_temp.groupby(['date'], as_index=False)['temperature'].mean())
-
-                                else:
-                                    filtered_temp['date'] = filtered_temp['date_local'].dt.date
-                                    filtered_temp['hour'] = filtered_temp['date_local'].dt.hour
-
-                                    hourly_avg = (filtered_temp.groupby(['date', 'hour'], as_index=False)['temperature'].mean())
-
-                                reported_df.loc[i, 'temperature'] = hourly_avg["temperature"].mean()
-
-                            reported_df['days'] = (reported_df['End Date (yyyy-mm-dd)'] - reported_df['Start Date (yyyy-mm-dd)']).dt.days
-
-                            # -------------------------
-                            # RUN MODELS FOR BASELINE
-                            # -------------------------
-
-                            Tmin_b = float(np.floor(baseline_df['temperature'].min()))
-                            Tmax_b = float(np.ceil(baseline_df['temperature'].max()))
-
-                            temp_b = baseline_df['temperature'].values
-                            energy_b = baseline_df['Energy'].values
-                            days_b = baseline_df['days'].values
-
-                            three_res_b = None
-                            five_res_b = None
-
-                            if model_choice == "3-parameter":
-                                three_res_b = fit_three_param_cp(temp_b, energy_b, days_b, Tmin_b, Tmax_b, step, mode=mode)
-
-                            if model_choice == "5-parameter":
-                                five_res_b = fit_five_param_deadband(temp_b, energy_b, Tmin_b, Tmax_b, step)
-
-                            if model_choice == "Both":
-                                three_res_b = fit_three_param_cp(temp_b, energy_b, Tmin_b, Tmax_b, step, mode=mode)
-                                five_res_b = fit_five_param_deadband(temp_b, energy_b, Tmin_b, Tmax_b, step)
-
-                            mean_energy_b = float(baseline_df['Energy'].mean())
-                            # preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct,mean_energy)
-
-                            # -------------------------
-                            # RUN MODELS FOR REPORTED
-                            # -------------------------
-
-                            Tmin_r = float(np.floor(reported_df['temperature'].min()))
-                            Tmax_r = float(np.ceil(reported_df['temperature'].max()))
-
-                            temp_r = reported_df['temperature'].values
-                            energy_r = reported_df['Energy'].values
-                            days_r = reported_df['days'].values
-
-                            three_res_r = None
-                            five_res_r = None
-
-                            if model_choice == "3-parameter":
-                                three_res_r = fit_three_param_cp(temp_r, energy_r, days_r, Tmin_r, Tmax_r, step, mode=mode)
-
-                            if model_choice == "5-parameter":
-                                five_res_r = fit_five_param_deadband(temp_r, energy_r, Tmin_r, Tmax_r, step)
-
-                            if model_choice == "Both":
-                                three_res_r = fit_three_param_cp(temp_r, energy_r, Tmin_r, Tmax_r, step, mode=mode)
-                                five_res_r = fit_five_param_deadband(temp_r, energy_r, Tmin_r, Tmax_r, step)
-
-                            mean_energy_r = float(reported_df['Energy'].mean())
-                            # preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct,mean_energy)
-
-
-                            # ----------------------------
-                            # DISPLAY RESULTS FOR BASELINE
-                            # ----------------------------
-                            st.write("## Baseline Model Results")
-
-                            if model_choice in ["3-parameter"]:
-                                three_para_results(three_res_b, temperature_unit, mean_energy_b)
-
-                            if model_choice in ["5-parameter"]:
-                                five_para_results(five_res_b, temperature_unit, mean_energy_b)
-
-                            if model_choice in ["Both"]:
-                                three_five_para_results(three_res_b, five_res_b, temperature_unit, mean_energy_b)
-
-
-                            # -------------------------
-                            # PLOT MODELS FOR BASELINE
-                            # -------------------------
-                            T_plot = np.linspace(baseline_df['temperature'].min(), baseline_df['temperature'].max(), 400)
-
-                            fig, ax = plt.subplots(figsize=(9, 5))
-                            ax.scatter(baseline_df['temperature'], baseline_df['Energy'], label="Measured Energy", s=50)
-
-                            if model_choice == "3-parameter":
-                                Y3_plot = predict_3p_for_plot(T_plot, three_res_b["Tb"], three_res_b["model"],
-                                                              mode=three_res_b["mode"])
-                                ax.plot(T_plot, Y3_plot, label="3-parameter", linewidth=2.5)
-
-                            elif model_choice == "5-parameter":
-                                Y5_plot = predict_5p_for_plot(T_plot, five_res_b["Tb_low"], five_res_b["Tb_high"],
-                                                              five_res_b["model"])
-                                ax.plot(T_plot, Y5_plot, label="5-parameter", linewidth=2.5)
-
-                            else:  # Both
-                                Y3_plot = predict_3p_for_plot(T_plot, three_res_b["Tb"], three_res_b["model"],
-                                                              mode=three_res_b["mode"])
-                                Y5_plot = predict_5p_for_plot(T_plot, five_res_b["Tb_low"], five_res_b["Tb_high"],
-                                                              five_res_b["model"])
-                                ax.plot(T_plot, Y3_plot, label="3-parameter", linewidth=2.5)
-                                ax.plot(T_plot, Y5_plot, label="5-parameter", linewidth=2.5)
-
-                            # Deadband shade
-                            if model_choice in ["5-parameter", "Both"]:
-                                ax.axvspan(five_res_b["Tb_low"], five_res_b["Tb_high"], alpha=0.08, color="gray",
-                                           label="Deadband")
-
-                            if temperature_unit == "celsius":
-                                ax.set_xlabel("Temperature (°C)")
                             else:
-                                ax.set_xlabel("Temperature (°F)")
-                            ax.set_ylabel("Energy")
+                                filtered_temp['date'] = filtered_temp['date_local'].dt.date
+                                filtered_temp['hour'] = filtered_temp['date_local'].dt.hour
 
-                            if model_choice in ["3-parameter"]:
-                                ax.set_title("3-Parameter Change-Point Model")
-                            elif model_choice in ["5-parameter"]:
-                                ax.set_title("5-Parameter Change-Point Model")
+                                hourly_avg = (filtered_temp.groupby(['date', 'hour'], as_index=False)['temperature'].mean())
+
+                            baseline_df.loc[i, 'temperature'] = hourly_avg["temperature"].mean()
+
+                        baseline_df['days'] = (baseline_df['End Date (yyyy-mm-dd)'] - baseline_df['Start Date (yyyy-mm-dd)']).dt.days
+
+                        progress.progress(15)
+
+                        status.text("Fetching reporting period temperatures...")
+
+                        for i in range(len(reported_df)):
+                            start_dt = reported_df.loc[i, 'Start Date (yyyy-mm-dd)']
+                            end_dt = reported_df.loc[i, 'End Date (yyyy-mm-dd)']
+
+                            start_date = start_dt.date().isoformat()
+                            end_date = end_dt.date().isoformat()
+                            meta, temperature_data = fetch_openmeteo_archive(client, lat, lon, start_date, end_date, temperature_unit, which, var)
+
+                            temperature_data['date_local'] = pd.to_datetime(temperature_data['date_local'])
+
+                            #mask = ((temperature_data['date_local'] >= start_dt) & (temperature_data['date_local'] <= end_dt))
+
+                            filtered_temp = temperature_data#.loc[mask]
+
+                            if daily_hourly == 'Daily':
+                                filtered_temp['date'] = filtered_temp['date_local'].dt.date
+
+                                hourly_avg = (filtered_temp.groupby(['date'], as_index=False)['temperature'].mean())
+
                             else:
-                                ax.set_title("3-Parameter and 5-parameter Change-Point Models")
+                                filtered_temp['date'] = filtered_temp['date_local'].dt.date
+                                filtered_temp['hour'] = filtered_temp['date_local'].dt.hour
 
-                            ax.legend()
-                            ax.grid(True)
+                                hourly_avg = (filtered_temp.groupby(['date', 'hour'], as_index=False)['temperature'].mean())
 
-                            st.pyplot(fig)
+                            reported_df.loc[i, 'temperature'] = hourly_avg["temperature"].mean()
 
-                            # ----------------------------
-                            # DISPLAY RESULTS FOR REPORTED
-                            # ----------------------------
-                            st.write("## Reported Model Results")
+                        reported_df['days'] = (reported_df['End Date (yyyy-mm-dd)'] - reported_df['Start Date (yyyy-mm-dd)']).dt.days
 
-                            if model_choice in ["3-parameter"]:
-                                three_para_results(three_res_r, temperature_unit, mean_energy_r)
+                        progress.progress(30)
 
-                            if model_choice in ["5-parameter"]:
-                                five_para_results(five_res_r, temperature_unit, mean_energy_r)
+                        status.text("Fitting baseline models...")
 
-                            if model_choice in ["Both"]:
-                                three_five_para_results(three_res_r, five_res_r, temperature_unit, mean_energy_r)
+                        # -------------------------
+                        # RUN MODELS FOR BASELINE
+                        # -------------------------
+
+                        Tmin_b = float(np.floor(baseline_df['temperature'].min()))
+                        Tmax_b = float(np.ceil(baseline_df['temperature'].max()))
+
+                        temp_b = baseline_df['temperature'].values
+                        energy_b = baseline_df['Energy'].values
+                        days_b = baseline_df['days'].values
+
+                        three_res_b = None
+                        five_res_b = None
+
+                        if model_choice == "3-parameter":
+                            three_res_b = fit_three_param_cp(temp_b, energy_b, days_b, Tmin_b, Tmax_b, step, mode=mode)
+
+                        if model_choice == "5-parameter":
+                            five_res_b = fit_five_param_deadband(temp_b, energy_b, Tmin_b, Tmax_b, step)
+
+                        if model_choice == "Both":
+                            three_res_b = fit_three_param_cp(temp_b, energy_b, Tmin_b, Tmax_b, step, mode=mode)
+                            five_res_b = fit_five_param_deadband(temp_b, energy_b, Tmin_b, Tmax_b, step)
+
+                        mean_energy_b = float(baseline_df['Energy'].mean())
+                        # preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct,mean_energy)
+
+                        progress.progress(45)
+
+                        status.text("Fitting reported models...")
+
+                        # -------------------------
+                        # RUN MODELS FOR REPORTED
+                        # -------------------------
+
+                        Tmin_r = float(np.floor(reported_df['temperature'].min()))
+                        Tmax_r = float(np.ceil(reported_df['temperature'].max()))
+
+                        temp_r = reported_df['temperature'].values
+                        energy_r = reported_df['Energy'].values
+                        days_r = reported_df['days'].values
+
+                        three_res_r = None
+                        five_res_r = None
+
+                        if model_choice == "3-parameter":
+                            three_res_r = fit_three_param_cp(temp_r, energy_r, days_r, Tmin_r, Tmax_r, step, mode=mode)
+
+                        if model_choice == "5-parameter":
+                            five_res_r = fit_five_param_deadband(temp_r, energy_r, Tmin_r, Tmax_r, step)
+
+                        if model_choice == "Both":
+                            three_res_r = fit_three_param_cp(temp_r, energy_r, Tmin_r, Tmax_r, step, mode=mode)
+                            five_res_r = fit_five_param_deadband(temp_r, energy_r, Tmin_r, Tmax_r, step)
+
+                        mean_energy_r = float(reported_df['Energy'].mean())
+                        # preferred_label, preferred_result = select_model_by_rmse_r2(three_res, five_res, rel_tol_pct,mean_energy)
+
+                        progress.progress(60)
+
+                        status.text("Generating baseline model results plots...")
+
+                        # ----------------------------
+                        # DISPLAY RESULTS FOR BASELINE
+                        # ----------------------------
+                        st.write("## Baseline Model Results")
+
+                        if model_choice in ["3-parameter"]:
+                            three_para_results(three_res_b, temperature_unit, mean_energy_b)
+
+                        if model_choice in ["5-parameter"]:
+                            five_para_results(five_res_b, temperature_unit, mean_energy_b)
+
+                        if model_choice in ["Both"]:
+                            three_five_para_results(three_res_b, five_res_b, temperature_unit, mean_energy_b)
 
 
-                            # -------------------------
-                            # PLOT MODELS FOR REPORTED
-                            # -------------------------
-                            T_plot = np.linspace(reported_df['temperature'].min(), reported_df['temperature'].max(),400)
+                        # -------------------------
+                        # PLOT MODELS FOR BASELINE
+                        # -------------------------
+                        T_plot = np.linspace(baseline_df['temperature'].min(), baseline_df['temperature'].max(), 400)
 
-                            fig, ax = plt.subplots(figsize=(9, 5))
-                            ax.scatter(reported_df['temperature'], reported_df['Energy'], label="Measured Energy", s=50)
+                        fig, ax = plt.subplots(figsize=(9, 5))
+                        ax.scatter(baseline_df['temperature'], baseline_df['Energy'], label="Measured Energy", s=50)
 
-                            if model_choice == "3-parameter":
-                                Y3_plot = predict_3p_for_plot(T_plot, three_res_r["Tb"], three_res_r["model"],
-                                                              mode=three_res_r["mode"])
-                                ax.plot(T_plot, Y3_plot, label="3-parameter", linewidth=2.5)
+                        if model_choice == "3-parameter":
+                            Y3_plot = predict_3p_for_plot(T_plot, three_res_b["Tb"], three_res_b["model"],
+                                                          mode=three_res_b["mode"])
+                            ax.plot(T_plot, Y3_plot, label="3-parameter", linewidth=2.5)
 
-                            elif model_choice == "5-parameter":
-                                Y5_plot = predict_5p_for_plot(T_plot, five_res_r["Tb_low"], five_res_r["Tb_high"],
-                                                              five_res_r["model"])
-                                ax.plot(T_plot, Y5_plot, label="5-parameter", linewidth=2.5)
+                        elif model_choice == "5-parameter":
+                            Y5_plot = predict_5p_for_plot(T_plot, five_res_b["Tb_low"], five_res_b["Tb_high"],
+                                                          five_res_b["model"])
+                            ax.plot(T_plot, Y5_plot, label="5-parameter", linewidth=2.5)
 
-                            else:  # Both
-                                Y3_plot = predict_3p_for_plot(T_plot, three_res_r["Tb"], three_res_r["model"],
-                                                              mode=three_res_r["mode"])
-                                Y5_plot = predict_5p_for_plot(T_plot, five_res_b["Tb_low"], five_res_r["Tb_high"],
-                                                              five_res_r["model"])
-                                ax.plot(T_plot, Y3_plot, label="3-parameter", linewidth=2.5)
-                                ax.plot(T_plot, Y5_plot, label="5-parameter", linewidth=2.5)
+                        else:  # Both
+                            Y3_plot = predict_3p_for_plot(T_plot, three_res_b["Tb"], three_res_b["model"],
+                                                          mode=three_res_b["mode"])
+                            Y5_plot = predict_5p_for_plot(T_plot, five_res_b["Tb_low"], five_res_b["Tb_high"],
+                                                          five_res_b["model"])
+                            ax.plot(T_plot, Y3_plot, label="3-parameter", linewidth=2.5)
+                            ax.plot(T_plot, Y5_plot, label="5-parameter", linewidth=2.5)
 
-                            # Deadband shade
-                            if model_choice in ["5-parameter", "Both"]:
-                                ax.axvspan(five_res_r["Tb_low"], five_res_r["Tb_high"], alpha=0.08, color="gray",
-                                           label="Deadband")
+                        # Deadband shade
+                        if model_choice in ["5-parameter", "Both"]:
+                            ax.axvspan(five_res_b["Tb_low"], five_res_b["Tb_high"], alpha=0.08, color="gray",
+                                       label="Deadband")
 
-                            if temperature_unit == "celsius":
-                                ax.set_xlabel("Temperature (°C)")
-                            else:
-                                ax.set_xlabel("Temperature (°F)")
-                            ax.set_ylabel("Energy")
+                        if temperature_unit == "celsius":
+                            ax.set_xlabel("Temperature (°C)")
+                        else:
+                            ax.set_xlabel("Temperature (°F)")
+                        ax.set_ylabel("Energy")
 
-                            if model_choice in ["3-parameter"]:
-                                ax.set_title("3-Parameter Change-Point Model")
-                            elif model_choice in ["5-parameter"]:
-                                ax.set_title("5-Parameter Change-Point Model")
-                            else:
-                                ax.set_title("3-Parameter and 5-parameter Change-Point Models")
+                        if model_choice in ["3-parameter"]:
+                            ax.set_title("3-Parameter Change-Point Model")
+                        elif model_choice in ["5-parameter"]:
+                            ax.set_title("5-Parameter Change-Point Model")
+                        else:
+                            ax.set_title("3-Parameter and 5-parameter Change-Point Models")
 
-                            ax.legend()
-                            ax.grid(True)
+                        ax.legend()
+                        ax.grid(True)
 
-                            st.pyplot(fig)
+                        st.pyplot(fig)
+
+                        progress.progress(75)
+
+                        status.text("Generating reported model results and plots...")
+
+                        # ----------------------------
+                        # DISPLAY RESULTS FOR REPORTED
+                        # ----------------------------
+                        st.write("## Reported Model Results")
+
+                        if model_choice in ["3-parameter"]:
+                            three_para_results(three_res_r, temperature_unit, mean_energy_r)
+
+                        if model_choice in ["5-parameter"]:
+                            five_para_results(five_res_r, temperature_unit, mean_energy_r)
+
+                        if model_choice in ["Both"]:
+                            three_five_para_results(three_res_r, five_res_r, temperature_unit, mean_energy_r)
 
 
-                            # TMY Calculations--------------------------
+                        # -------------------------
+                        # PLOT MODELS FOR REPORTED
+                        # -------------------------
+                        T_plot = np.linspace(reported_df['temperature'].min(), reported_df['temperature'].max(),400)
 
-                            x_tmy = avg_weather_tmy['temperature']
+                        fig, ax = plt.subplots(figsize=(9, 5))
+                        ax.scatter(reported_df['temperature'], reported_df['Energy'], label="Measured Energy", s=50)
 
-                            if model_choice == "3-parameter":
-                                pred_base_tmy = predict_3p_for_plot(x_tmy.to_numpy(), three_res_b["Tb"], three_res_b["model"],
-                                                             mode=three_res_b["mode"])
-                                pred_rep_tmy = predict_3p_for_plot(x_tmy.to_numpy(), three_res_r["Tb"],
-                                                                    three_res_r["model"],
-                                                                    mode=three_res_r["mode"])
+                        if model_choice == "3-parameter":
+                            Y3_plot = predict_3p_for_plot(T_plot, three_res_r["Tb"], three_res_r["model"],
+                                                          mode=three_res_r["mode"])
+                            ax.plot(T_plot, Y3_plot, label="3-parameter", linewidth=2.5)
 
-                            elif model_choice == "5-parameter":
-                                pred_base_tmy = predict_5p_for_plot(x_tmy.to_numpy(), five_res_b["Tb_low"], five_res_b["Tb_high"],
-                                                             five_res_b["model"])
-                                pred_rep_tmy = predict_5p_for_plot(x_tmy.to_numpy(), five_res_r["Tb_low"],
-                                                                    five_res_r["Tb_high"],
-                                                                    five_res_r["model"])
+                        elif model_choice == "5-parameter":
+                            Y5_plot = predict_5p_for_plot(T_plot, five_res_r["Tb_low"], five_res_r["Tb_high"],
+                                                          five_res_r["model"])
+                            ax.plot(T_plot, Y5_plot, label="5-parameter", linewidth=2.5)
 
-                            else:  # Both
-                                pred_base_tmy_3p = predict_3p_for_plot(x_tmy.to_numpy(), three_res_b["Tb"], three_res_b["model"],
+                        else:  # Both
+                            Y3_plot = predict_3p_for_plot(T_plot, three_res_r["Tb"], three_res_r["model"],
+                                                          mode=three_res_r["mode"])
+                            Y5_plot = predict_5p_for_plot(T_plot, five_res_b["Tb_low"], five_res_r["Tb_high"],
+                                                          five_res_r["model"])
+                            ax.plot(T_plot, Y3_plot, label="3-parameter", linewidth=2.5)
+                            ax.plot(T_plot, Y5_plot, label="5-parameter", linewidth=2.5)
+
+                        # Deadband shade
+                        if model_choice in ["5-parameter", "Both"]:
+                            ax.axvspan(five_res_r["Tb_low"], five_res_r["Tb_high"], alpha=0.08, color="gray",
+                                       label="Deadband")
+
+                        if temperature_unit == "celsius":
+                            ax.set_xlabel("Temperature (°C)")
+                        else:
+                            ax.set_xlabel("Temperature (°F)")
+                        ax.set_ylabel("Energy")
+
+                        if model_choice in ["3-parameter"]:
+                            ax.set_title("3-Parameter Change-Point Model")
+                        elif model_choice in ["5-parameter"]:
+                            ax.set_title("5-Parameter Change-Point Model")
+                        else:
+                            ax.set_title("3-Parameter and 5-parameter Change-Point Models")
+
+                        ax.legend()
+                        ax.grid(True)
+
+                        st.pyplot(fig)
+
+                        progress.progress(90)
+
+                        status.text("Calculating TMY predictions and savings...")
+
+                        # TMY Calculations--------------------------
+
+                        x_tmy = avg_weather_tmy['temperature']
+
+                        if model_choice == "3-parameter":
+                            pred_base_tmy = predict_3p_for_plot(x_tmy.to_numpy(), three_res_b["Tb"], three_res_b["model"],
                                                                 mode=three_res_b["mode"])
-                                pred_rep_tmy_3p = predict_3p_for_plot(x_tmy.to_numpy(), three_res_r["Tb"],
-                                                                       three_res_r["model"],
-                                                                       mode=three_res_r["mode"])
-                                pred_base_tmy_5p = predict_5p_for_plot(x_tmy.to_numpy(), five_res_b["Tb_low"], five_res_b["Tb_high"],
+                            pred_rep_tmy = predict_3p_for_plot(x_tmy.to_numpy(), three_res_r["Tb"],
+                                                               three_res_r["model"],
+                                                               mode=three_res_r["mode"])
+
+                        elif model_choice == "5-parameter":
+                            pred_base_tmy = predict_5p_for_plot(x_tmy.to_numpy(), five_res_b["Tb_low"], five_res_b["Tb_high"],
                                                                 five_res_b["model"])
-                                pred_rep_tmy_5p = predict_5p_for_plot(x_tmy.to_numpy(), five_res_r["Tb_low"],
-                                                                       five_res_r["Tb_high"],
-                                                                       five_res_r["model"])
+                            pred_rep_tmy = predict_5p_for_plot(x_tmy.to_numpy(), five_res_r["Tb_low"],
+                                                               five_res_r["Tb_high"],
+                                                               five_res_r["model"])
 
-                            if model_choice == "3-parameter" or model_choice == "5-parameter":
-                                st.write(f'##### Predicted Baseline Consumption: \n {pred_base_tmy.sum():.2f}')
-                                st.write(f'##### Predicted Reported Consumption: \n {pred_rep_tmy.sum():.2f}')
+                        else:  # Both
+                            pred_base_tmy_3p = predict_3p_for_plot(x_tmy.to_numpy(), three_res_b["Tb"], three_res_b["model"],
+                                                                   mode=three_res_b["mode"])
+                            pred_rep_tmy_3p = predict_3p_for_plot(x_tmy.to_numpy(), three_res_r["Tb"],
+                                                                  three_res_r["model"],
+                                                                  mode=three_res_r["mode"])
+                            pred_base_tmy_5p = predict_5p_for_plot(x_tmy.to_numpy(), five_res_b["Tb_low"], five_res_b["Tb_high"],
+                                                                   five_res_b["model"])
+                            pred_rep_tmy_5p = predict_5p_for_plot(x_tmy.to_numpy(), five_res_r["Tb_low"],
+                                                                  five_res_r["Tb_high"],
+                                                                  five_res_r["model"])
 
-                            else:
-                                mod1, mod2 = st.columns(2, border=True)
-                                with mod1:
-                                    st.write(f'##### 3 Parameter Predicted Baseline Consumption: \n {pred_base_tmy_3p.sum():.2f}')
-                                    st.write(f'##### 3 Parameter Predicted Reported Consumption: \n {pred_rep_tmy_3p.sum():.2f}')
-                                with mod2:
-                                    st.write(f'##### 5 Parameter Predicted Baseline Consumption: \n {pred_base_tmy_5p.sum():.2f}')
-                                    st.write(f'##### 5 Parameter Predicted Reported Consumption: \n {pred_rep_tmy_5p.sum():.2f}')
+                        if model_choice == "3-parameter" or model_choice == "5-parameter":
+                            st.write(f'##### Predicted Baseline Consumption: \n {pred_base_tmy.sum():.2f}')
+                            st.write(f'##### Predicted Reported Consumption: \n {pred_rep_tmy.sum():.2f}')
+
+                        else:
+                            mod1, mod2 = st.columns(2, border=True)
+                            with mod1:
+                                st.write(f'##### 3 Parameter Predicted Baseline Consumption: \n {pred_base_tmy_3p.sum():.2f}')
+                                st.write(f'##### 3 Parameter Predicted Reported Consumption: \n {pred_rep_tmy_3p.sum():.2f}')
+                            with mod2:
+                                st.write(f'##### 5 Parameter Predicted Baseline Consumption: \n {pred_base_tmy_5p.sum():.2f}')
+                                st.write(f'##### 5 Parameter Predicted Reported Consumption: \n {pred_rep_tmy_5p.sum():.2f}')
 
 
-                            if model_choice == "3-parameter" or model_choice == "5-parameter":
-                                savings = pred_base_tmy.sum() - pred_rep_tmy.sum()
-                                st.write(f'##### Savings: \n {savings:.2f}')
-                            else:
-                                mod1, mod2 = st.columns(2, border=True)
+                        if model_choice == "3-parameter" or model_choice == "5-parameter":
+                            savings = pred_base_tmy.sum() - pred_rep_tmy.sum()
+                            st.write(f'##### Savings: \n {savings:.2f}')
+                        else:
+                            mod1, mod2 = st.columns(2, border=True)
 
-                                with mod1:
-                                    savings_3p = pred_base_tmy_3p.sum() - pred_rep_tmy_3p.sum()
-                                    st.write(f'##### 3 Parameter Savings: \n {savings_3p:.2f}')
-                                with mod2:
-                                    savings_5p = pred_base_tmy_5p.sum() - pred_rep_tmy_5p.sum()
-                                    st.write(f'##### 5 Parameter Savings: \n {savings_5p:.2f}')
+                            with mod1:
+                                savings_3p = pred_base_tmy_3p.sum() - pred_rep_tmy_3p.sum()
+                                st.write(f'##### 3 Parameter Savings: \n {savings_3p:.2f}')
+                            with mod2:
+                                savings_5p = pred_base_tmy_5p.sum() - pred_rep_tmy_5p.sum()
+                                st.write(f'##### 5 Parameter Savings: \n {savings_5p:.2f}')
+
+                        progress.progress(100)
+
+                        status.empty()
+                        progress.empty()
 
             if tmy == 'No':
 
