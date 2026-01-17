@@ -15,19 +15,9 @@ def fit_three_param_cp(
         Tmin: float,
         Tmax: float,
         step: float,
-        mode: str = "auto",  # NEW: "heating", "cooling", or "auto"
-) -> Dict[str, Any]:
-    """
-    Fit 3-parameter change-point model.
+        mode: str = "auto",
+        ) -> Dict[str, Any]:
 
-    mode:
-        "heating": use heating model only
-        "cooling": use cooling model only
-        "auto":    evaluate both and pick lowest RMSE
-
-    Heating CP:  kWh = b0 + b1 * max(0, Tb - T)
-    Cooling CP:  kWh = b0 + b1 * max(0, T - Tb)
-    """
 
     mode = mode.lower()
     if mode not in ("heating", "cooling", "auto"):
