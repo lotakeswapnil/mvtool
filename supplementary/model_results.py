@@ -13,6 +13,49 @@ def three_para_results(three_res, temperature_unit, mean_energy):
     # Display equation
     # ----------------------------
     if mode_used == "heating":
+        st.latex(
+            fr"\text{{Energy}} = {three_res['model'].intercept_:.2f} + "
+            fr"{three_res['model'].coef_[0]:.2f}\,\max(0,\,{three_res['Tb']:.2f} - T)"
+        )
+    else:
+        cdd_model = three_res["cdd_model"]
+        b0, b1 = cdd_model.coef_  # b0 = kWh/day, b1 = kWh/HDD
+        st.latex(
+            fr"\text{{Energy}} = {b0:.4f}\cdot \text{{Days}} + "
+            fr"{b1:.4f}\cdot \text{{CDD}}_{{{Tb:.1f}}}"
+        )
+    # ----------------------------
+    # Model results
+    # ----------------------------
+    st.write("#### Results")
+
+    if temperature_unit == "celsius":
+        st.write(f"**Balance Temperature (Tb):** {Tb:.2f} °C")
+    else:
+        st.write(f"**Balance Temperature (Tb):** {Tb:.2f} °F")
+
+    st.write(f"**β₀ (Baseload):** {three_res['model'].coef_[0]:.4f} Energy/day")
+
+    if mode_used == 'heating':
+        st.write(f"**CV(RMSE):** {three_res['rmse'] / mean_energy:.2%}")
+        st.write(f"**R²:** {three_res['r2']:.2%}")
+    else:
+        st.write(f"**CV(RMSE):** {three_res['rmse'] / mean_energy:.2%}")
+        st.write(f"**R²:** {three_res['r2']:.2%}")
+
+def three_para_results_days(three_res, temperature_unit, mean_energy):
+
+    st.subheader("3-Parameter Model")
+    st.write("#### Equation")
+
+    Tb = three_res["Tb"]
+    mode_used = three_res["mode"]
+
+
+    # ----------------------------
+    # Display equation
+    # ----------------------------
+    if mode_used == "heating":
         hdd_model = three_res["hdd_model"]
         b0, b1 = hdd_model.coef_  # b0 = kWh/day, b1 = kWh/HDD
         st.latex(
