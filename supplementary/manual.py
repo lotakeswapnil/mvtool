@@ -13,7 +13,7 @@ import streamlit as st
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import root_mean_squared_error
 
-from supplementary.change_point import (fit_three_param_cp, fit_five_param_deadband, predict_3p_for_plot,predict_5p_for_plot, model_details)
+from supplementary.change_point import (fit_three_param_cp_days, fit_five_param_deadband, predict_3p_for_plot,predict_5p_for_plot, model_details)
 from supplementary.weather import make_openmeteo_client, fetch_openmeteo_archive, get_timezone_from_coords
 from supplementary.model_results import three_para_results, five_para_results, three_five_para_results
 from supplementary.weather import pvgis_tmy
@@ -474,13 +474,13 @@ def manual_page():
                         five_res_b = None
 
                         if model_choice == "3-parameter":
-                            three_res_b = fit_three_param_cp(temp_b, energy_b, days_b, Tmin_b, Tmax_b, step, mode=mode)
+                            three_res_b = fit_three_param_cp_days(temp_b, energy_b, days_b, Tmin_b, Tmax_b, step, mode=mode)
 
                         if model_choice == "5-parameter":
                             five_res_b = fit_five_param_deadband(temp_b, energy_b, Tmin_b, Tmax_b, step)
 
                         if model_choice == "Both":
-                            three_res_b = fit_three_param_cp(temp_b, energy_b, Tmin_b, Tmax_b, step, mode=mode)
+                            three_res_b = fit_three_param_cp_days(temp_b, energy_b, days_b, Tmin_b, Tmax_b, step, mode=mode)
                             five_res_b = fit_five_param_deadband(temp_b, energy_b, Tmin_b, Tmax_b, step)
 
                         mean_energy_b = float(baseline_df['Energy'].mean())
@@ -505,13 +505,13 @@ def manual_page():
                         five_res_r = None
 
                         if model_choice == "3-parameter":
-                            three_res_r = fit_three_param_cp(temp_r, energy_r, days_r, Tmin_r, Tmax_r, step, mode=mode)
+                            three_res_r = fit_three_param_cp_days(temp_r, energy_r, days_r, Tmin_r, Tmax_r, step, mode=mode)
 
                         if model_choice == "5-parameter":
                             five_res_r = fit_five_param_deadband(temp_r, energy_r, Tmin_r, Tmax_r, step)
 
                         if model_choice == "Both":
-                            three_res_r = fit_three_param_cp(temp_r, energy_r, Tmin_r, Tmax_r, step, mode=mode)
+                            three_res_r = fit_three_param_cp_days(temp_r, energy_r, days_r, Tmin_r, Tmax_r, step, mode=mode)
                             five_res_r = fit_five_param_deadband(temp_r, energy_r, Tmin_r, Tmax_r, step)
 
                         mean_energy_r = float(reported_df['Energy'].mean())
@@ -867,13 +867,13 @@ def manual_page():
                         five_res = None
 
                         if model_choice == "3-parameter":
-                            three_res = fit_three_param_cp(temp, energy, days, Tmin, Tmax, step, mode=mode)
+                            three_res = fit_three_param_cp_days(temp, energy, days, Tmin, Tmax, step, mode=mode)
 
                         if model_choice == "5-parameter":
                             five_res = fit_five_param_deadband(temp, energy, Tmin, Tmax, step)
 
                         if model_choice == "Both":
-                            three_res = fit_three_param_cp(temp, energy, Tmin, Tmax, step, mode=mode)
+                            three_res = fit_three_param_cp_days(temp, energy, days, Tmin, Tmax, step, mode=mode)
                             five_res = fit_five_param_deadband(temp, energy, Tmin, Tmax, step)
 
                         mean_energy = float(baseline_df['Energy'].mean())

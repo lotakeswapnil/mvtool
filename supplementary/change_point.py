@@ -12,6 +12,76 @@ def rmse(y_true: np.ndarray, y_pred: np.ndarray) -> float:
 def fit_three_param_cp(
         temp: np.ndarray,
         kwh: np.ndarray,
+        Tmin: float,
+        Tmax: float,
+        step: float,
+        mode: str = "auto",  # NEW: "heating", "cooling", or "auto"
+) -> Dict[str, Any]:
+    """
+    Fit 3-parameter change-point model.
+
+    mode:
+        "heating": use heating model only
+        "cooling": use cooling model only
+        "auto":    evaluate both and pick lowest RMSE
+
+    Heating CP:  kWh = b0 + b1 * max(0, Tb - T)
+    Cooling CP:  kWh = b0 + b1 * max(0, T - Tb)
+    """
+
+    mode = mode.lower()
+    if mode not in ("heating", "cooling", "auto"):
+        raise ValueError("mode must be 'heating', 'cooling', or 'auto'")
+
+    best = {"rmse": np.inf}
+    candidates = np.arange(Tmin, Tmax + step / 2, step)
+
+    for Tb in candidates:
+
+        # ----------------------------
+        # Cooling Model
+        # ----------------------------
+
+        if mode in ("cooling", "auto"):
+            X_cool = np.maximum(0.0, temp - Tb).reshape(-1, 1)
+            mdl = LinearRegression().fit(X_cool, kwh)
+            pred = mdl.predict(X_cool)
+            rmse_val = rmse(kwh, pred)
+
+            if rmse_val < best["rmse"]:
+                best = {
+                    "mode": "cooling",
+                    "Tb": float(Tb),
+                    "model": mdl,
+                    "pred": pred,
+                    "rmse": rmse_val,
+                    "r2": mdl.score(X_cool, kwh),
+                }
+
+        # ----------------------------
+        # Heating Model
+        # ----------------------------
+        if mode in ("heating", "auto"):
+            X_heat = np.maximum(0.0, Tb - temp).reshape(-1, 1)
+            mdl = LinearRegression().fit(X_heat, kwh)
+            pred = mdl.predict(X_heat)
+            rmse_val = rmse(kwh, pred)
+
+            if rmse_val < best["rmse"]:
+                best = {
+                    "mode": "heating",
+                    "Tb": float(Tb),
+                    "model": mdl,
+                    "pred": pred,
+                    "rmse": rmse_val,
+                    "r2": mdl.score(X_heat, kwh),
+                }
+
+    return best
+
+def fit_three_param_cp_days(
+        temp: np.ndarray,
+        kwh: np.ndarray,
         days: np.ndarray,
         Tmin: float,
         Tmax: float,
