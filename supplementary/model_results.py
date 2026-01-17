@@ -16,17 +16,22 @@ def three_para_results(three_res, temperature_unit, mean_energy):
     c = three_res["model"].intercept_
 
     if mode_used == "heating":
-        st.latex(
-            fr"\text{{Energy}} = {c:.4f} + "
-            fr"{b0:.4f}\,\max(0,\,{Tb:.2f} - T)"
-        )
+        if mode_used == "heating":
+            st.latex(
+                fr"\text{{Energy}} = {c:.4f} + "
+                fr"{b0:.4f}\,\max(0,\,{Tb:.2f} - T)"
+            )
     else:
-        cdd_model = three_res["cdd_model"]
-        b0, b1 = cdd_model.coef_  # b0 = kWh/day, b1 = kWh/HDD
-        st.latex(
-            fr"\text{{Energy}} = {b0:.4f}\cdot \text{{Days}} + "
-            fr"{b1:.4f}\cdot \text{{CDD}}_{{{Tb:.1f}}}"
-        )
+         if b0 >= 0:
+             st.latex(
+                 fr"\text{{Energy}} = {c:.4f}"
+                 fr" + {b0:.4f}\,\max(0,\,T - {Tb:.2f})"
+             )
+         else:
+             st.latex(
+                 fr"\text{{Energy}} = {c:.4f}"
+                 fr" {b0:.4f}\,\max(0,\,T - {Tb:.2f})"
+             )
     # ----------------------------
     # Model results
     # ----------------------------

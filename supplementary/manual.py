@@ -1,7 +1,7 @@
 # --------------------------
 # import necessary packages
 # --------------------------
-
+import calendar
 from datetime import date, timedelta
 import time
 
@@ -1032,7 +1032,8 @@ def manual_page():
                 with end_b:
                     end_year = st.selectbox("End Year", options=range(date.today().year - 10, date.today().year + 1), index=10)
                     end_month = st.selectbox("End Month", options=range(1, 13), format_func=lambda m: date(1900, m, 1).strftime("%B"))
-                    end_date_b = date(end_year, end_month, 1)
+                    last_day = calendar.monthrange(end_year, end_month)[1]
+                    end_date_b = date(end_year, end_month, last_day)
                 with weather_int_b:
                     weather_interval = st.selectbox('Select Interval', {'Hourly', 'Daily', 'Monthly'})
 
@@ -1047,7 +1048,8 @@ def manual_page():
                 with end_r:
                     end_year = st.selectbox("End Year", options=range(date.today().year - 10, date.today().year + 1), index=10, key='reported_end_year')
                     end_month = st.selectbox("End Month", options=range(1, 13), format_func=lambda m: date(1900, m, 1).strftime("%B"), key='reported_end_month')
-                    end_date_r = date(end_year, end_month, 1)
+                    last_day = calendar.monthrange(end_year, end_month)[1]
+                    end_date_r = date(end_year, end_month, last_day)
                 with weather_int_r:
                     st.selectbox('Select Interval', weather_interval, disabled=True, help='This will be same as baseline interval to avoid errors.')
 
