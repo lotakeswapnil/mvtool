@@ -12,10 +12,13 @@ def three_para_results(three_res, temperature_unit, mean_energy):
     # ----------------------------
     # Display equation
     # ----------------------------
+    b0 = three_res["model"].coef_[0]
+    c = three_res["model"].intercept_
+
     if mode_used == "heating":
         st.latex(
-            fr"\text{{Energy}} = {three_res['model'].intercept_:.2f} + "
-            fr"{three_res['model'].coef_[0]:.2f}\,\max(0,\,{three_res['Tb']:.2f} - T)"
+            fr"\text{{Energy}} = {c:.4f} + "
+            fr"{b0:.4f}\,\max(0,\,{Tb:.2f} - T)"
         )
     else:
         cdd_model = three_res["cdd_model"]
@@ -34,7 +37,8 @@ def three_para_results(three_res, temperature_unit, mean_energy):
     else:
         st.write(f"**Balance Temperature (Tb):** {Tb:.2f} °F")
 
-    st.write(f"**β₀ (Baseload):** {three_res['model'].coef_[0]:.4f} Energy/day")
+    st.write(f"**β₀ (Slope):** {b0:.4f} Energy/day")
+    st.write(f"**C (Baseload):** {c:.4f} Energy")
 
     if mode_used == 'heating':
         st.write(f"**CV(RMSE):** {three_res['rmse'] / mean_energy:.2%}")
