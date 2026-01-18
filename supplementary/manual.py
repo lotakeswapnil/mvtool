@@ -1446,10 +1446,12 @@ def manual_page():
                                     elif weather_interval == "Monthly":
 
                                         df_temp['month'] = df_temp['date_local'].dt.month  # 1–12
+                                        df_temp['day'] = df_temp['date_local'].dt.day
                                         df_temp_r['month'] = df_temp_r['date_local'].dt.month
+                                        df_temp_r['day'] = df_temp_r['date_local'].dt.day
 
-                                        df_weather_final = (df_temp.groupby('month', as_index=False).mean(numeric_only=True))
-                                        df_weather_final_r = (df_temp_r.groupby('month', as_index=False).mean(numeric_only=True))
+                                        df_weather_final = (df_temp.groupby('month', as_index=False).agg(temperature=('temperature', 'mean'), days=('day', 'nunique')))
+                                        df_weather_final_r = (df_temp_r.groupby('month', as_index=False).agg(temperature=('temperature', 'mean'), days=('day', 'nunique')))
 
                                     else:
 
@@ -1462,6 +1464,8 @@ def manual_page():
                                             df_temp.groupby(['month', 'day'], as_index=False).mean(numeric_only=True))
                                         df_weather_final_r = (
                                             df_temp_r.groupby(['month', 'day'], as_index=False).mean(numeric_only=True))
+
+                                    st.write(df_weather_final_r)
 
 
                                 baseline_df = pd.concat([manual_df, df_weather_final], axis=1)
