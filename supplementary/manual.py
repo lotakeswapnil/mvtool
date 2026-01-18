@@ -1026,13 +1026,9 @@ def manual_page():
                 start_b, end_b, weather_int_b = st.columns(3, border=True)
 
                 with start_b:
-                    start_year = st.selectbox("Start Year",options=range(date.today().year, 1940+1, -1))
-                    start_month = st.selectbox("Start Month", options=range(1, 13), format_func=lambda m: date(1900, m, 1).strftime("%B"))
-                    start_date_b = date(start_year, start_month, 1)
+                    start_date_b = st.date_input('Baseline Start Date', max_value=date.today()-timedelta(days=2))
                 with end_b:
-                    end_year = st.selectbox("End Year", options=range(date.today().year, 1940+1, -1))
-                    end_month = st.selectbox("End Month", options=range(1, 13), format_func=lambda m: date(1900, m, 1).strftime("%B"))
-                    end_date_b = date(end_year, end_month, 31)
+                    end_date_b = st.date_input('Baseline End Date', max_value=date.today()-timedelta(days=1))
                 with weather_int_b:
                     weather_interval = st.selectbox('Select Interval', {'Hourly', 'Daily', 'Monthly'})
 
@@ -1041,14 +1037,9 @@ def manual_page():
                 start_r, end_r, weather_int_r = st.columns(3, border=True)
 
                 with start_r:
-                    start_year = st.selectbox("Start Year", options=range(date.today().year, 1940+1, -1), key='reported_start_year')
-                    start_month = st.selectbox("Start Month", options=range(1, 13), format_func=lambda m: date(1900, m, 1).strftime("%B"), key='reported_start_month')
-                    start_date_r = date(start_year, start_month, 1)
+                    start_date_r = st.date_input('Reported Start Date', max_value=date.today()-timedelta(days=2))
                 with end_r:
-                    end_year = st.selectbox("End Year", options=range(date.today().year, 1940+1, -1), key='reported_end_year')
-                    end_month = st.selectbox("End Month", options=range(1, 13), format_func=lambda m: date(1900, m, 1).strftime("%B"), key='reported_end_month')
-                    last_day = calendar.monthrange(end_year, end_month)[1]
-                    end_date_r = date(end_year, end_month, last_day)
+                    end_date_r = st.date_input('Reported End Date', max_value=date.today()-timedelta(days=1))
                 with weather_int_r:
                     st.selectbox('Select Interval', weather_interval, disabled=True, help='This will be same as baseline interval to avoid errors.')
 
@@ -1119,7 +1110,7 @@ def manual_page():
                         st.error(f'Please Enter Correct Latitude and Longitude')
 
                     if st.button("Fetch Weather Data & Calculate savings"):
-                        if start_date_b > end_date_b and start_date_r >= end_date_r:
+                        if start_date_b > end_date_b and start_date_r > end_date_r:
                             st.error("Start must be <= end")
                         else:
                             start_str_b = start_date_b.isoformat()
@@ -1475,8 +1466,6 @@ def manual_page():
 
                                 baseline_df = pd.concat([manual_df, df_weather_final], axis=1)
                                 reported_df = pd.concat([reported_df, df_weather_final_r], axis=1)
-
-                                st.write(baseline_df)
 
                                 # -------------------------
                                 # DEFAULT MODEL SETTINGS
