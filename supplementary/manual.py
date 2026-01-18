@@ -1465,8 +1465,6 @@ def manual_page():
                                         df_weather_final_r = (
                                             df_temp_r.groupby(['month', 'day'], as_index=False).mean(numeric_only=True))
 
-                                    st.write(df_weather_final_r)
-
 
                                 baseline_df = pd.concat([manual_df, df_weather_final], axis=1)
                                 reported_df = pd.concat([reported_df, df_weather_final_r], axis=1)
