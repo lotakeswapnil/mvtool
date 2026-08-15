@@ -51,7 +51,7 @@ def upload_page():
                 base_num_var = st.number_input('Number of Independent Variables', min_value=1, max_value=10, step=1)
 
             else:
-                temp_data = st.text_input('Temperature column name')
+                temp_data = st.selectbox('Temperature column name:',df_b.columns)
 
 
         with base2:
@@ -64,7 +64,7 @@ def upload_page():
                     globals()[f"ind_var_{i}"] = st.text_input(f"Independent Variable {i}",key=f"var_{i}")
 
             else:
-                base_energy = st.text_input('Energy column name')
+                base_energy = st.selectbox('Energy column name:',df_b.columns)
                 temperature_unit = st.selectbox('Select Temperature Unit:', ['celsius', 'fahrenheit'])
 
 
